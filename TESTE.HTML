@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestão de Planos de Cuidados</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f0f2f7;--sur:#fff;--sur2:#f5f6fa;--sur3:#e8eaf2;
+  --bdr:rgba(0,0,0,0.08);--bdr2:rgba(0,0,0,0.15);
+  --txt:#1a1d2e;--mut:#6b6f8a;--dim:#a0a4bc;
+  --acc:#3a5ff0;--acc-g:rgba(58,95,240,0.1);
+  --warn:#c47d00;--warn-bg:#fff8e6;--warn-br:rgba(196,125,0,0.25);
+  --red:#c0303c;--red-bg:#fff0f1;--red-br:rgba(192,48,60,0.25);
+  --grn:#1d7a52;--grn-bg:#edf7f2;--grn-br:rgba(29,122,82,0.25);
+  --pur:#6b38d4;--pur-bg:#f2edfc;--pur-br:rgba(107,56,212,0.2);
+  --teal:#0d7fa5;--teal-bg:#e8f6fb;--teal-br:rgba(13,127,165,0.2);
+  --r:10px;--rs:6px;--font:'Sora',sans-serif;--mono:'IBM Plex Mono',monospace;
+  --sb:220px;
+}
+body{background:var(--bg);color:var(--txt);font-family:var(--font);font-size:14px;min-height:100vh;display:flex;flex-direction:column}
+
+/* ── HEADER ── */
+header{background:var(--sur);border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 24px;gap:14px;height:56px;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.logo{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600;letter-spacing:-.3px}
+.logo-ic{width:30px;height:30px;background:linear-gradient(135deg,var(--acc),var(--pur));border-radius:var(--rs);display:flex;align-items:center;justify-content:center;color:#fff}
+.hstat{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--mut);font-family:var(--mono)}
+.hstat b{color:var(--txt);font-weight:500}
+.live{width:7px;height:7px;border-radius:50%;background:var(--grn)}
+
+/* ── LAYOUT ── */
+.shell{display:flex;flex:1;min-height:0}
+.sidebar{width:var(--sb);background:var(--sur);border-right:1px solid var(--bdr);padding:20px 12px;display:flex;flex-direction:column;gap:4px;position:sticky;top:56px;height:calc(100vh - 56px);flex-shrink:0}
+.sb-lbl{font-size:10px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.7px;padding:0 8px;margin-bottom:8px}
+.nav{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--rs);cursor:pointer;transition:all .18s;font-size:13px;font-weight:500;color:var(--mut);border:1px solid transparent}
+.nav:hover{background:var(--sur2);color:var(--txt)}
+.nav.on{background:var(--acc-g);color:var(--acc);border-color:rgba(58,95,240,.15)}
+.nbadge{margin-left:auto;border-radius:10px;font-size:10px;font-weight:600;padding:1px 7px;font-family:var(--mono);color:#fff}
+.nb-w{background:var(--warn)}.nb-b{background:var(--acc)}
+.content{flex:1;padding:28px;min-width:0;overflow-y:auto}
+.screen{display:none}.screen.on{display:block}
+.pg-title{font-size:18px;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:10px}
+.pg-sub{font-size:13px;color:var(--mut);margin-bottom:22px}
+
+/* ── SUMMARY CARDS ── */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px}
+.card{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);padding:14px 18px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.c-ic{width:38px;height:38px;border-radius:var(--rs);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ci-w{background:var(--warn-bg);color:var(--warn)}
+.ci-g{background:var(--grn-bg);color:var(--grn)}
+.ci-b{background:var(--acc-g);color:var(--acc)}
+.ci-p{background:var(--pur-bg);color:var(--pur)}
+.c-val{font-size:24px;font-weight:600;font-family:var(--mono);line-height:1}
+.c-lbl{font-size:11px;color:var(--mut);margin-top:3px}
+
+/* ── TOOLBAR ── */
+.toolbar{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;align-items:center}
+.srch{position:relative;flex:1;min-width:200px}
+.srch svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--dim);pointer-events:none}
+.srch input{width:100%;background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);color:var(--txt);padding:9px 12px 9px 36px;font-family:var(--font);font-size:13px;outline:none;transition:border-color .2s}
+.srch input:focus{border-color:var(--acc)}
+.srch input::placeholder{color:var(--dim)}
+.fbtn{display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:var(--r);border:1px solid var(--bdr);background:var(--sur);color:var(--mut);font-family:var(--font);font-size:12px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.fbtn:hover{border-color:var(--bdr2);color:var(--txt)}
+.fbtn.on{border-color:var(--acc);color:var(--acc);background:var(--acc-g);font-weight:500}
+
+/* ── TABLE ── */
+.tcard{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+.cc1{width:110px}.cc2{width:auto}.cc3{width:160px}.cc4{width:170px}.cc5{width:130px}.cc6{width:60px}
+.ce1{width:80px}.ce2{width:auto}.ce3{width:110px}.ce4{width:110px}.ce5{width:110px}.ce6{width:90px}
+thead tr{background:var(--sur2);border-bottom:1px solid var(--bdr)}
+th{padding:11px 14px;text-align:left;font-size:11px;font-weight:500;color:var(--dim);letter-spacing:.6px;text-transform:uppercase;white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--bdr);transition:background .15s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--sur2)}
+td{padding:12px 14px;vertical-align:middle}
+.mono{font-family:var(--mono);font-size:12px;color:var(--mut);white-space:nowrap}
+.tcell{font-size:12px;color:var(--mut);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:0}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap}
+.b-atualizar{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-br)}
+.b-atualizado{background:var(--grn-bg);color:var(--grn);border:1px solid var(--grn-br)}
+.b-em-atual{background:var(--acc-g);color:var(--acc);border:1px solid rgba(58,95,240,.2)}
+.b-reprov{background:var(--red-bg);color:var(--red);border:1px solid var(--red-br)}
+.b-llm{background:var(--pur-bg);color:var(--pur);border:1px solid var(--pur-br)}
+.b-doc{background:var(--grn-bg);color:var(--grn);border:1px solid var(--grn-br)}
+.icnbtn{background:none;border:none;cursor:pointer;color:var(--mut);padding:5px;border-radius:var(--rs);transition:all .18s;display:inline-flex;align-items:center}
+.icnbtn:hover{color:var(--acc);background:var(--acc-g)}
+.empty td{text-align:center;color:var(--dim);padding:40px;font-size:13px}
+.pag{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-top:1px solid var(--bdr);background:var(--sur2)}
+.pag-i{font-size:12px;color:var(--mut);font-family:var(--mono)}
+.pag-b{display:flex;gap:5px}
+.pbtn{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rs);color:var(--mut);padding:5px 12px;cursor:pointer;font-size:12px;font-family:var(--font);transition:all .2s}
+.pbtn:hover:not(:disabled){border-color:var(--acc);color:var(--acc)}
+.pbtn:disabled{opacity:.35;cursor:default}
+.pbtn.cur{border-color:var(--acc);color:var(--acc);background:var(--acc-g);font-weight:500}
+
+/* ── OVERLAYS ── */
+.ov{display:none;position:fixed;inset:0;background:rgba(15,18,35,.52);z-index:200;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.ov.on{display:flex}
+.ov.l2{z-index:310;background:rgba(15,18,35,.3)}
+.ov.l3{z-index:420;background:rgba(15,18,35,.25)}
+
+/* ── MODAL ── */
+.modal{background:var(--sur);border:1px solid var(--bdr);border-radius:14px;width:100%;max-width:1080px;max-height:94vh;overflow:hidden;display:flex;flex-direction:column;animation:mIn .2s ease;box-shadow:0 12px 48px rgba(0,0,0,.2)}
+.modal.sm{max-width:540px}
+.modal.med{max-width:760px}
+.modal.xl{max-width:1120px}
+@keyframes mIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
+
+.mh{display:flex;align-items:flex-start;justify-content:space-between;padding:20px 24px 16px;border-bottom:1px solid var(--bdr);flex-shrink:0}
+.mh-l{display:flex;align-items:flex-start;gap:12px}
+.mtype{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;white-space:nowrap;margin-top:2px}
+.mt-atualizar{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-br)}
+.mt-atualizado{background:var(--grn-bg);color:var(--grn);border:1px solid var(--grn-br)}
+.mt-em{background:var(--acc-g);color:var(--acc);border:1px solid rgba(58,95,240,.2)}
+.mt-emb{background:var(--pur-bg);color:var(--pur);border:1px solid var(--pur-br)}
+.mt-hist{background:var(--sur3);color:var(--mut);border:1px solid var(--bdr2)}
+.mtitle{font-size:15px;font-weight:600;color:var(--txt)}
+.msub{font-size:12px;color:var(--mut);font-family:var(--mono);margin-top:3px}
+.xbtn{background:none;border:none;color:var(--dim);cursor:pointer;font-size:22px;padding:2px 6px;border-radius:6px;line-height:1;transition:color .2s;flex-shrink:0}
+.xbtn:hover{color:var(--txt)}
+
+/* ── MODAL BODY LAYOUT ── */
+.mbody{flex:1;overflow-y:auto;padding:0}
+
+/* top meta strip */
+.meta-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:0;border-bottom:1px solid var(--bdr);background:var(--sur2)}
+.ms-item{padding:14px 20px;border-right:1px solid var(--bdr)}
+.ms-item:last-child{border-right:none}
+.ms-lbl{font-size:10px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.ms-val{font-size:13px;font-family:var(--mono);color:var(--txt);font-weight:500}
+.ms-val.acc{color:var(--acc)}
+.ms-val.grn{color:var(--grn)}
+.ms-val.warn{color:var(--warn)}
+
+/* plan cards grid (Embeddings - original 4 cards) */
+.plans-section{padding:20px 24px;border-bottom:1px solid var(--bdr)}
+.sec-title{font-size:11px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.p4grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.p4card{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;transition:box-shadow .2s}
+.p4card.highlight{border-color:var(--warn);box-shadow:0 0 0 3px var(--warn-bg)}
+.p4card.highlight .p4h{background:var(--warn-bg);border-bottom-color:var(--warn-br)}
+.p4h{padding:10px 13px;background:var(--sur2);border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;gap:6px}
+.p4id{font-family:var(--mono);font-size:11px;color:var(--mut)}
+.p4b{padding:12px 13px}
+.p4origin{font-size:12px;font-weight:600;color:var(--txt);margin-bottom:5px}
+.p4text{font-size:11px;color:var(--mut);line-height:1.5;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.p4ts{font-size:10px;color:var(--dim);font-family:var(--mono);margin-top:8px;padding-top:8px;border-top:1px solid var(--bdr)}
+.target-flag{display:inline-flex;align-items:center;gap:4px;background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-br);border-radius:10px;font-size:10px;font-weight:600;padding:2px 7px;white-space:nowrap}
+
+/* ── PLANO CONTAINER GRANDE (Modal 1 – Validação) ── */
+.planos-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:20px 24px}
+.plano-container{background:var(--sur);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .22s;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.plano-container:hover{border-color:var(--acc);box-shadow:0 4px 20px rgba(58,95,240,.15);transform:translateY(-2px)}
+.plano-container.has-requests{border-color:var(--warn-br)}
+.plano-container.has-requests:hover{border-color:var(--warn);box-shadow:0 4px 20px rgba(196,125,0,.2);transform:translateY(-2px)}
+.plano-hdr{padding:14px 18px;background:var(--sur2);border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.plano-hdr.medico{background:linear-gradient(135deg,rgba(29,122,82,.06),rgba(29,122,82,.02));border-bottom-color:var(--grn-br)}
+.plano-hdr.ia{background:linear-gradient(135deg,rgba(107,56,212,.06),rgba(107,56,212,.02));border-bottom-color:var(--pur-br)}
+.plano-num{font-size:20px;font-weight:700;font-family:var(--mono);color:var(--txt);line-height:1}
+.plano-origin-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.plano-origin-badge.medico{background:var(--grn-bg);color:var(--grn);border:1px solid var(--grn-br)}
+.plano-origin-badge.ia{background:var(--pur-bg);color:var(--pur);border:1px solid var(--pur-br)}
+.notif-badge{background:var(--warn);color:#fff;border-radius:50%;width:22px;height:22px;font-size:12px;font-weight:700;font-family:var(--mono);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(196,125,0,.4);animation:pulse-notif 2s infinite;flex-shrink:0}
+@keyframes pulse-notif{0%,100%{box-shadow:0 2px 6px rgba(196,125,0,.4)}50%{box-shadow:0 2px 14px rgba(196,125,0,.7)}}
+.plano-body{padding:16px 18px}
+.plano-label{font-size:13px;font-weight:600;color:var(--txt);margin-bottom:6px}
+.plano-texto{font-size:12px;color:var(--mut);line-height:1.6;height:180px;overflow-y:auto}
+.plano-footer{padding:10px 18px;border-top:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;background:var(--sur2)}
+.plano-ts{font-size:10px;color:var(--dim);font-family:var(--mono)}
+.click-hint{font-size:11px;color:var(--acc);display:flex;align-items:center;gap:4px;opacity:.8}
+.click-hint-gray{font-size:11px;color:var(--mut);display:flex;align-items:center;gap:4px;opacity:.6}
+
+/* split section */
+.split-wrap{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--bdr)}
+.sp{display:flex;flex-direction:column}
+.sp+.sp{border-left:1px solid var(--bdr)}
+.sp-head{padding:12px 20px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:8px;background:var(--sur2)}
+.sp-title{font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--mut)}
+.sp-pill{padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600}
+.pp-r{background:var(--red-bg);color:var(--red)}
+.pp-w{background:var(--warn-bg);color:var(--warn)}
+.pp-g{background:var(--grn-bg);color:var(--grn)}
+.sp-body{padding:18px 20px}
+
+.req-box{background:var(--sur);border:1px solid var(--bdr);border-left:3px solid var(--warn);border-radius:var(--rs);padding:15px}
+.req-author{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+.av{width:30px;height:30px;border-radius:50%;background:var(--acc);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.av-name{font-size:13px;font-weight:600;color:var(--txt)}
+.av-crm{font-size:11px;color:var(--mut);font-family:var(--mono)}
+.av-date{font-size:11px;color:var(--dim);font-family:var(--mono);margin-left:auto}
+.req-sec{margin-top:11px;padding-top:11px;border-top:1px solid var(--bdr)}
+.req-sec-lbl{font-size:10px;font-weight:600;color:var(--warn);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.req-text{font-size:13px;color:var(--txt);line-height:1.7}
+.trecho{font-size:12px;font-style:italic;color:var(--warn);background:rgba(196,125,0,.08);border-radius:4px;padding:8px 12px}
+.caso-link{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--rs);border:1px solid var(--teal-br);background:var(--teal-bg);color:var(--teal);font-size:12px;font-weight:500;cursor:pointer;transition:all .18s;margin-top:10px}
+.caso-link:hover{opacity:.8}
+
+/* edit area */
+.edit-wrap{display:none;margin-top:14px}
+.edit-wrap.on{display:block}
+.edit-lbl{font-size:11px;font-weight:600;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+textarea.edit-ta{width:100%;background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rs);color:var(--txt);font-family:var(--font);font-size:13px;line-height:1.7;padding:12px;outline:none;resize:vertical;min-height:120px;transition:border-color .2s}
+textarea.edit-ta:focus{border-color:var(--acc)}
+
+/* history section */
+.hist-section{padding:18px 24px}
+.hist-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--bdr)}
+.hist-item:last-child{border-bottom:none}
+.hist-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.hist-body{flex:1}
+.hist-action{font-size:13px;font-weight:500;color:var(--txt)}
+.hist-meta{font-size:11px;color:var(--dim);font-family:var(--mono);margin-top:2px}
+.hist-note{font-size:12px;color:var(--mut);margin-top:4px;line-height:1.5;font-style:italic}
+
+/* footer */
+.mfoot{display:flex;gap:10px;padding:14px 24px;border-top:1px solid var(--bdr);background:var(--sur2);flex-shrink:0;flex-wrap:wrap;align-items:center}
+.sep{flex:1}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:var(--r);font-family:var(--font);font-size:13px;font-weight:500;cursor:pointer;transition:all .18s;border:1px solid transparent;white-space:nowrap}
+.btn-ghost{background:var(--sur);border-color:var(--bdr2);color:var(--mut)}
+.btn-ghost:hover{color:var(--txt);border-color:var(--dim)}
+.btn-outline-acc{background:var(--sur);border-color:rgba(58,95,240,.3);color:var(--acc)}
+.btn-outline-acc:hover{background:var(--acc-g)}
+.btn-outline-pur{background:var(--sur);border-color:var(--pur-br);color:var(--pur)}
+.btn-outline-pur:hover{background:var(--pur-bg)}
+.btn-outline-hist{background:var(--sur);border-color:var(--bdr2);color:var(--mut)}
+.btn-outline-hist:hover{background:var(--sur3);color:var(--txt)}
+.btn-red{background:var(--red);color:#fff}
+.btn-red:hover{opacity:.88}
+.btn-grn{background:var(--grn);color:#fff}
+.btn-grn:hover{opacity:.88}
+
+/* toast */
+.toast{position:fixed;bottom:28px;right:28px;background:var(--sur);border:1px solid var(--bdr2);border-radius:var(--r);padding:12px 18px;font-size:13px;color:var(--txt);z-index:600;display:flex;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,.12);opacity:0;transform:translateY(12px);transition:all .25s;pointer-events:none;max-width:360px}
+.toast.on{opacity:1;transform:none}
+
+/* emb screen */
+.ecards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px}
+.emb-stat-pill{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600}
+.ep-ok{background:var(--grn-bg);color:var(--grn);border:1px solid var(--grn-br)}
+.ep-pend{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-br)}
+
+/* ── MODAL LISTA DE VALIDAÇÕES (Modal 2) ── */
+.val-list-header{padding:16px 24px 0;display:flex;align-items:center;gap:12px;justify-content:space-between;flex-shrink:0}
+.val-list-title{font-size:13px;font-weight:600;color:var(--txt)}
+.val-dropdown-wrap{position:relative}
+.val-dropdown-select{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rs);color:var(--txt);padding:7px 30px 7px 12px;font-family:var(--font);font-size:12px;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;transition:border-color .2s}
+.val-dropdown-select:focus{border-color:var(--acc)}
+.val-dropdown-arrow{position:absolute;right:9px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--dim)}
+.val-items-list{flex:1;overflow-y:auto;padding:14px 24px;display:flex;flex-direction:column;gap:8px}
+.val-item-row{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rs);cursor:pointer;transition:all .18s}
+.val-item-row:hover{border-color:var(--acc);background:var(--acc-g);box-shadow:0 2px 8px rgba(58,95,240,.1)}
+.val-item-num{font-family:var(--mono);font-size:11px;color:var(--dim);width:28px;flex-shrink:0;font-weight:600}
+.val-item-info{flex:1;min-width:0}
+.val-item-cod{font-size:12px;font-weight:600;color:var(--acc);font-family:var(--mono)}
+.val-item-cond{font-size:13px;font-weight:500;color:var(--txt);margin-top:2px}
+.val-item-med{font-size:11px;color:var(--mut);margin-top:2px}
+.val-item-trecho{font-size:11px;color:var(--warn);font-style:italic;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.val-item-arrow{color:var(--dim);flex-shrink:0;transition:color .18s}
+.val-item-row:hover .val-item-arrow{color:var(--acc)}
+
+/* ── PLANO SEM REQUISIÇÕES ── */
+.plano-view-body{padding:24px;flex:1;overflow-y:auto}
+.plano-view-label{font-size:11px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.plano-view-text{font-size:14px;line-height:1.8;color:var(--txt);background:var(--sur2);border:1px solid var(--bdr);border-left:3px solid var(--grn);border-radius:var(--rs);padding:18px}
+.plano-view-meta{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.plano-view-meta-item{background:var(--sur2);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px}
+
+/* hist modal */
+.hist-modal-body{padding:20px 24px;overflow-y:auto;flex:1}
+
+@media(max-width:900px){.p4grid{grid-template-columns:1fr 1fr}.split-wrap{grid-template-columns:1fr}.meta-strip{grid-template-columns:repeat(3,1fr)}.cards,.ecards{grid-template-columns:1fr 1fr}.sidebar{width:56px}.sb-lbl,.nav span{display:none}.planos-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">
+    <div class="logo-ic">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+    </div>
+    Planos de Cuidados
+  </div>
+  <div style="flex:1"></div>
+  <div class="hstat"><div class="live"></div>&nbsp;Sistema ativo</div>
+  <div class="hstat" style="margin-left:16px">Base: <b>public.embeddings</b></div>
+</header>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="sb-lbl">Menu</div>
+    <div class="nav on" id="nav-val" onclick="goScr('val')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      <span>Validação</span>
+      <span class="nbadge nb-w" id="badgeVal">—</span>
+    </div>
+    <div class="nav" id="nav-emb" onclick="goScr('emb')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
+      <span>Embeddings</span>
+      <span class="nbadge nb-b" id="badgeEmb">—</span>
+    </div>
+  </aside>
+
+  <div class="content">
+    <!-- ══ VALIDAÇÃO ══ -->
+    <div class="screen on" id="screen-val">
+      <div class="pg-title">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Validação — Planos de Cuidados
+      </div>
+      <div class="pg-sub">Solicitações de atualização enviadas por médicos</div>
+      <div class="cards" id="valCards"></div>
+      <div class="toolbar">
+        <div class="srch">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input id="valSrch" placeholder="Buscar por código, condição clínica ou médico...">
+        </div>
+        <button class="fbtn on" id="f-all"      onclick="setF('all')">Todos</button>
+        <button class="fbtn"    id="f-atualizar" onclick="setF('atualizar')"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--warn)"></span>A atualizar</button>
+        <button class="fbtn"    id="f-em"        onclick="setF('em')"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--acc)"></span>Em atualização</button>
+        <button class="fbtn"    id="f-atualizado" onclick="setF('atualizado')"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--grn)"></span>Atualizado</button>
+      </div>
+      <div class="tcard">
+        <table>
+          <colgroup><col class="cc1"><col class="cc2"><col class="cc3"><col class="cc4"><col class="cc5"><col class="cc6"></colgroup>
+          <thead><tr><th>Cód. Regra</th><th>Condição Clínica</th><th>Plano Solicitado</th><th>Médico Solicitante</th><th>Status</th><th></th></tr></thead>
+          <tbody id="valBody"></tbody>
+        </table>
+        <div class="pag" id="valPag"></div>
+      </div>
+    </div>
+
+    <!-- ══ EMBEDDINGS ══ -->
+    <div class="screen" id="screen-emb">
+      <div class="pg-title">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
+        Base de Embeddings
+      </div>
+      <div class="pg-sub">Cada embedding possui 1 plano médico + 3 planos IA</div>
+      <div class="ecards" id="embCards"></div>
+      <div class="toolbar">
+        <div class="srch">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input id="embSrch" placeholder="Buscar por ID, especialidade ou contexto...">
+        </div>
+      </div>
+      <div class="tcard">
+        <table>
+          <colgroup><col class="ce1"><col class="ce2"><col class="ce3"><col class="ce4"><col class="ce5"><col class="ce6"></colgroup>
+          <thead><tr><th>ID</th><th>Contexto clínico</th><th>Especialidade</th><th>Planos</th><th>Status</th><th>Ação</th></tr></thead>
+          <tbody id="embBody"></tbody>
+        </table>
+        <div class="pag" id="embPag"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     FLUXO VALIDAÇÃO: MODAL 1 — Embedding + 2 Planos Grandes
+     ══════════════════════════════════════════════════════ -->
+<div class="ov" id="ovValVis">
+  <div class="modal xl">
+    <div class="mh">
+      <div class="mh-l">
+        <div class="mtype mt-emb">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
+          Embedding
+        </div>
+        <div>
+          <div class="mtitle" id="vvTitle"></div>
+          <div class="msub" id="vvSub"></div>
+        </div>
+      </div>
+      <button class="xbtn" onclick="closeOv('ovValVis')">&#215;</button>
+    </div>
+    <div class="mbody">
+      <!-- Infos da embedding -->
+      <div style="padding:16px 24px;border-bottom:1px solid var(--bdr);background:var(--sur2)">
+        <div class="sec-title" style="margin-bottom:12px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
+          Informações da Embedding
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px" id="vvMetaGrid"></div>
+        <div style="font-size:10px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Contexto vetorizado</div>
+        <div style="font-size:13px;line-height:1.7;color:var(--txt);background:var(--pur-bg);border:1px solid var(--pur-br);border-left:3px solid var(--pur);border-radius:var(--rs);padding:14px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden" id="vvContexto"></div>
+        <button class="btn btn-outline-pur" style="margin-top:10px;font-size:12px;padding:6px 14px" onclick="openEmbRefFromVal()">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          Visualizar mais
+        </button>
+      </div>
+
+      <!-- Dois planos grandes -->
+      <div style="padding:20px 24px 6px">
+        <div class="sec-title">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Planos de Cuidados
+          <span style="font-size:11px;color:var(--mut);font-weight:400;text-transform:none;letter-spacing:0">— clique em um plano para ver detalhes ou validações</span>
+        </div>
+      </div>
+      <div class="planos-grid" id="vvPlanosGrid"></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" onclick="closeOv('ovValVis')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Fechar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     FLUXO VALIDAÇÃO: MODAL 2 — Lista de Validações do Plano
+     ══════════════════════════════════════════════════════ -->
+<div class="ov l2" id="ovValLista">
+  <div class="modal" style="max-width:880px;min-height:70vh">
+    <div class="mh">
+      <div class="mh-l">
+        <div class="mtype mt-atualizar">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/></svg>
+          Validações pendentes
+        </div>
+        <div>
+          <div class="mtitle" id="vlTitle"></div>
+          <div class="msub" id="vlSub"></div>
+        </div>
+      </div>
+      <button class="xbtn" onclick="closeOv('ovValLista')">&#215;</button>
+    </div>
+    <div class="val-list-header">
+      <div class="val-list-title" id="vlCount"></div>
+      <div class="val-dropdown-wrap" id="vlDropdownWrap" style="display:none">
+        <select class="val-dropdown-select" id="vlDropdown" onchange="scrollToValItem(this.value)"></select>
+        <svg class="val-dropdown-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+    </div>
+    <div class="val-items-list" id="vlList"></div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" onclick="closeOv('ovValLista')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Voltar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     FLUXO VALIDAÇÃO: MODAL 3 — Validação Individual
+     ══════════════════════════════════════════════════════ -->
+<div class="ov l3" id="ovMain">
+  <div class="modal">
+    <div class="mh">
+      <div class="mh-l">
+        <div class="mtype" id="mMainType"></div>
+        <div>
+          <div class="mtitle" id="mMainTitle"></div>
+          <div class="msub" id="mMainSub"></div>
+        </div>
+      </div>
+      <button class="xbtn" onclick="closeOv('ovMain')">&#215;</button>
+    </div>
+    <div class="mbody">
+      <div class="meta-strip" id="metaStrip"></div>
+      
+      <!-- Contexto Clínico do Paciente -->
+      <div id="casoContextStrip" style="padding:14px 24px;background:var(--teal-bg);border-bottom:1px solid var(--teal-br);display:flex;align-items:center;justify-content:space-between;gap:16px">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="font-size:10px;font-weight:600;color:var(--teal);text-transform:uppercase;letter-spacing:.5px">Contexto Clínico do Paciente Atendido</div>
+          <div style="font-size:13px;color:var(--txt);line-height:1.5" id="casoContextText"></div>
+        </div>
+        <button class="btn btn-outline-pur" style="border-color:var(--teal-br);color:var(--teal);background:var(--sur);padding:6px 12px;font-size:12px" onclick="openCaso()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Visualizar Prontuário
+        </button>
+      </div>
+
+      <div class="split-wrap">
+        <div class="sp">
+          <div class="sp-head">
+            <div class="sp-title">Plano sinalizado para atualização</div>
+            <span class="sp-pill pp-r" id="spLeftPill">Versão atual</span>
+          </div>
+          <div class="sp-body" id="spLeft"></div>
+        </div>
+        <div class="sp">
+          <div class="sp-head">
+            <div class="sp-title">Solicitação do médico</div>
+            <span class="sp-pill pp-w">Modificação requerida</span>
+          </div>
+          <div class="sp-body" id="spRight"></div>
+        </div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" onclick="closeOv('ovMain')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Voltar
+      </button>
+      <div class="sep"></div>
+      <button class="btn btn-outline-acc" id="btnEditar" onclick="toggleEditMode()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Editar
+      </button>
+      <button class="btn btn-red" id="btnReprovar" onclick="doReprovar()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>
+        Reprovar
+      </button>
+      <button class="btn btn-grn" id="btnAprovar" onclick="doAprovar()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        Aprovar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL EMBEDDING REF (l3 - dentro da validação) ══ -->
+<div class="ov l3" id="ovEmb">
+  <div class="modal sm">
+    <div class="mh">
+      <div class="mh-l">
+        <div class="mtype mt-emb">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
+          Embedding vinculada
+        </div>
+        <div><div class="mtitle" id="embRTitle"></div><div class="msub" id="embRSub"></div></div>
+      </div>
+      <button class="xbtn" onclick="closeOv('ovEmb')">&#215;</button>
+    </div>
+    <div style="padding:20px 24px;overflow-y:auto;flex:1">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px" id="embRMeta"></div>
+      <div class="req-sec-lbl" style="margin-bottom:8px">Contexto vetorizado</div>
+      <div style="font-size:13px;line-height:1.75;color:var(--txt);background:var(--pur-bg);border:1px solid var(--pur-br);border-left:3px solid var(--pur);border-radius:var(--rs);padding:16px" id="embRText"></div>
+    </div>
+    <div class="mfoot"><button class="btn btn-ghost" onclick="closeOv('ovEmb')">Fechar</button></div>
+  </div>
+</div>
+
+<!-- ══ MODAL CASO CLÍNICO (l3) ══ -->
+<div class="ov l3" id="ovCaso">
+  <div class="modal sm">
+    <div class="mh">
+      <div class="mh-l">
+        <div class="mtype" style="background:var(--teal-bg);color:var(--teal);border:1px solid var(--teal-br)">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Caso Clínico
+        </div>
+        <div><div class="mtitle" id="casoTitle"></div><div class="msub" id="casoSub"></div></div>
+      </div>
+      <button class="xbtn" onclick="closeOv('ovCaso')">&#215;</button>
+    </div>
+    <div style="padding:20px 24px;overflow-y:auto;flex:1" id="casoBody"></div>
+    <div class="mfoot"><button class="btn btn-ghost" onclick="closeOv('ovCaso')">Fechar</button></div>
+  </div>
+</div>
+
+<!-- ══ MODAL PLANO SEM REQUISIÇÕES (l2) ══ -->
+<div class="ov l2" id="ovPlanoView">
+  <div class="modal med" style="max-width: 970px;">
+    <div class="mh">
+      <div class="mh-l">
+        <div class="mtype" id="pvType"></div>
+        <div>
+          <div class="mtitle" id="pvTitle"></div>
+          <div class="msub" id="pvSub"></div>
+        </div>
+      </div>
+      <button class="xbtn" onclick="closeOv('ovPlanoView')">&#215;</button>
+    </div>
+    <div class="plano-view-body" style="padding: 20px 24px;">
+      <!-- Dropdown para visualizar outros planos -->
+      <div style="margin-bottom: 16px; display: flex; align-items: center; gap: 10px; background: var(--sur2); border: 1px solid var(--bdr); border-radius: var(--rs); padding: 10px 14px;">
+        <span style="font-size: 12px; font-weight: 600; color: var(--mut); text-transform: uppercase; letter-spacing: .5px;">Visualizar Plano:</span>
+        <div class="val-dropdown-wrap" style="flex: 1; max-width: 370px;">
+          <select class="val-dropdown-select" id="pvPlanoDropdown" onchange="onPvPlanoDropdownChange(this.value)" style="width: 100%; padding-right: 30px;"></select>
+          <svg class="val-dropdown-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--dim);"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+
+      <div class="plano-view-label" id="pvPlanoLabel" style="margin-top: 10px;"></div>
+      <div class="plano-view-text" id="pvPlanoText" style="min-height: 330px; max-height: 500px; overflow-y: auto; font-size: 13.5px; line-height: 1.8;"></div>
+      <div class="plano-view-meta" id="pvPlanoMeta" style="grid-template-columns: repeat(4, 1fr);"></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" onclick="closeOv('ovPlanoView')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Fechar
+      </button>
+      <div class="sep"></div>
+      <button class="btn btn-outline-acc" id="pvBtnEditar" onclick="toggleEditPlanoView()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Editar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     EMBEDDINGS: MODAL DETALHES (original)
+     ══════════════════════════════════════════════════════ -->
+<div class="ov" id="ovEmbDet">
+  <div class="modal sm">
+    <div class="mh">
+      <div class="mh-l">
+        <div class="mtype mt-emb">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
+          Embedding
+        </div>
+        <div><div class="mtitle" id="edTitle"></div><div class="msub" id="edSub"></div></div>
+      </div>
+      <button class="xbtn" onclick="closeOv('ovEmbDet')">&#215;</button>
+    </div>
+    <div style="padding:20px 24px;overflow-y:auto;flex:1">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px" id="edMeta"></div>
+      <div class="req-sec-lbl" style="margin-bottom:8px">Contexto vetorizado</div>
+      <div style="font-size:13px;line-height:1.75;color:var(--txt);background:var(--pur-bg);border:1px solid var(--pur-br);border-left:3px solid var(--pur);border-radius:var(--rs);padding:16px" id="edText"></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" onclick="closeOv('ovEmbDet')">Fechar</button>
+      <button class="btn btn-outline-acc" onclick="openPlanosAssoc()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Ver 4 Planos Associados
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ EMBEDDINGS: MODAL 4 PLANOS (original) ══ -->
+<div class="ov l2" id="ovPlanos">
+  <div class="modal med">
+    <div class="mh">
+      <div class="mh-l">
+        <div class="mtype" style="background:var(--teal-bg);color:var(--teal);border:1px solid var(--teal-br)">Planos associados</div>
+        <div><div class="mtitle" id="plTitle"></div><div class="msub" id="plSub"></div></div>
+      </div>
+      <button class="xbtn" onclick="closeOv('ovPlanos')">&#215;</button>
+    </div>
+    <div class="p4grid" style="padding:20px 24px;overflow-y:auto;flex:1" id="plGrid"></div>
+    <div class="mfoot"><button class="btn btn-ghost" onclick="closeOv('ovPlanos')">Fechar</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span id="toastIc"></span><span id="toastMsg"></span></div>
+
+<script>
+/* ═══════════════════════ DATA ═══════════════════════ */
+const EMBS = [
+  {id:'EMB-001',esp:'Cardiologia',modelo:'text-embedding-3-large',dim:3072,status:'ativo',criado:'2024-01-10 08:32',
+   texto:'Paciente hipertenso, risco cardiovascular elevado, uso de losartana, comorbidades metabólicas, sedentarismo. Acompanhamento mensal recomendado.'},
+  {id:'EMB-002',esp:'Endocrinologia',modelo:'text-embedding-3-large',dim:3072,status:'ativo',criado:'2024-01-15 10:15',
+   texto:'Diabetes mellitus tipo 2 descompensada, HbA1c elevada, obesidade grau I, uso de metformina, risco de nefropatia diabética.'},
+  {id:'EMB-003',esp:'Reumatologia',modelo:'text-embedding-ada-002',dim:1536,status:'pendente-retreino',criado:'2023-11-20 14:00',
+   texto:'Síndrome fibromiálgica com dor difusa, fadiga crônica, distúrbio do sono, ansiedade associada, histórico de trauma emocional.'},
+  {id:'EMB-004',esp:'Pneumologia',modelo:'text-embedding-3-large',dim:3072,status:'ativo',criado:'2024-02-18 09:00',
+   texto:'Asma brônquica persistente leve, atopia confirmada, rinite alérgica concomitante, exposição a ácaros, criança em idade escolar.'},
+  {id:'EMB-005',esp:'Neurologia / Sono',modelo:'text-embedding-ada-002',dim:1536,status:'pendente-retreino',criado:'2023-10-05 11:30',
+   texto:'Síndrome da apneia obstrutiva do sono moderada, sonolência diurna excessiva, hipertensão noturna, sobrepeso, tabagismo ativo.'},
+  {id:'EMB-006',esp:'Endocrinologia',modelo:'text-embedding-3-large',dim:3072,status:'ativo',criado:'2024-03-01 08:00',
+   texto:'Hipotireoidismo primário com TSH elevado, sintomas de hipometabolismo, ausência de bócio, sem anticorpos detectáveis.'},
+  {id:'EMB-007',esp:'Psiquiatria',modelo:'text-embedding-3-small',dim:1536,status:'ativo',criado:'2024-03-20 15:45',
+   texto:'Transtorno de ansiedade generalizada moderado, GAD-7 elevado, insônia de manutenção, estressor ocupacional identificado.'},
+  {id:'EMB-008',esp:'Infectologia / IST',modelo:'text-embedding-3-large',dim:3072,status:'ativo',criado:'2024-04-10 13:20',
+   texto:'Infecção sexualmente transmissível bacteriana confirmada em cultura, parceiro não tratado, relação desprotegida recente.'},
+  {id:'EMB-009',esp:'Cardiologia / Arritmia',modelo:'text-embedding-3-large',dim:3072,status:'ativo',criado:'2024-04-15 09:10',
+   texto:'Fibrilação atrial paroxística, paciente em uso de anticoagulante oral direto, controle de frequência cardíaca com beta-bloqueador, monitoramento de função renal e episódios de sangramento.'},
+  {id:'EMB-010',esp:'Neurologia',modelo:'text-embedding-3-large',dim:3072,status:'ativo',criado:'2024-04-20 11:15',
+   texto:'Enxaqueca crônica refratária, mais de 15 dias de dor por mês, uso excessivo de analgésicos comuns, indicação de profilaxia medicamentosa e mudança no estilo de vida.'},
+  {id:'EMB-011',esp:'Gastroenterologia',modelo:'text-embedding-3-small',dim:1536,status:'ativo',criado:'2024-05-02 14:00',
+   texto:'Síndrome do intestino irritável com predomínio de diarreia, dor abdominal recorrente relacionada à evacuação, estresse psicológico associado, indicação de dieta Low-FODMAP.'},
+  {id:'EMB-012',esp:'Nefrologia',modelo:'text-embedding-3-large',dim:3072,status:'ativo',criado:'2024-05-10 16:30',
+   texto:'Doença renal crônica estágio 3b, nefropatia hipertensiva, proteinúria persistente, necessidade de restrição proteica moderada e monitoramento rigoroso de eletrólitos.'},
+  {id:'EMB-013',esp:'Dermatologia',modelo:'text-embedding-ada-002',dim:1536,status:'pendente-retreino',criado:'2024-05-15 08:45',
+   texto:'Psoríase em placas moderada a grave, acometimento de couro cabeludo e articulações, candidata a terapia sistêmica com imunobiológicos, rastreamento de artrite psoriásica.'},
+  {id:'EMB-014',esp:'Ortopedia',modelo:'text-embedding-3-large',dim:3072,status:'ativo',criado:'2024-05-20 10:20',
+   texto:'Osteoartrite de joelho bilateral avançada, dor crônica limitante, crepitação articular, indicação de reabilitação física, perda de peso e controle de dor por escala visual analógica.'},
+  {id:'EMB-015',esp:'Geriatria',modelo:'text-embedding-ada-002',dim:1536,status:'pendente-retreino',criado:'2024-05-25 11:40',
+   texto:'Transtorno neurocognitivo maior devido à doença de Alzheimer, fase moderada, alterações de comportamento, dependência para atividades instrumentais da vida diária, suporte ao cuidador.'},
+  {id:'EMB-016',esp:'Ginecologia',modelo:'text-embedding-3-large',dim:3072,status:'ativo',criado:'2024-06-01 09:15',
+   texto:'Endometriose profunda diagnosticada por ressonância magnética, dismenorreia severa, dispareunia profunda, dor pélvica crônica, indicação de bloqueio hormonal contínuo.'},
+  {id:'EMB-017',esp:'Hematologia',modelo:'text-embedding-3-small',dim:1536,status:'ativo',criado:'2024-06-05 13:50',
+   texto:'Anemia ferropriva refratária ao tratamento oral, intolerância a sulfato ferroso por sintomas gastrointestinais, necessidade de reposição de ferro por via parenteral.'},
+  {id:'EMB-018',esp:'Otorrinolaringologia',modelo:'text-embedding-3-large',dim:3072,status:'ativo',criado:'2024-06-10 15:10',
+   texto:'Rinite alérgica crônica persistente grave, obstrução nasal crônica, prurido e espirros frequentes, refratária a anti-histamínicos orais de segunda geração.'},
+];
+
+/* 4 planos por embedding (original) */
+const PLANOS_EMB = {
+  'EMB-001':[
+    {pid:'PC-0101',origem:'medico',label:'Dr. Carlos Vieira (Médico)',status:'ok',ts:'2025-04-01 14:22',texto:'Manter losartana 50mg. Dieta DASH, 150min/semana exercício aeróbico. Retorno mensal com PA e perfil lipídico. Estratificação de risco cardiovascular por Framingham.'},
+    {pid:'PC-0102',origem:'ia',label:'Plano IA α',status:'atualizar',ts:'2025-03-15 09:10',texto:'Aumentar losartana para 100mg imediatamente. Iniciar estatina sem perfil lipídico prévio. Exercício sem avaliação cardíaca.'},
+    {pid:'PC-0103',origem:'ia',label:'Plano IA β',status:'ok',ts:'2025-04-10 11:30',texto:'Losartana 50mg mantida. Orientação dietética com nutricionista. Monitoramento domiciliar de PA diário. Retorno em 30 dias.'},
+    {pid:'PC-0104',origem:'ia',label:'Plano IA γ',status:'atualizar',ts:'2025-03-20 16:45',texto:'Dieta hipossódica genérica. Sem ajuste farmacológico. Retorno em 90 dias. Falta estratificação de risco cardiovascular.'},
+  ],
+  'EMB-002':[
+    {pid:'PC-0201',origem:'medico',label:'Dra. Renata Souza (Médico)',status:'ok',ts:'2025-04-05 10:00',texto:'Metformina 850mg 2x/dia. Meta HbA1c < 7% (ADA 2024). ASCVD score calculated. Repetir exames em 90 dias. Encaminhar nutricionista.'},
+    {pid:'PC-0202',origem:'ia',label:'Plano IA α',status:'atualizar',ts:'2025-03-10 08:30',texto:'Reduzir metformina para 500mg. Sem acompanhamento nutricional. Retorno semestral. Não considera risco cardiovascular associado.'},
+    {pid:'PC-0203',origem:'ia',label:'Plano IA β',status:'ok',ts:'2025-04-12 14:00',texto:'Metformina 850mg mantida. Adicionar inibidor de SGLT-2 se HbA1c não atingir meta. Monitoramento glicêmico domiciliar.'},
+    {pid:'PC-0204',origem:'ia',label:'Plano IA γ',status:'ok',ts:'2025-04-08 09:45',texto:'Consulta trimestral com HbA1c, função renal e perfil lipídico. Orientação alimentar individualizada. Atividade física supervisionada.'},
+  ],
+  'EMB-003':[
+    {pid:'PC-0301',origem:'medico',label:'Dr. Fábio Mendes (Médico)',status:'ok',ts:'2025-04-14 16:00',texto:'Duloxetina 30mg/dia escalonada. Fisioterapia aquática 2x/semana. TCC com foco em dor crônica. Retorno em 30 dias.'},
+    {pid:'PC-0302',origem:'ia',label:'Plano IA α',status:'atualizar',ts:'2025-02-28 10:00',texto:'Amitriptilina 25mg ao deitar. Fisioterapia semanal convencional. Sem psicoterapia.'},
+    {pid:'PC-0303',origem:'ia',label:'Plano IA β',status:'atualizar',ts:'2025-02-20 11:15',texto:'Prescrição de opioides para dor. Sem abordagem multidisciplinar.'},
+    {pid:'PC-0304',origem:'ia',label:'Plano IA γ',status:'ok',ts:'2025-04-18 13:30',texto:'Duloxetina + pregabalina se refratário. Fisioterapia aquática + meditação. Escala FIQ mensal.'},
+  ],
+  'EMB-004':[
+    {pid:'PC-0401',origem:'medico',label:'Dra. Ana Lima (Médico)',status:'ok',ts:'2025-04-20 09:00',texto:'Budesonida 100mcg 2x/dia. Salbutamol SOS. Montelucaste 4mg/noite. GINA 2024 Step 2. ACQ-7 em 4 semanas.'},
+    {pid:'PC-0402',origem:'ia',label:'Plano IA α',status:'ok',ts:'2025-04-15 11:00',texto:'Budesonida 200mcg 2x/dia. Salbutamol SOS. Encaminhamento alergologista. Espirometria em 3 meses.'},
+    {pid:'PC-0403',origem:'ia',label:'Plano IA β',status:'atualizar',ts:'2025-03-05 14:20',texto:'Salbutamol contínuo 4x/dia como controlador. Sem corticosteroide inalatório.'},
+    {pid:'PC-0404',origem:'ia',label:'Plano IA γ',status:'atualizar',ts:'2025-03-10 08:45',texto:'Corticosteroide oral de corta duração sem inalatório de manutenção.'},
+  ],
+  'EMB-005':[
+    {pid:'PC-0501',origem:'medico',label:'Dr. Paulo Rios (Médico)',status:'ok',ts:'2025-04-22 10:30',texto:'CPAP auto-ajustável 6–12 cmH2O. Meta >4h/noite. Terapia miofuncional. Cessação tabagismo. Dados CPAP em 30 dias.'},
+    {pid:'PC-0502',origem:'ia',label:'Plano IA α',status:'atualizar',ts:'2025-03-18 09:00',texto:'CPAP pressão fixa 4 cmH2O. Sem acompanhamento de adesão. Sem abordagem do tabagismo.'},
+    {pid:'PC-0503',origem:'ia',label:'Plano IA β',status:'atualizar',ts:'2025-03-22 13:00',texto:'Mandibular advancement device sem polissonografia prévia de titulação.'},
+    {pid:'PC-0504',origem:'ia',label:'Plano IA γ',status:'ok',ts:'2025-04-25 11:45',texto:'CPAP 8 cmH2O fixo + adesão via telemonitoramento. Pneumologista. Polissonografia em 6 meses.'},
+  ],
+  'EMB-006':[
+    {pid:'PC-0601',origem:'medico',label:'Dra. Fernanda Paz (Médico)',status:'ok',ts:'2025-04-28 08:00',texto:'Levotiroxina 1,6 mcg/kg/dia em jejum. Repetir TSH e T4L em 6 semanas. Interações: ferro, cálcio (SBE 2025).'},
+    {pid:'PC-0602',origem:'ia',label:'Plano IA α',status:'atualizar',ts:'2025-03-25 10:00',texto:'Levotiroxina 25mcg dose fixa. Coleta de TSH em 3 meses. Não usa cálculo posológico atual.'},
+    {pid:'PC-0603',origem:'ia',label:'Plano IA β',status:'ok',ts:'2025-04-30 09:15',texto:'Levotiroxina dose-peso calculada. Retorno 6 semanas com TSH/T4L. Orientação de horário.'},
+    {pid:'PC-0604',origem:'ia',label:'Plano IA γ',status:'atualizar',ts:'2025-03-28 14:30',texto:'Levotiroxina 50mcg padrão. Sem orientação de interações. Retorno em 45 dias sem T4L.'},
+  ],
+  'EMB-007':[
+    {pid:'PC-0701',origem:'medico',label:'Dr. Márcio Torres (Médico)',status:'ok',ts:'2025-05-01 10:00',texto:'Escitalopram 10mg. TCC semanal. Higiene do sono. Retorno 30 dias com GAD-7 e PHQ-9.'},
+    {pid:'PC-0702',origem:'ia',label:'Plano IA α',status:'ok',ts:'2025-05-02 11:00',texto:'Escitalopram 10mg. Mindfulness guiado. Restrição cafeína. Psicoeducação. Retorno mensal.'},
+    {pid:'PC-0703',origem:'ia',label:'Plano IA β',status:'atualizar',ts:'2025-03-30 09:30',texto:'Alprazolam 0,5mg 3x/dia como tratamento principal. Sem acompanhamento psicoterápico.'},
+    {pid:'PC-0704',origem:'ia',label:'Plano IA γ',status:'atualizar',ts:'2025-04-02 14:00',texto:'Sertralina 50mg sem avaliação de comorbidades. Sem escalas de acompanhamento.'},
+  ],
+  'EMB-008':[
+    {pid:'PC-0801',origem:'medico',label:'Dra. Camila Rocha (Médico)',status:'ok',ts:'2025-05-05 08:30',texto:'Ceftriaxona 500mg IM + Azitromicina 1g VO dose única. Abstinência 7 dias. SINAN.'},
+    {pid:'PC-0802',origem:'ia',label:'Plano IA α',status:'atualizar',ts:'2025-04-05 10:00',texto:'Ciprofloxacino 500mg 7 dias. N. gonorrhoeae resistente a quinolonas no Brasil.'},
+    {pid:'PC-0803',origem:'ia',label:'Plano IA β',status:'ok',ts:'2025-05-06 09:00',texto:'Ceftriaxona 500mg IM. Tratar clamídia com azitromicina. Retorno com HIV e VDRL.'},
+    {pid:'PC-0804',origem:'ia',label:'Plano IA γ',status:'atualizar',ts:'2025-04-08 11:00',texto:'Amoxicilina 3g dose única. Sem cobertura adequada para gonorreia resistente.'},
+  ],
+  'EMB-009':[
+    {pid:'PC-0901',origem:'medico',label:'Dr. Marcos Abreu (Médico)',status:'ok',ts:'2025-05-10 09:00',texto:'Manter rivaroxabana 20mg/dia. Atenolol 50mg/dia. Monitorar FC e PA. Rastrear sangramentos. Retorno em 3 meses.'},
+    {pid:'PC-0902',origem:'ia',label:'Plano IA α',status:'ok',ts:'2025-05-08 08:30',texto:'Manter anticoagulação. Iniciar beta-bloqueador se FC > 110bpm. Monitoramento ambulatorial de FC.'},
+    {pid:'PC-0903',origem:'ia',label:'Plano IA β',status:'ok',ts:'2025-05-09 10:15',texto:'Controle de ritmo e frequência cardíaca. Rastreio periódico de função renal para ajuste da dose do anticoagulante.'},
+    {pid:'PC-0904',origem:'ia',label:'Plano IA γ',status:'ok',ts:'2025-05-11 11:20',texto:'Orientação sobre sinais de alerta para sangramentos ativos. Acompanhamento cardiológico regular.'},
+  ],
+  'EMB-010':[
+    {pid:'PC-1001',origem:'medico',label:'Dra. Alice Ribeiro (Médico)',status:'ok',ts:'2025-05-12 10:00',texto:'Prescrever amitriptilina 25mg/noite. Orientar diário de cefaleia. Higiene do sono e redução de cafeína.'},
+    {pid:'PC-1002',origem:'ia',label:'Plano IA α',status:'ok',ts:'2025-05-10 09:30',texto:'Profilaxia com beta-bloqueadores. Evitar gatilhos alimentares identificados no diário.'},
+    {pid:'PC-1003',origem:'ia',label:'Plano IA β',status:'ok',ts:'2025-05-11 14:00',texto:'Uso de analgésicos limitado a no máximo 2 dias por semana para evitar efeito rebote.'},
+    {pid:'PC-1004',origem:'ia',label:'Plano IA γ',status:'ok',ts:'2025-05-13 16:15',texto:'Terapias complementares e manejo de estresse ocupacional. Retorno em 4 semanas.'},
+  ],
+  'EMB-011':[
+    {pid:'PC-1101',origem:'medico',label:'Dr. Roberto Alves (Médico)',status:'ok',ts:'2025-05-15 11:00',texto:'Iniciar dieta Low-FODMAP por 6 semanas. Brometo de pinavério 50mg 3x/dia. Suporte psicológico se ansiedade.'},
+    {pid:'PC-1102',origem:'ia',label:'Plano IA α',status:'ok',ts:'2025-05-12 10:00',texto:'Suplementação de fibras solúveis (psyllium). Aumento da ingestão hídrica diária.'},
+    {pid:'PC-1103',origem:'ia',label:'Plano IA β',status:'ok',ts:'2025-05-13 13:00',texto:'Diário alimentar para identificar alimentos gatilhos e padrão de sintomas intestinais.'},
+    {pid:'PC-1104',origem:'ia',label:'Plano IA γ',status:'ok',ts:'2025-05-16 09:30',texto:'Atividade física regular e técnicas de relaxamento abdominal para melhora do trânsito.'},
+  ],
+  'EMB-012':[
+    {pid:'PC-1201',origem:'medico',label:'Dra. Julia Santos (Médico)',status:'ok',ts:'2025-05-18 14:00',texto:'Enapril 10mg 2x/dia. Restrição de sódio (<2g) e proteínas (0.8g/kg/dia). Dosar potássio e creatinina em 15 dias.'},
+    {pid:'PC-1202',origem:'ia',label:'Plano IA α',status:'ok',ts:'2025-05-15 11:00',texto:'Evitar uso de anti-inflamatórios não esteroides (AINEs). Controle rigoroso de PA.'},
+    {pid:'PC-1203',origem:'ia',label:'Plano IA β',status:'ok',ts:'2025-05-16 15:30',texto:'Vacinação para Hepatite B e Influenza recomendada. Acompanhamento conjunto com cardiologia.'},
+    {pid:'PC-1204',origem:'ia',label:'Plano IA γ',status:'ok',ts:'2025-05-19 10:45',texto:'Monitoramento de anemia renal e distúrbio mineral ósseo associados.'},
+  ],
+  'EMB-013':[
+    {pid:'PC-1301',origem:'medico',label:'Dr. Nelson Mendes (Médico)',status:'ok',ts:'2025-05-22 09:30',texto:'Iniciar imunobiológico (anti-TNF ou anti-IL17/23) após triagem de tuberculose (IGRA/PPD) e sorologias.'},
+    {pid:'PC-1302',origem:'ia',label:'Plano IA α',status:'ok',ts:'2025-05-20 08:00',texto:'Hidratação cutânea intensa. Uso de corticoides tópicos de alta potência de forma intermitente.'},
+    {pid:'PC-1303',origem:'ia',label:'Plano IA β',status:'ok',ts:'2025-05-21 14:15',texto:'Exposição solar controlada e fototerapia se disponível. Avaliação dermatológica trimestral.'},
+    {pid:'PC-1304',origem:'ia',label:'Plano IA γ',status:'ok',ts:'2025-05-23 11:00',texto:'Rastreamento de comorbidades cardiometabólicas associadas à psoríase grave.'},
+  ],
+  'EMB-014':[
+    {pid:'PC-1401',origem:'medico',label:'Dra. Cristina Costa (Médico)',status:'ok',ts:'2025-05-25 11:00',texto:'Fisioterapia motora 3x/semana. Perda ponderal (meta 5% do peso). Paracetamol SOS e condroitina/glucosamina.'},
+    {pid:'PC-1402',origem:'ia',label:'Plano IA α',status:'ok',ts:'2025-05-22 10:00',texto:'Exercícios de baixo impacto (hidroginástica ou natação). Uso de joelheira estabilizadora.'},
+    {pid:'PC-1403',origem:'ia',label:'Plano IA β',status:'ok',ts:'2025-05-23 13:30',texto:'Uso intermitente de calor local para rigidez matinal e gelo após atividades físicas.'},
+    {pid:'PC-1404',origem:'ia',label:'Plano IA γ',status:'ok',ts:'2025-05-26 09:15',texto:'Avaliação de necessidade de infiltração intra-articular caso refratário a medidas físicas.'},
+  ],
+  'EMB-015':[
+    {pid:'PC-1501',origem:'medico',label:'Dr. Walter Lima (Médico)',status:'ok',ts:'2025-05-28 10:00',texto:'Donepezila 10mg/dia ao deitar. Estímulo cognitivo diário. Apoio social e prevenção de quedas domiciliares.'},
+    {pid:'PC-1502',origem:'ia',label:'Plano IA α',status:'ok',ts:'2025-05-25 09:00',texto:'Revisão de polifarmácia para evitar uso de anticolinérgicos que piorem a cognição.'},
+    {pid:'PC-1503',origem:'ia',label:'Plano IA β',status:'ok',ts:'2025-05-26 14:00',texto:'Rotina diária estruturada com atividades físicas e de socialização simples.'},
+    {pid:'PC-1504',origem:'ia',label:'Plano IA γ',status:'ok',ts:'2025-05-29 11:30',texto:'Grupo de apoio para cuidadores com foco em prevenção do burnout.'},
+  ],
+  'EMB-016':[
+    {pid:'PC-1601',origem:'medico',label:'Dra. Sofia Ramos (Médico)',status:'ok',ts:'2025-06-02 09:00',texto:'Progestagênio contínuo oral (dienogeste 2mg/dia). Analgesia escalonada. Retorno em 6 meses com controle de dor.'},
+    {pid:'PC-1602',origem:'ia',label:'Plano IA α',status:'ok',ts:'2025-05-30 11:00',texto:'Dispositivo intrauterino liberador de levonorgestrel (DIU-Mirena) como alternativa.'},
+    {pid:'PC-1603',origem:'ia',label:'Plano IA β',status:'ok',ts:'2025-05-31 15:00',texto:'Acompanhamento multiprofissional com fisioterapia pélvica e suporte psicológico.'},
+    {pid:'PC-1604',origem:'ia',label:'Plano IA γ',status:'ok',ts:'2025-06-03 14:00',texto:'Avaliação cirúrgica por laparoscopia se refratariedade ao tratamento clínico.'},
+  ],
+  'EMB-017':[
+    {pid:'PC-1701',origem:'medico',label:'Dr. Henrique Dias (Médico)',status:'ok',ts:'2025-06-05 13:00',texto:'Reposição de ferro parenteral (sacarato de hidróxido de ferro III 200mg IV semanal). Rastrear sangramento oculto.'},
+    {pid:'PC-1702',origem:'ia',label:'Plano IA α',status:'ok',ts:'2025-06-03 09:30',texto:'Investigação etiológica com colonoscopia e endoscopia digestiva alta.'},
+    {pid:'PC-1703',origem:'ia',label:'Plano IA β',status:'ok',ts:'2025-06-04 14:20',texto:'Dosar ferritina, saturação de transferrina e hemograma 30 dias após término da reposição.'},
+    {pid:'PC-1704',origem:'ia',label:'Plano IA γ',status:'ok',ts:'2025-06-06 11:00',texto:'Orientação nutricional para ingestão de alimentos ricos em ferro heme.'},
+  ],
+  'EMB-018':[
+    {pid:'PC-1801',origem:'medico',label:'Dra. Glória Nunes (Médico)',status:'ok',ts:'2025-06-10 15:00',texto:'Furoato de fluticasona spray nasal 2 jatos em cada narina 1x/dia. Lavagem nasal com soro fisiológico morno.'},
+    {pid:'PC-1802',origem:'ia',label:'Plano IA α',status:'ok',ts:'2025-06-08 10:00',texto:'Uso de anti-histamínicos não sedantes (como fexofenadina) sob demanda.'},
+    {pid:'PC-1803',origem:'ia',label:'Plano IA β',status:'ok',ts:'2025-06-09 11:30',texto:'Controle ambiental de poeira e ácaros no quarto e residência do paciente.'},
+    {pid:'PC-1804',origem:'ia',label:'Plano IA γ',status:'ok',ts:'2025-06-11 14:00',texto:'Avaliação com alergologista para indicação de imunoterapia específica se indicado.'},
+  ],
+};
+
+/* FILA DE VALIDAÇÃO — 30 itens (EMB-001/PC-0102 e EMB-002/PC-0202) */
+const FILA_BASE = [
+  /* EMB-001 · PC-0102 */
+  {fid:1,cod:'RGR-HAS-001',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-01-10 09:00',
+   med:{nome:'Dr. Rafael Costa',crm:'SP-112233',data:'2025-04-10 14:32',ini:'RC'},
+   trecho:'Aumentar losartana para 100mg imediatamente',
+   modificacao:'Substituir escalonamento imediato por ajuste gradual em 4 semanas com monitoramento de PA. Incluir estratificação de risco por Framingham antes de qualquer modificação farmacológica.',
+   caso:{paciente:'João Mendes, 58a',prontuario:'PRN-00342',queixa:'PA = 158/96 mmHg em consulta de rotina.',diagnostico:'HAS Estágio 2 com risco cardiovascular moderado.',conduta_atual:'Losartana 50mg/dia há 3 meses.'}},
+  {fid:2,cod:'RGR-HAS-001',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-01-10 09:00',
+   med:{nome:'Enf. Patrícia Luz',crm:'COREN-SP-445566',data:'2025-04-14 10:00',ini:'PL'},
+   trecho:'Iniciar estatina sem perfil lipídico prévio',
+   modificacao:'Exigir perfil lipídico completo antes de qualquer prescrição de estatina. Incluir avaliação de função hepática basal.',
+   caso:{paciente:'Maria Souza, 62a',prontuario:'PRN-00519',queixa:'Hipertensa há 5 anos, sem acompanhamento regular.',diagnostico:'HAS grau II não controlada.',conduta_atual:'Amlodipina 5mg/dia sem ajuste há 18 meses.'}},
+  {fid:3,cod:'RGR-HAS-002',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-02-01 10:00',
+   med:{nome:'Dr. Antônio Silva',crm:'SP-998877',data:'2025-04-20 09:00',ini:'AS'},
+   trecho:'Exercício sem avaliação cardíaca',
+   modificacao:'Incluir avaliação cardiológica prévia com ergometria para pacientes hipertensos acima de 50 anos antes de prescrever atividade física de intensidade moderada a alta.',
+   caso:{paciente:'Pedro Albuquerque, 54a',prontuario:'PRN-00601',queixa:'Hipertensão de difícil controle.',diagnostico:'HAS estágio 1 com obesidade.',conduta_atual:'Losartana + hidroclorotiazida.'}},
+  {fid:4,cod:'RGR-HAS-003',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-02-10 11:00',
+   med:{nome:'Dra. Luciana Freitas',crm:'RJ-556677',data:'2025-04-25 14:30',ini:'LF'},
+   trecho:'Retorno em 90 dias sem monitoramento',
+   modificacao:'Reduzir intervalo de retorno para 30 dias em pacientes com HAS não controlada. Incluir telemonitoramento domiciliar de PA como complemento.',
+   caso:{paciente:'Carla Mendes, 47a',prontuario:'PRN-00712',queixa:'Cefaleia occipital frequente, PA variável.',diagnostico:'HAS estágio 2 com síndrome metabólica.',conduta_atual:'Nifedipina 30mg retard.'}},
+  {fid:5,cod:'RGR-HAS-004',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-02-20 08:00',
+   med:{nome:'Dr. Marcos Pereira',crm:'MG-334455',data:'2025-05-01 10:00',ini:'MP'},
+   trecho:'Sem estratificação de risco cardiovascular',
+   modificacao:'Incluir obrigatoriamente o escore de Framingham antes de definir intensidade terapêutica. Adicionar campo de risco calculado ao plano.',
+   caso:{paciente:'Roberto Farias, 61a',prontuario:'PRN-00830',queixa:'Dor precordial leve, dispneia a esforço moderado.',diagnostico:'HAS + suspeita de cardiopatia isquêmica.',conduta_atual:'Captopril 25mg 2x/dia.'}},
+  {fid:6,cod:'RGR-HAS-005',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-03-01 09:00',
+   med:{nome:'Dra. Ana Beatriz Costa',crm:'SP-112200',data:'2025-05-05 11:00',ini:'AB'},
+   trecho:'Sem orientação sobre AMPA',
+   modificacao:'Incluir orientação sobre Automonitorização da Pressão Arterial (AMPA) com registro em diário para todos os pacientes hipertensos.',
+   caso:{paciente:'Fernanda Lima, 52a',prontuario:'PRN-00944',queixa:'Hipertensão de consultório vs. normotensão domiciliar.',diagnostico:'Hipertensão do avental branco confirmada.',conduta_atual:'Em avaliação sem medicamento.'}},
+  {fid:7,cod:'RGR-HAS-006',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-03-10 10:00',
+   med:{nome:'Dr. Henrique Moura',crm:'BA-778899',data:'2025-05-08 09:30',ini:'HM'},
+   trecho:'Sem avaliação de órgão-alvo',
+   modificacao:'Adicionar avaliação anual de órgão-alvo: ECG, ecocardiograma, fundoscopia e microalbuminúria em todos os hipertensos com mais de 2 anos de diagnóstico.',
+   caso:{paciente:'Juliana Santos, 58a',prontuario:'PRN-01055',queixa:'Hipertensão de longa data, refratária.',diagnostico:'HAS grau III com suspeita de HVE.',conduta_atual:'Anlodipino + enalapril + hidroclorotiazida.'}},
+  {fid:8,cod:'RGR-HAS-007',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-03-15 14:00',
+   med:{nome:'Dr. Claudio Batista',crm:'RS-223344',data:'2025-05-10 10:00',ini:'CB'},
+   trecho:'Sem abordagem de comorbidades metabólicas',
+   modificacao:'Incluir rastreio e manejo integrado de síndrome metabólica: glicemia, perfil lipídico, circunferência abdominal e IMC como parâmetros obrigatórios.',
+   caso:{paciente:'Maurício Gomes, 49a',prontuario:'PRN-01167',queixa:'HAS + obesidade + glicemia elevada.',diagnostico:'HAS + pré-diabetes + dislipidemia.',conduta_atual:'Apenas anti-hipertensivo, sem abordagem metabólica.'}},
+  {fid:9,cod:'RGR-HAS-008',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-03-20 09:00',
+   med:{nome:'Dra. Patricia Nascimento',crm:'SP-556699',data:'2025-05-12 14:00',ini:'PN'},
+   trecho:'Sem orientação nutricional formal',
+   modificacao:'Incluir encaminhamento obrigatório à nutrição para orientação da dieta DASH com metas específicas de sódio (<2g/dia) e potássio (>4,7g/dia).',
+   caso:{paciente:'Silvia Ramos, 55a',prontuario:'PRN-01289',queixa:'HAS associada a dieta hipersódica reconhecida.',diagnostico:'HAS estágio 1, responsiva a dieta.',conduta_atual:'Medicamento suspenso após mudança alimentar parcial.'}},
+  {fid:10,cod:'RGR-HAS-009',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-03-25 10:00',
+   med:{nome:'Dr. Eduardo Teixeira',crm:'MG-443322',data:'2025-05-14 11:30',ini:'ET'},
+   trecho:'Sem avaliação de adesão ao tratamento',
+   modificacao:'Adicionar aplicação de escala de Morisky (MMAS-8) a cada consulta para avaliação padronizada de adesão terapêutica.',
+   caso:{paciente:'Alexandre Barros, 63a',prontuario:'PRN-01400',queixa:'HAS sem controle apesar de medicação prescrita.',diagnostico:'HAS grau II, suspeita de não-adesão.',conduta_atual:'Três anti-hipertensivos prescritos, PA ainda 160/100.'}},
+  {fid:11,cod:'RGR-HAS-010',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-04-01 09:00',
+   med:{nome:'Dra. Isabela Cunha',crm:'SP-667788',data:'2025-05-16 10:00',ini:'IC'},
+   trecho:'Sem rastreio de hipertensão secundária',
+   modificacao:'Em casos de HAS refratária ou de início precoce (<40 anos), incluir investigação de causas secundárias: aldosteronismo primário, estenose de artéria renal, apneia do sono.',
+   caso:{paciente:'Gabriel Oliveira, 32a',prontuario:'PRN-01511',queixa:'HAS grave de início súbito, jovem.',diagnostico:'HAS severa em paciente jovem, sem fator de risco óbvio.',conduta_atual:'Dois anti-hipertensivos sem investigação etiológica.'}},
+  {fid:12,cod:'RGR-HAS-011',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-04-05 10:00',
+   med:{nome:'Dr. Leonardo Carvalho',crm:'BA-991100',data:'2025-05-18 09:00',ini:'LC'},
+   trecho:'Sem abordagem de estresse e saúde mental',
+   modificacao:'Incluir avaliação de fatores psicossociais e de estresse crônico com encaminhamento para psicologia/psiquiatria quando identificados como fator contribuinte.',
+   caso:{paciente:'Beatriz Alves, 44a',prontuario:'PRN-01633',queixa:'HAS com piora em períodos de estresse ocupacional.',diagnostico:'HAS associada a transtorno de ansiedade.',conduta_atual:'Anti-hipertensivo sem abordagem psicossocial.'}},
+  {fid:13,cod:'RGR-HAS-012',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-04-10 11:00',
+   med:{nome:'Dra. Viviane Rocha',crm:'RJ-778822',data:'2025-05-19 14:30',ini:'VR'},
+   trecho:'Sem metas de PA individualizadas',
+   modificacao:'Definir metas de PA individualizadas conforme perfil: <130/80 mmHg para DM ou DRC; <140/90 para idosos frágeis.',
+   caso:{paciente:'Sônia Ferreira, 78a',prontuario:'PRN-01754',queixa:'HAS em idosa com múltiplas comorbidades.',diagnostico:'HAS + DM2 + DRC estágio 3.',conduta_atual:'Meta de PA não individualizada no prontuário.'}},
+  {fid:14,cod:'RGR-HAS-013',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-04-15 09:00',
+   med:{nome:'Dr. Thiago Moreira',crm:'SP-334411',data:'2025-05-20 10:00',ini:'TM'},
+   trecho:'Sem programa de cessação tabágica',
+   modificacao:'Para pacientes tabagistas, incluir protocolo de cessação tabágica com terapia de reposição nicotínica e/ou vareniclina, além de suporte psicológico.',
+   caso:{paciente:'Carlos Eduardo, 51a',prontuario:'PRN-01876',queixa:'HAS + tabagismo ativo (20 cigarros/dia).',diagnostico:'HAS estágio 2 com risco cardiovascular alto por tabagismo.',conduta_atual:'Anti-hipertensivo sem abordagem do tabagismo.'}},
+  {fid:15,cod:'RGR-HAS-014',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-04-20 10:00',
+   med:{nome:'Dra. Renata Azevedo',crm:'MG-112233',data:'2025-05-21 11:00',ini:'RA'},
+   trecho:'Sem monitoramento de função renal',
+   modificacao:'Incluir creatinina sérica, TFGe e relação albumina/creatinina urinária a cada 6 meses para todos os hipertensos em uso de IECA ou BRA.',
+   caso:{paciente:'Rita Santos, 65a',prontuario:'PRN-01999',queixa:'HAS de longa data em uso de enalapril.',diagnostico:'HAS com DRC incipiente não detectada.',conduta_atual:'Enalapril sem monitoramento renal por 2 anos.'}},
+  /* EMB-002 · PC-0202 */
+  {fid:16,cod:'RGR-DM2-001',condicao:'Diabetes Mellitus Tipo 2',embId:'EMB-002',pidAlvo:'PC-0202',criacao:'2025-01-15 10:00',
+   med:{nome:'Dra. Helena Matos',crm:'RJ-234567',data:'2025-04-18 09:30',ini:'HM'},
+   trecho:'Reduzir metformina para 500mg',
+   modificacao:'Manter metformina 850mg 2x/dia conforme ADA 2024. Incluir avaliação de TFG antes de qualquer ajuste de dose.',
+   caso:{paciente:'Carlos Ferreira, 55a',prontuario:'PRN-00781',queixa:'DM2 há 8 anos. HbA1c = 8,2%.',diagnostico:'DM2 descompensada com intolerância leve à metformina.',conduta_atual:'Metformina 850mg 2x/dia.'}},
+  {fid:17,cod:'RGR-DM2-002',condicao:'Diabetes Mellitus Tipo 2',embId:'EMB-002',pidAlvo:'PC-0202',criacao:'2025-01-20 11:00',
+   med:{nome:'Dr. Rodrigo Vaz',crm:'SP-998811',data:'2025-04-22 10:00',ini:'RV'},
+   trecho:'Retorno semestral sem acompanhamento',
+   modificacao:'Reduzir intervalo de retorno para 90 dias em DM2 descompensada. Incluir HbA1c a cada consulta e automonitoramento glicêmico capilar.',
+   caso:{paciente:'Ana Carolina, 48a',prontuario:'PRN-00892',queixa:'DM2 com HbA1c oscilante sem controle.',diagnostico:'DM2 moderada com má adesão.',conduta_atual:'Metformina isolada, sem ajuste há 1 ano.'}},
+  {fid:18,cod:'RGR-DM2-003',condicao:'Diabetes Mellitus Tipo 2',embId:'EMB-002',pidAlvo:'PC-0202',criacao:'2025-02-01 09:00',
+   med:{nome:'Dra. Luciane Ribeiro',crm:'RS-667744',data:'2025-04-28 14:00',ini:'LR'},
+   trecho:'Sem acompanhamento nutricional',
+   modificacao:'Encaminhar obrigatoriamente à nutrição para plano alimentar individualizado com contagem de carboidratos.',
+   caso:{paciente:'Roberto Martins, 60a',prontuario:'PRN-01003',queixa:'DM2 + obesidade grau II.',diagnostico:'DM2 descompensada associada à obesidade.',conduta_atual:'Glibenclamida sem orientação dietética.'}},
+  {fid:19,cod:'RGR-DM2-004',condicao:'Diabetes Mellitus Tipo 2',embId:'EMB-002',pidAlvo:'PC-0202',criacao:'2025-02-10 10:00',
+   med:{nome:'Dr. Felipe Santana',crm:'BA-334499',data:'2025-05-02 09:00',ini:'FS'},
+   trecho:'Não considera risco cardiovascular associado',
+   modificacao:'Incluir ASCVD score e, se risco >10%, adicionar estatina de alta intensidade e considerar iSGLT-2 ou GLP-1a por benefício cardiovascular comprovado.',
+   caso:{paciente:'Sérgio Alves, 58a',prontuario:'PRN-01114',queixa:'DM2 + HAS + dislipidemia.',diagnostico:'DM2 com alto risco cardiovascular.',conduta_atual:'Apenas metformina, sem proteção cardiovascular.'}},
+  {fid:20,cod:'RGR-DM2-005',condicao:'Diabetes Mellitus Tipo 2',embId:'EMB-002',pidAlvo:'PC-0202',criacao:'2025-02-20 11:00',
+   med:{nome:'Dra. Mariana Fonseca',crm:'SP-881100',data:'2025-05-07 10:30',ini:'MF'},
+   trecho:'Sem rastreio de complicações',
+   modificacao:'Incluir rastreio anual de: retinopatia (fundoscopia), nefropatia (microalbuminúria + TFG), neuropatia e pé diabético.',
+   caso:{paciente:'Nilza Pereira, 63a',prontuario:'PRN-01225',queixa:'DM2 há 12 anos sem avaliação de complicações.',diagnostico:'DM2 de longa duração sem rastreio.',conduta_atual:'Insulinização recente sem avaliação de órgão-alvo.'}},
+  {fid:21,cod:'RGR-DM2-006',condicao:'Diabetes Mellitus Tipo 2',embId:'EMB-002',pidAlvo:'PC-0202',criacao:'2025-03-01 09:00',
+   med:{nome:'Dr. Vinicius Cunha',crm:'MG-556688',data:'2025-05-09 11:00',ini:'VC'},
+   trecho:'Sem abordagem de atividade física',
+   modificacao:'Prescrever 150min/semana de atividade física aeróbica + 2-3 sessões semanais de exercício resistido, com avaliação prévia de contraindicações.',
+   caso:{paciente:'Lúcia Barros, 55a',prontuario:'PRN-01338',queixa:'DM2 + sedentarismo + sobrepeso.',diagnostico:'DM2 com síndrome metabólica.',conduta_atual:'Medicação sem prescrição de exercício.'}},
+  {fid:22,cod:'RGR-DM2-007',condicao:'Diabetes Mellitus Tipo 2',embId:'EMB-002',pidAlvo:'PC-0202',criacao:'2025-03-10 10:00',
+   med:{nome:'Dra. Beatriz Lemos',crm:'RJ-990011',data:'2025-05-11 09:00',ini:'BL'},
+   trecho:'Sem avaliação de hipoglicemia',
+   modificacao:'Incluir avaliação e educação sobre hipoglicemia para todos os pacientes em uso de sulfonilureias ou insulina.',
+   caso:{paciente:'José Rodrigues, 70a',prontuario:'PRN-01449',queixa:'DM2 com episódios de tontura e sudorese.',diagnostico:'DM2 + episódios sugestivos de hipoglicemia.',conduta_atual:'Glibenclamida sem monitoramento glicêmico.'}},
+  {fid:23,cod:'RGR-DM2-008',condicao:'Diabetes Mellitus Tipo 2',embId:'EMB-002',pidAlvo:'PC-0202',criacao:'2025-03-20 11:00',
+   med:{nome:'Dr. Augusto Lima',crm:'SP-443311',data:'2025-05-13 10:30',ini:'AL'},
+   trecho:'Sem vacinação atualizada',
+   modificacao:'Incluir revisão do calendário vacinal: influenza anual, pneumocócica, hepatite B se não imunizado, e COVID-19 atualizado.',
+   caso:{paciente:'Teresa Moura, 68a',prontuario:'PRN-01560',queixa:'DM2 + histórico de pneumonia grave.',diagnostico:'DM2 + imunossupressão relativa.',conduta_atual:'Sem verificação de vacinas há 3 anos.'}},
+  {fid:24,cod:'RGR-DM2-009',condicao:'Diabetes Mellitus Tipo 2',embId:'EMB-002',pidAlvo:'PC-0202',criacao:'2025-04-01 09:00',
+   med:{nome:'Dra. Cristiane Neves',crm:'BA-667711',data:'2025-05-15 14:00',ini:'CN'},
+   trecho:'Sem cuidados com saúde bucal',
+   modificacao:'Incluir orientação de higiene bucal e encaminhamento odontológico semestral, dado que doença periodontal agrava controle glicêmico em DM2.',
+   caso:{paciente:'Paulo Souza, 52a',prontuario:'PRN-01672',queixa:'DM2 com mau controle apesar de medicação adequada.',diagnostico:'DM2 com periodontite avançada não tratada.',conduta_atual:'Sem referência à saúde bucal no plano.'}},
+  {fid:25,cod:'RGR-DM2-010',condicao:'Diabetes Mellitus Tipo 2',embId:'EMB-002',pidAlvo:'PC-0202',criacao:'2025-04-10 10:00',
+   med:{nome:'Dr. Renato Campos',crm:'MG-223355',data:'2025-05-17 11:00',ini:'RC'},
+   trecho:'Sem avaliação psicológica',
+   modificacao:'Incluir rastreio de depressão e ansiedade (PHQ-9 e GAD-7) anualmente, e encaminhar à psicologia quando identificado.',
+   caso:{paciente:'Márcia Oliveira, 45a',prontuario:'PRN-01785',queixa:'DM2 com adesão muito baixa, relata desmotivação.',diagnostico:'DM2 + suspeita de depressão maior.',conduta_atual:'Apenas abordagem farmacológica sem suporte psicossocial.'}},
+  {fid:26,cod:'RGR-DM2-011',condicao:'Diabetes Mellitus Tipo 2',embId:'EMB-002',pidAlvo:'PC-0202',criacao:'2025-04-15 09:00',
+   med:{nome:'Dra. Samira Torres',crm:'SP-334477',data:'2025-05-19 09:30',ini:'ST'},
+   trecho:'Sem monitoramento de função renal periódico',
+   modificacao:'Solicitar creatinina, ureia, TFGe e relação albumina/creatinina urinária a cada 6 meses em todos os diabéticos.',
+   caso:{paciente:'Henrique Costa, 58a',prontuario:'PRN-01898',queixa:'DM2 de 15 anos, nenhum exame renal recente.',diagnostico:'DM2 com nefropatia diabética incipiente.',conduta_atual:'Sem exame renal há 3 anos.'}},
+  {fid:27,cod:'RGR-DM2-012',condicao:'Diabetes Mellitus Tipo 2',embId:'EMB-002',pidAlvo:'PC-0202',criacao:'2025-04-20 10:00',
+   med:{nome:'Dr. André Freitas',crm:'RJ-881133',data:'2025-05-20 10:00',ini:'AF'},
+   trecho:'Sem educação em diabetes',
+   modificacao:'Incluir programa de educação estruturada em diabetes (DSMES) com pelo menos 4 sessões/ano.',
+   caso:{paciente:'Ivone Rodrigues, 61a',prontuario:'PRN-02010',queixa:'DM2 com múltiplas internações por descompensação.',diagnostico:'DM2 grave com baixo letramento em saúde.',conduta_atual:'Medicação prescrita sem nenhuma educação em diabetes.'}},
+  {fid:28,cod:'RGR-DM2-013',condicao:'Diabetes Mellitus Tipo 2',embId:'EMB-002',pidAlvo:'PC-0202',criacao:'2025-04-25 11:00',
+   med:{nome:'Dra. Carla Brito',crm:'BA-557744',data:'2025-05-21 11:00',ini:'CB'},
+   trecho:'Sem avaliação do pé diabético',
+   modificacao:'Incluir exame anual dos pés com avaliação neurológica (monofilamento 10g), vascular (ITB) e inspeção visual.',
+   caso:{paciente:'Sebastião Almeida, 67a',prontuario:'PRN-02122',queixa:'DM2 com formigamento nos pés há 6 meses.',diagnostico:'DM2 + neuropatia diabética periférica.',conduta_atual:'Sem exame de pé em nenhuma consulta registrada.'}},
+  {fid:29,cod:'RGR-DM2-014',condicao:'Diabetes Mellitus Tipo 2',embId:'EMB-002',pidAlvo:'PC-0202',criacao:'2025-04-28 09:00',
+   med:{nome:'Dr. Fábio Correia',crm:'MG-669922',data:'2025-05-22 09:00',ini:'FC'},
+   trecho:'Sem revisão dos medicamentos',
+   modificacao:'Realizar revisão anual do esquema farmacológico para eliminar duplicidades, avaliar interações e revisar doses conforme função renal.',
+   caso:{paciente:'Norma Gomes, 72a',prontuario:'PRN-02234',queixa:'DM2 + polifarmácia (11 medicamentos).',diagnostico:'DM2 + alto risco de interação medicamentosa.',conduta_atual:'Nenhuma revisão farmacêutica em 2 anos.'}},
+  {fid:30,cod:'RGR-DM2-015',condicao:'Diabetes Mellitus Tipo 2',embId:'EMB-002',pidAlvo:'PC-0202',criacao:'2025-04-30 10:00',
+   med:{nome:'Dra. Elaine Pinto',crm:'SP-445566',data:'2025-05-22 14:00',ini:'EP'},
+   trecho:'Sem metas glicêmicas individualizadas',
+   modificacao:'Definir metas de HbA1c individualizadas: <7% para jovens; <7,5% para idosos saudáveis; <8% para idosos frágeis ou com hipoglicemia frequente.',
+   caso:{paciente:'Décio Martins, 80a',prontuario:'PRN-02345',queixa:'DM2 em idoso frágil, com quedas frequentes.',diagnostico:'DM2 + síndrome de fragilidade + risco de hipoglicemia.',conduta_atual:'Meta de HbA1c <7% aplicada sem considerar a fragilidade.'}},
+];
+
+// Gerador dinâmico de validações adicionais (10 novos itens, cada um com 15 a 30 validações)
+const condicoesVal = [
+  { embId: 'EMB-003', condicao: 'Fibromialgia', prefix: 'RGR-FIB', pidAlvo: 'PC-0302', count: 16, medicos: ['Dr. André Silva', 'Dra. Marina Santos', 'Dr. Lucas Pereira'], queixas: ['Dor generalizada', 'Fadiga crônica', 'Insônia e dor muscular'] },
+  { embId: 'EMB-004', condicao: 'Asma Brônquica', prefix: 'RGR-ASM', pidAlvo: 'PC-0403', count: 18, medicos: ['Dra. Julia Costa', 'Dr. Ricardo Lima', 'Dra. Sandra Souza'], queixas: ['Falta de ar e sibilância', 'Tosse seca noturna', 'Dispneia aos esforços'] },
+  { embId: 'EMB-005', condicao: 'Apneia Obstrutiva do Sono', prefix: 'RGR-APN', pidAlvo: 'PC-0502', count: 21, medicos: ['Dr. Marcos Oliveira', 'Dra. Beatriz Santos', 'Dr. Roberto Cruz'], queixas: ['Ronco alto e sonolência diurna', 'Cefaleia matinal e cansaço', 'Apneia presenciada pelo cônjuge'] },
+  { embId: 'EMB-006', condicao: 'Hipotireoidismo Primário', prefix: 'RGR-HIP', pidAlvo: 'PC-0602', count: 19, medicos: ['Dra. Fernanda Lemos', 'Dr. Carlos Pires', 'Dra. Amanda Silva'], queixas: ['Cansaço excessivo e ganho de peso', 'Intolerância ao frio', 'Pele seca e queda de cabelo'] },
+  { embId: 'EMB-007', condicao: 'Transtorno de Ansiedade', prefix: 'RGR-ANS', pidAlvo: 'PC-0703', count: 24, medicos: ['Dr. Paulo Torres', 'Dra. Luciana Mendes', 'Dr. Thiago Rocha'], queixas: ['Preocupação excessiva e palpitações', 'Tensão muscular e irritabilidade', 'Ataques de pânico recorrentes'] },
+  { embId: 'EMB-008', condicao: 'Infecção Sexualmente Transmissível', prefix: 'RGR-IST', pidAlvo: 'PC-0802', count: 15, medicos: ['Dra. Samara Lima', 'Dr. Rodrigo Santos', 'Dra. Elaine Costa'], queixas: ['Corrimento uretral', 'Disúria e dor pélvica', 'Úlcera genital indolor'] },
+  { embId: 'EMB-009', condicao: 'Fibrilação Atrial', prefix: 'RGR-FAT', pidAlvo: 'PC-0902', count: 22, medicos: ['Dr. Gustavo Ferreira', 'Dra. Patricia Melo', 'Dr. Nelson Souza'], queixas: ['Palpitações e cansaço aos esforços', 'Tontura e falta de ar', 'Episódio de síncope leve'] },
+  { embId: 'EMB-010', condicao: 'Enxaqueca Crônica', prefix: 'RGR-ENX', pidAlvo: 'PC-1002', count: 20, medicos: ['Dra. Alice Ribeiro', 'Dr. Walter Lima', 'Dra. Cristina Costa'], queixas: ['Cefaleia unilateral pulsátil', 'Fotofobia e fonofobia intensas', 'Náuseas e vômitos associados'] },
+  { embId: 'EMB-011', condicao: 'Síndrome do Intestino Irritável', prefix: 'RGR-SII', pidAlvo: 'PC-1102', count: 27, medicos: ['Dr. Roberto Alves', 'Dra. Sofia Ramos', 'Dr. Henrique Dias'], queixas: ['Dor abdominal e distensão', 'Alternância entre diarreia e constipação', 'Flatulência e desconforto pós-prandial'] },
+  { embId: 'EMB-012', condicao: 'Doença Renal Crônica', prefix: 'RGR-DRC', pidAlvo: 'PC-1202', count: 23, medicos: ['Dra. Julia Santos', 'Dr. Arthur Mendes', 'Dra. Glória Nunes'], queixas: ['Edema de membros inferiores', 'Nictúria e fadiga', 'Alteração em exames de urina de rotina'] }
+];
+
+let currentFid = 31;
+condicoesVal.forEach((c) => {
+  for (let i = 1; i <= c.count; i++) {
+    const medIdx = i % c.medicos.length;
+    const qIdx = i % c.queixas.length;
+    const medNome = c.medicos[medIdx];
+    const ini = medNome.split(' ').slice(1).map(n => n[0]).join('') || 'DR';
+    
+    FILA_BASE.push({
+      fid: currentFid++,
+      cod: `${c.prefix}-${String(i).padStart(3, '0')}`,
+      condicao: c.condicao,
+      embId: c.embId,
+      pidAlvo: c.pidAlvo,
+      criacao: `2025-05-${String((i % 28) + 1).padStart(2, '0')} 10:00`,
+      med: {
+        nome: medNome,
+        crm: `CRM-SP-${100000 + currentFid}`,
+        data: `2025-06-${String((i % 28) + 1).padStart(2, '0')} 14:00`,
+        ini: ini
+      },
+      trecho: `Diretriz ou recomendação identificada no plano de cuidado #${i}`,
+      modificacao: `Substituir por conduta clínica apropriada baseada na diretriz mais recente. Rastrear parâmetros a cada ${i + 2} semanas.`,
+      caso: {
+        paciente: `Paciente Teste ${currentFid}, ${30 + (i % 50)}a`,
+        prontuario: `PRN-VAL-${currentFid}`,
+        queixa: c.queixas[qIdx],
+        diagnostico: `${c.condicao} estágio intermediário.`,
+        conduta_atual: `Medicamento padrão para ${c.condicao} sem melhora expressiva.`
+      }
+    });
+  }
+});
+
+/* histórico */
+const LOGS = {};
+FILA_BASE.forEach(r=>{ LOGS[r.fid]=[{ts:r.criacao,acao:'Regra criada',cor:'var(--acc)',nota:`Código ${r.cod} registrado na base de conhecimento.`},{ts:r.med.data,acao:'Solicitação enviada',cor:'var(--warn)',nota:`${r.med.nome} enviou solicitação de atualização para ${r.pidAlvo}.`}]; });
+
+let FILA = FILA_BASE.map(r=>({...r,status:'atualizar',editado:false,modAtual:r.modificacao}));
+
+/* STATE */
+const PS=8;
+let vFilt='all',vSrch='',vPage=1;
+let curRow=null,curEmb=null,curValEmb=null,curPlanoView=null;
+let embSrch='',embPg=1;
+let editMode=false,pvEditMode=false;
+
+/* ICONS */
+const IC={
+  eye:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>`,
+  db:`<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>`,
+  robot:`<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4M8 15h.01M16 15h.01"/></svg>`,
+  spin:`<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="animation:spin 1s linear infinite"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>`,
+  arrow:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`,
+};
+const sty=document.createElement('style');
+sty.textContent='@keyframes spin{to{transform:rotate(360deg)}}';
+document.head.appendChild(sty);
+
+function stBadge(s){
+  if(s==='atualizar') return `<span class="badge b-atualizar">${IC.spin} A atualizar</span>`;
+  if(s==='atualizado') return `<span class="badge b-atualizado"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Atualizado</span>`;
+  if(s==='em-atualizacao') return `<span class="badge b-em-atual">${IC.spin} Em atualização</span>`;
+  if(s==='reprovado') return `<span class="badge b-reprov"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg> Reprovado</span>`;
+  return '';
+}
+function p4StBadge(s){
+  if(s==='ok') return `<span class="badge b-atualizado" style="font-size:10px;padding:2px 7px"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> OK</span>`;
+  if(s==='atualizar') return `<span class="badge b-atualizar" style="font-size:10px;padding:2px 7px">A atualizar</span>`;
+  return `<span class="badge" style="font-size:10px;padding:2px 7px;background:var(--sur3);color:var(--mut);border:1px solid var(--bdr2)">${s}</span>`;
+}
+
+/* ── SCREENS ── */
+function goScr(s){
+  document.querySelectorAll('.screen').forEach(e=>e.classList.remove('on'));
+  document.querySelectorAll('.nav').forEach(e=>e.classList.remove('on'));
+  document.getElementById('screen-'+s).classList.add('on');
+  document.getElementById('nav-'+s).classList.add('on');
+  if(s==='emb') renderEmb();
+}
+
+/* ── VALIDAÇÃO ── */
+function fRows(){
+  const groups = {};
+  FILA.forEach(r => {
+    if(vFilt==='atualizar'&&r.status!=='atualizar') return;
+    if(vFilt==='em'&&r.status!=='em-atualizacao') return;
+    if(vFilt==='atualizado'&&r.status!=='atualizado') return;
+    if(vSrch){
+      const q=vSrch.toLowerCase();
+      if(!r.cod.toLowerCase().includes(q)&&!r.condicao.toLowerCase().includes(q)&&!r.med.nome.toLowerCase().includes(q)&&!r.pidAlvo.toLowerCase().includes(q)) return;
+    }
+    if(!groups[r.embId]) groups[r.embId] = [];
+    groups[r.embId].push(r);
+  });
+  return Object.keys(groups).map(embId => {
+    const reqs = groups[embId];
+    const first = reqs[0];
+    const pids = reqs.map(x => x.pidAlvo).filter((v, i, a) => a.indexOf(v) === i);
+    const pendentes = reqs.filter(x => x.status === 'atualizar').length;
+    return {
+      embId: embId,
+      condicao: first.condicao,
+      cod: embId,
+      pidAlvo: pids.join(', '),
+      med: {
+        nome: `${reqs.length} solicitação(ões)`,
+        crm: pendentes > 0 ? `${pendentes} pendente(s)` : 'Sem pendências'
+      },
+      status: reqs.some(x => x.status === 'atualizar') ? 'atualizar' : (reqs.some(x => x.status === 'em-atualizacao') ? 'em-atualizacao' : 'atualizado'),
+      fid: first.fid
+    };
+  });
+}
+
+function renderVal(){
+  const rows=fRows(),total=rows.length,tp=Math.max(1,Math.ceil(total/PS));
+  if(vPage>tp) vPage=tp;
+  const st=(vPage-1)*PS,pg=rows.slice(st,st+PS);
+  const atualizar=FILA.filter(r=>r.status==='atualizar').length;
+  const em=FILA.filter(r=>r.status==='em-atualizacao').length;
+  const atualizado=FILA.filter(r=>r.status==='atualizado').length;
+  document.getElementById('badgeVal').textContent=FILA.length;
+  const wI=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg>`;
+  const gI=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>`;
+  const aI=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>`;
+  document.getElementById('valCards').innerHTML=`
+    <div class="card"><div class="c-ic ci-w">${wI}</div><div><div class="c-val">${atualizar}</div><div class="c-lbl">A atualizar</div></div></div>
+    <div class="card"><div class="c-ic ci-b">${aI}</div><div><div class="c-val">${em}</div><div class="c-lbl">Em atualização</div></div></div>
+    <div class="card"><div class="c-ic ci-g">${gI}</div><div><div class="c-val">${atualizado}</div><div class="c-lbl">Atualizado</div></div></div>`;
+  const tbody=document.getElementById('valBody');
+  tbody.innerHTML=pg.length===0?'<tr class="empty"><td colspan="6">Nenhuma solicitação encontrada</td></tr>'
+    :pg.map(r=>`<tr>
+      <td class="mono" style="color:var(--acc);font-weight:500">${r.cod}</td>
+      <td style="font-size:13px;font-weight:500;color:var(--txt)">${r.condicao}</td>
+      <td class="mono">${r.pidAlvo}</td>
+      <td>
+        <div style="font-size:12px;font-weight:600;color:var(--txt)">${r.med.nome}</div>
+        <div style="font-size:11px;color:var(--dim);font-family:var(--mono)">${r.med.crm}</div>
+      </td>
+      <td>${stBadge(r.status)}</td>
+      <td><button class="icnbtn" title="Visualizar" onclick="openValVis(${r.fid})">${IC.eye}</button></td>
+    </tr>`).join('');
+  const pp=Array.from({length:tp},(_,i)=>i+1);
+  document.getElementById('valPag').innerHTML=`
+    <div class="pag-i">Exibindo ${Math.min(st+1,total)}–${Math.min(st+PS,total)} de ${total}</div>
+    <div class="pag-b">
+      <button class="pbtn" onclick="vGo(${vPage-1})" ${vPage===1?'disabled':''}>&#8249;</button>
+      ${pp.map(p=>`<button class="pbtn ${p===vPage?'cur':''}" onclick="vGo(${p})">${p}</button>`).join('')}
+      <button class="pbtn" onclick="vGo(${vPage+1})" ${vPage===tp?'disabled':''}>&#8250;</button>
+    </div>`;
+}
+function setF(f){vFilt=f;vPage=1;['all','atualizar','em','atualizado'].forEach(x=>document.getElementById('f-'+x).classList.remove('on'));document.getElementById('f-'+f).classList.add('on');renderVal();}
+function vGo(p){vPage=p;renderVal();}
+document.getElementById('valSrch').addEventListener('input',e=>{vSrch=e.target.value.trim();vPage=1;renderVal();});
+
+/* ══════════════════════════════════════════════════════
+   FLUXO VALIDAÇÃO
+   ══════════════════════════════════════════════════════ */
+
+/* MODAL 1: Embedding + 2 planos grandes */
+function openValVis(fid){
+  const row=FILA.find(r=>r.fid===fid); if(!row) return;
+  const emb=EMBS.find(e=>e.id===row.embId); if(!emb) return;
+  curValEmb=emb;
+
+  document.getElementById('vvTitle').textContent=`Embedding ${emb.id} — ${emb.esp}`;
+  document.getElementById('vvSub').textContent=`${emb.modelo} · ${emb.dim} dimensões · Criado: ${emb.criado}`;
+
+  const clr=emb.status==='ativo'?'var(--grn)':'var(--warn)';
+  document.getElementById('vvMetaGrid').innerHTML=`
+    <div style="background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px"><div style="font-size:10px;color:var(--dim);margin-bottom:4px">Modelo</div><div style="font-size:12px;font-family:var(--mono);font-weight:500">${emb.modelo}</div></div>
+    <div style="background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px"><div style="font-size:10px;color:var(--dim);margin-bottom:4px">Dimensões</div><div style="font-size:12px;font-family:var(--mono);font-weight:500">${emb.dim}d</div></div>
+    <div style="background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px"><div style="font-size:10px;color:var(--dim);margin-bottom:4px">Status</div><div style="font-size:12px;font-family:var(--mono);font-weight:500;color:${clr}">${emb.status}</div></div>
+    <div style="background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px"><div style="font-size:10px;color:var(--dim);margin-bottom:4px">Criado em</div><div style="font-size:12px;font-family:var(--mono);font-weight:500">${emb.criado}</div></div>`;
+  document.getElementById('vvContexto').textContent=emb.texto;
+
+  /* Montar os 2 planos: médico + IA alvo */
+  const todosPlanos=PLANOS_EMB[emb.id]||[];
+  const planMed=todosPlanos.find(p=>p.origem==='medico');
+  const planIA=todosPlanos.find(p=>p.pid===row.pidAlvo);
+  const planosMostrar=[planMed,planIA].filter(Boolean);
+
+  document.getElementById('vvPlanosGrid').innerHTML=planosMostrar.map((p,idx)=>{
+    const isMed=p.origem==='medico';
+    const reqs=FILA.filter(r=>r.embId===emb.id&&r.pidAlvo===p.pid&&r.status==='atualizar');
+    const n=reqs.length;
+    const originClass=isMed?'medico':'ia';
+    const originBadge=isMed
+      ?`<span class="plano-origin-badge medico">${IC.db} Médico</span>`
+      :`<span class="plano-origin-badge ia">${IC.robot} IA</span>`;
+    const notif=n>0
+      ?`<span class="notif-badge" title="${n} solicitação(ões)">${n}</span>`
+      :`<span style="font-size:11px;color:var(--grn);font-family:var(--mono);font-weight:600">✓ OK</span>`;
+    const hint=n>0
+      ?`<span class="click-hint">${IC.arrow} Ver ${n} solicitaç${n===1?'ão':'ões'}</span>`
+      :`<span class="click-hint-gray">${IC.arrow} Ver plano</span>`;
+    return `<div class="plano-container ${n>0?'has-requests':''}" onclick="onValPlanoClick('${emb.id}','${p.pid}')">
+      <div class="plano-hdr ${originClass}">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="plano-num">Plano ${idx+1}</div>
+          ${originBadge}
+        </div>
+        ${notif}
+      </div>
+      <div class="plano-body">
+        <div class="plano-label">${p.label} · <span style="font-family:var(--mono);font-size:11px;color:var(--mut)">${p.pid}</span></div>
+        <div class="plano-texto">${p.texto}</div>
+      </div>
+      <div class="plano-footer">
+        <span class="plano-ts">Atualizado: ${p.ts}</span>
+        ${hint}
+      </div>
+    </div>`;
+  }).join('');
+
+  openOv('ovValVis');
+}
+
+/* Ao clicar num plano dentro do Modal 1 */
+function onValPlanoClick(embId, pid){
+  const reqs=FILA.filter(r=>r.embId===embId&&r.pidAlvo===pid&&r.status==='atualizar');
+  const planos=PLANOS_EMB[embId]||[];
+  const plano=planos.find(p=>p.pid===pid);
+  if(reqs.length>0){
+    openValLista(embId,pid,plano,reqs);
+  } else {
+    openPlanoView(embId,pid,plano);
+  }
+}
+
+/* MODAL 2: Lista de validações */
+function openValLista(embId,pid,plano,reqs){
+  const emb=EMBS.find(e=>e.id===embId);
+  const isMed=plano&&plano.origem==='medico';
+  document.getElementById('vlTitle').textContent=`${pid} — ${emb?emb.esp:''}`;
+  document.getElementById('vlSub').textContent=`${isMed?'Plano Médico':'Plano IA'} · ${reqs.length} solicitaç${reqs.length===1?'ão':'ões'} de validação`;
+  document.getElementById('vlCount').textContent=`${reqs.length} solicitaç${reqs.length===1?'ão':'ões'} encontrada${reqs.length===1?'':'s'}`;
+  const dw=document.getElementById('vlDropdownWrap');
+  if(reqs.length>8){
+    dw.style.display='block';
+    document.getElementById('vlDropdown').innerHTML=reqs.map((r,i)=>`<option value="vl-item-${r.fid}">#${i+1} — ${r.cod} · ${r.med.nome}</option>`).join('');
+  } else {
+    dw.style.display='none';
+  }
+  document.getElementById('vlList').innerHTML=reqs.map((r,i)=>`
+    <div class="val-item-row" id="vl-item-${r.fid}" onclick="openMain(${r.fid})">
+      <div class="val-item-num">#${i+1}</div>
+      <div class="val-item-info">
+        <div class="val-item-cod">${r.cod}</div>
+        <div class="val-item-cond">${r.condicao}</div>
+        <div class="val-item-med">${r.med.nome} · ${r.med.crm} · ${r.med.data}</div>
+        <div class="val-item-trecho">"…${r.trecho}…"</div>
+      </div>
+      <div>${stBadge(r.status)}</div>
+      <div class="val-item-arrow">${IC.arrow}</div>
+    </div>`).join('');
+  openOv('ovValLista');
+}
+function scrollToValItem(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'nearest'});}
+
+/* MODAL 3: Validação individual */
+function openMain(fid){
+  const row=FILA.find(r=>r.fid===fid); if(!row) return;
+  curRow=row; editMode=false;
+  const typeCls=row.status==='atualizar'?'mtype mt-atualizar':row.status==='atualizado'?'mtype mt-atualizado':row.status==='em-atualizacao'?'mtype mt-em':'mtype mt-atualizar';
+  document.getElementById('mMainType').className=typeCls;
+  document.getElementById('mMainType').textContent=row.status==='atualizar'?'A atualizar':row.status==='atualizado'?'Atualizado':row.status==='em-atualizacao'?'Em atualização':'Reprovado';
+  document.getElementById('mMainTitle').textContent=`${row.cod} — ${row.condicao}`;
+  document.getElementById('mMainSub').textContent=`Plano: ${row.pidAlvo} · Embedding: ${row.embId} · Solicitante: ${row.med.nome}`;
+  document.getElementById('metaStrip').innerHTML=`
+    <div class="ms-item"><div class="ms-lbl">Cód. Regra</div><div class="ms-val acc">${row.cod}</div></div>
+    <div class="ms-item"><div class="ms-lbl">Condição Clínica</div><div class="ms-val">${row.condicao}</div></div>
+    <div class="ms-item"><div class="ms-lbl">Plano solicitado</div><div class="ms-val acc">${row.pidAlvo}</div></div>
+    <div class="ms-item"><div class="ms-lbl">Médico solicitante</div><div class="ms-val">${row.med.nome}</div></div>
+    <div class="ms-item"><div class="ms-lbl">Criação da regra</div><div class="ms-val">${row.criacao}</div></div>`;
+
+  if (row.caso) {
+    document.getElementById('casoContextStrip').style.display = 'flex';
+    document.getElementById('casoContextText').innerHTML = `<b>Paciente:</b> ${row.caso.paciente} &nbsp;·&nbsp; <b>Queixa:</b> ${row.caso.queixa} &nbsp;·&nbsp; <b>Diagnóstico:</b> ${row.caso.diagnostico}`;
+  } else {
+    document.getElementById('casoContextStrip').style.display = 'none';
+  }
+
+  const planos=PLANOS_EMB[row.embId]||[];
+  const pl=planos.find(p=>p.pid===row.pidAlvo);
+  document.getElementById('spLeft').innerHTML=`
+    <div style="font-size:11px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Texto atual do plano — ${row.pidAlvo}</div>
+    <div style="font-size:13px;line-height:1.75;color:var(--txt);background:var(--sur2);border:1px solid var(--bdr);border-left:3px solid var(--red);border-radius:var(--rs);padding:16px">${pl?pl.texto:'—'}</div>`;
+  renderSolicitacao(row);
+  const done=row.status==='atualizado'||row.status==='reprovado';
+  document.getElementById('btnAprovar').disabled=done;
+  document.getElementById('btnReprovar').disabled=done;
+  document.getElementById('btnAprovar').style.opacity=done?'.4':'1';
+  document.getElementById('btnReprovar').style.opacity=done?'.4':'1';
+  editMode = false;
+  _applyEditModeUI(done);
+  openOv('ovMain');
+}
+
+function toggleEditMode() {
+  if (!curRow) return;
+  const done = curRow.status === 'atualizado' || curRow.status === 'reprovado';
+  if (done) return;
+  editMode = !editMode;
+  _applyEditModeUI(done);
+}
+
+function _applyEditModeUI(done) {
+  const btnEd = document.getElementById('btnEditar');
+  const modTxt = document.getElementById('modTexto');
+  
+  if (done) {
+    if (btnEd) btnEd.style.display = 'none';
+    return;
+  } else {
+    if (btnEd) btnEd.style.display = 'inline-flex';
+  }
+
+  if (editMode) {
+    if (btnEd) {
+      btnEd.innerHTML = `
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Salvar`;
+      btnEd.className = 'btn btn-grn';
+    }
+    if (modTxt) {
+      const val = curRow.modAtual;
+      modTxt.outerHTML = `<textarea class="edit-ta" id="editArea" style="width:100%; min-height:100px; margin-top:8px; font-family:inherit; font-size:13px; color:var(--txt); background:var(--sur); border:1px solid var(--bdr); border-radius:var(--rs); padding:8px; outline:none; resize:vertical;">${val}</textarea>`;
+    }
+  } else {
+    if (btnEd) {
+      btnEd.innerHTML = `
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Editar`;
+      btnEd.className = 'btn btn-outline-acc';
+    }
+    const editArea = document.getElementById('editArea');
+    if (editArea) {
+      const nv = editArea.value.trim();
+      if (nv) {
+        curRow.modAtual = nv;
+      }
+      editArea.outerHTML = `<div class="req-text" id="modTexto">${curRow.modAtual}</div>`;
+    }
+  }
+}
+
+function renderSolicitacao(row){
+  document.getElementById('spRight').innerHTML=`
+    <div class="req-box">
+      <div class="req-author">
+        <div class="av">${row.med.ini}</div>
+        <div><div class="av-name">${row.med.nome}</div><div class="av-crm">${row.med.crm}</div></div>
+        <div class="av-date">${row.med.data}</div>
+      </div>
+      <div class="req-sec">
+        <div class="req-sec-lbl">Trecho identificado</div>
+        <div class="trecho">"…${row.trecho}…"</div>
+      </div>
+      <div class="req-sec">
+        <div class="req-sec-lbl">Modificação solicitada</div>
+        <div class="req-text" id="modTexto">${row.modAtual}</div>
+      </div>
+    </div>`;
+}
+
+function renderHist(fid){
+  const logs=LOGS[fid]||[];
+  document.getElementById('histLog').innerHTML=logs.length===0?'<div style="font-size:13px;color:var(--dim)">Nenhum registro ainda.</div>'
+    :logs.map(l=>`<div class="hist-item"><div class="hist-dot" style="background:${l.cor}"></div><div class="hist-body"><div class="hist-action">${l.acao}</div><div class="hist-meta">${l.ts}</div>${l.nota?`<div class="hist-note">${l.nota}</div>`:''}</div></div>`).reverse().join('');
+}
+
+function doAprovar(){
+  if(!curRow) return;
+  if(editMode){
+    const editArea=document.getElementById('editArea');
+    const novo=editArea?editArea.value.trim():'';
+    if(!novo){toast('Salve a edição antes de aprovar.','warn');return;}
+    curRow.modAtual=novo;
+    editMode=false;
+  }
+  curRow.status='em-atualizacao';
+  LOGS[curRow.fid].push({ts:now(),acao:'Aprovado — em atualização',cor:'var(--grn)',nota:`Plano ${curRow.pidAlvo} encaminhado para reprocessamento.`});
+  setTimeout(()=>{
+    const r=FILA.find(x=>x.fid===curRow.fid);
+    if(r&&r.status==='em-atualizacao'){
+      r.status='atualizado';
+      const p=PLANOS_EMB[r.embId]?.find(x=>x.pid===r.pidAlvo);
+      if(p){p.texto=r.modAtual;p.ts=now();}
+      LOGS[r.fid].push({ts:now(),acao:'Plano atualizado com sucesso',cor:'var(--grn)',nota:`Plano ${r.pidAlvo} indexado com a nova versão aprovada.`});
+      renderVal();
+    }
+  },3000);
+  closeOv('ovMain');renderVal();
+  toast('Aprovado — plano em atualização. Concluirá em instantes.','ok');
+}
+
+function doReprovar(){
+  if(!curRow) return;
+  curRow.status='reprovado';
+  LOGS[curRow.fid].push({ts:now(),acao:'Reprovado',cor:'var(--red)',nota:'Solicitação rejeitada. Nenhum plano de cuidado foi alterado. Histórico preservado.'});
+  closeOv('ovMain');renderVal();
+  toast('Solicitação reprovada — histórico preservado.','warn');
+}
+
+function openEmbRef(){
+  if(!curRow) return;
+  const emb=EMBS.find(e=>e.id===curRow.embId); if(!emb) return;
+  document.getElementById('embRTitle').textContent=`Embedding ${emb.id}`;
+  document.getElementById('embRSub').textContent=`${emb.modelo} · ${emb.dim}d · ${emb.esp}`;
+  document.getElementById('embRMeta').innerHTML=metaGrid(emb);
+  document.getElementById('embRText').textContent=emb.texto;
+  openOv('ovEmb');
+}
+
+function openEmbRefFromVal(){
+  if(!curValEmb) return;
+  document.getElementById('embRTitle').textContent=`Embedding ${curValEmb.id}`;
+  document.getElementById('embRSub').textContent=`${curValEmb.modelo} · ${curValEmb.dim}d · ${curValEmb.esp}`;
+  document.getElementById('embRMeta').innerHTML=metaGrid(curValEmb);
+  document.getElementById('embRText').textContent=curValEmb.texto;
+  openOv('ovEmb');
+}
+
+function openCaso(){
+  if(!curRow||!curRow.caso) return;
+  const c=curRow.caso;
+  document.getElementById('casoTitle').textContent=c.paciente;
+  document.getElementById('casoSub').textContent=`Prontuário: ${c.prontuario}`;
+  document.getElementById('casoBody').innerHTML=`<div style="display:flex;flex-direction:column;gap:12px">
+    ${casoCard('Queixa principal',c.queixa,'var(--teal-bg)','var(--teal-br)','var(--teal)')}
+    ${casoCard('Diagnóstico',c.diagnostico,'var(--pur-bg)','var(--pur-br)','var(--pur)')}
+    ${casoCard('Conduta atual',c.conduta_atual,'var(--sur2)','var(--bdr)','var(--mut)')}
+  </div>`;
+  openOv('ovCaso');
+}
+function casoCard(l,t,bg,br,cl){return `<div style="background:${bg};border:1px solid ${br};border-left:3px solid ${cl};border-radius:var(--rs);padding:13px"><div style="font-size:10px;font-weight:600;color:${cl};text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">${l}</div><div style="font-size:13px;color:var(--txt);line-height:1.65">${t}</div></div>`;}
+
+/* Modal: Plano sem requisições */
+function openPlanoView(embId,pid,plano){
+  const emb=EMBS.find(e=>e.id===embId);
+  const isMed=plano&&plano.origem==='medico';
+  curPlanoView={embId,pid,plano};pvEditMode=false;
+  const pvT=document.getElementById('pvType');
+  if(isMed){pvT.style.cssText='background:var(--grn-bg);color:var(--grn);border:1px solid var(--grn-br)';pvT.textContent='Plano Médico';}
+  else{pvT.style.cssText='background:var(--pur-bg);color:var(--pur);border:1px solid var(--pur-br)';pvT.textContent='Plano IA';}
+  document.getElementById('pvTitle').textContent=`${pid} — ${emb?emb.esp:''}`;
+  document.getElementById('pvSub').textContent=`${plano?plano.label:''} · Sem solicitações de validação`;
+  document.getElementById('pvPlanoLabel').textContent=`Conteúdo do plano — ${pid}`;
+  const bc=isMed?'var(--grn)':'var(--pur)';
+  document.getElementById('pvPlanoText').style.borderLeftColor=bc;
+  document.getElementById('pvPlanoText').textContent=plano?plano.texto:'—';
+  document.getElementById('pvPlanoMeta').innerHTML=`
+    <div class="plano-view-meta-item"><div style="font-size:10px;color:var(--dim);margin-bottom:4px">Origem</div><div style="font-size:13px;font-weight:600;color:var(--txt)">${plano?plano.label:'—'}</div></div>
+    <div class="plano-view-meta-item"><div style="font-size:10px;color:var(--dim);margin-bottom:4px">Última atualização</div><div style="font-size:13px;font-family:var(--mono);color:var(--txt)">${plano?plano.ts:'—'}</div></div>
+    <div class="plano-view-meta-item"><div style="font-size:10px;color:var(--dim);margin-bottom:4px">Status</div><div style="font-size:13px;font-weight:600;color:var(--grn)">✓ Sem pendências</div></div>
+    <div class="plano-view-meta-item"><div style="font-size:10px;color:var(--dim);margin-bottom:4px">Embedding</div><div style="font-size:13px;font-family:var(--mono);color:var(--mut)">${embId}</div></div>`;
+
+  const planos=PLANOS_EMB[embId]||[];
+  const dropdown=document.getElementById('pvPlanoDropdown');
+  dropdown.innerHTML=planos.map(p=>`<option value="${p.pid}" ${p.pid===pid?'selected':''}>${p.pid} — ${p.label} (${p.origem==='medico'?'Médico':'IA'})</option>`).join('');
+
+  const btn=document.getElementById('pvBtnEditar');
+  btn.textContent='Editar';btn.className='btn btn-outline-acc';
+  openOv('ovPlanoView');
+}
+
+function onPvPlanoDropdownChange(pid){
+  if(!curPlanoView) return;
+  const planos=PLANOS_EMB[curPlanoView.embId]||[];
+  const plano=planos.find(p=>p.pid===pid);
+  if(plano){
+    openPlanoView(curPlanoView.embId,pid,plano);
+  }
+}
+
+function toggleEditPlanoView(){
+  pvEditMode=!pvEditMode;
+  const textEl=document.getElementById('pvPlanoText');
+  const btn=document.getElementById('pvBtnEditar');
+  if(pvEditMode){
+    const old=textEl.textContent;
+    textEl.innerHTML=`<textarea class="edit-ta" id="pvEditTa" style="min-height:160px;margin-top:0">${old}</textarea>`;
+    btn.textContent='Salvar';btn.className='btn btn-grn';
+  } else {
+    const ta=document.getElementById('pvEditTa');
+    if(ta){
+      const nv=ta.value.trim();
+      if(!nv){toast('O texto não pode estar vazio.','warn');pvEditMode=true;return;}
+      if(curPlanoView&&curPlanoView.plano) curPlanoView.plano.texto=nv;
+      textEl.textContent=nv;
+      toast('Plano atualizado com sucesso.','ok');
+    }
+    btn.textContent='Editar';btn.className='btn btn-outline-acc';
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   EMBEDDINGS — COMPORTAMENTO ORIGINAL
+   ══════════════════════════════════════════════════════ */
+function renderEmb(){
+  const rows=EMBS.filter(e=>{
+    if(!embSrch) return true;
+    const q=embSrch.toLowerCase();
+    return e.id.toLowerCase().includes(q)||e.esp.toLowerCase().includes(q)||e.texto.toLowerCase().includes(q);
+  });
+  const total=rows.length,tp=Math.max(1,Math.ceil(total/PS));
+  if(embPg>tp) embPg=tp;
+  const st=(embPg-1)*PS,pg=rows.slice(st,st+PS);
+  document.getElementById('badgeEmb').textContent=EMBS.length;
+  const atv=EMBS.filter(e=>e.status==='ativo').length,pend=EMBS.filter(e=>e.status==='pendente-retreino').length;
+  const dI=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>`;
+  document.getElementById('embCards').innerHTML=`
+    <div class="card"><div class="c-ic ci-p">${dI}</div><div><div class="c-val">${EMBS.length}</div><div class="c-lbl">Total de embeddings</div></div></div>
+    <div class="card"><div class="c-ic ci-g">${dI}</div><div><div class="c-val">${atv}</div><div class="c-lbl">Ativas</div></div></div>
+    <div class="card"><div class="c-ic ci-w">${dI}</div><div><div class="c-val">${pend}</div><div class="c-lbl">Pendentes retreino</div></div></div>`;
+  document.getElementById('embBody').innerHTML=pg.length===0?'<tr class="empty"><td colspan="6">—</td></tr>'
+    :pg.map(e=>{
+      const pls=PLANOS_EMB[e.id]||[],inad=pls.filter(p=>p.status==='atualizar').length;
+      const plCl=inad>0?`<span class="badge b-atualizar" style="font-size:10px;padding:2px 7px">4 (${inad} ✗)</span>`:`<span style="font-family:var(--mono);font-size:12px;color:var(--grn);font-weight:600">4 ✓</span>`;
+      const st=e.status==='ativo'?`<span class="emb-stat-pill ep-ok">Ativa</span>`:`<span class="emb-stat-pill ep-pend">Retreino</span>`;
+      return `<tr onclick="openEmbDet('${e.id}')" style="cursor:pointer">
+        <td class="mono">${e.id}</td>
+        <td class="tcell" title="${e.texto.replace(/"/g,'&quot;')}">${e.texto}</td>
+        <td style="font-size:12px;color:var(--mut)">${e.esp}</td>
+        <td>${plCl}</td>
+        <td>${st}</td>
+        <td><button class="icnbtn" onclick="event.stopPropagation();openEmbDet('${e.id}')">${IC.eye}</button></td>
+      </tr>`;
+    }).join('');
+  const pp=Array.from({length:tp},(_,i)=>i+1);
+  document.getElementById('embPag').innerHTML=`
+    <div class="pag-i">Exibindo ${Math.min(st+1,total)}–${Math.min(st+PS,total)} de ${total}</div>
+    <div class="pag-b">
+      <button class="pbtn" onclick="eGo(${embPg-1})" ${embPg===1?'disabled':''}>&#8249;</button>
+      ${pp.map(p=>`<button class="pbtn ${p===embPg?'cur':''}" onclick="eGo(${p})">${p}</button>`).join('')}
+      <button class="pbtn" onclick="eGo(${embPg+1})" ${embPg===tp?'disabled':''}>&#8250;</button>
+    </div>`;
+}
+function eGo(p){embPg=p;renderEmb();}
+document.getElementById('embSrch').addEventListener('input',e=>{embSrch=e.target.value.trim();embPg=1;renderEmb();});
+
+/* Modal detalhes embedding (original) */
+function openEmbDet(id){
+  const emb=EMBS.find(e=>e.id===id); if(!emb) return;
+  curEmb=emb;
+  document.getElementById('edTitle').textContent=`Embedding ${emb.id}`;
+  document.getElementById('edSub').textContent=`${emb.modelo} · ${emb.dim}d · ${emb.esp}`;
+  document.getElementById('edMeta').innerHTML=metaGrid(emb);
+  document.getElementById('edText').textContent=emb.texto;
+  openOv('ovEmbDet');
+}
+
+/* Modal 4 planos (original) */
+function openPlanosAssoc(){
+  if(!curEmb) return;
+  const pls=PLANOS_EMB[curEmb.id]||[];
+  document.getElementById('plTitle').textContent=`${curEmb.id} — ${curEmb.esp}`;
+  document.getElementById('plSub').textContent=`1 plano médico + 3 planos IA`;
+  document.getElementById('plGrid').innerHTML=pls.map(p=>{
+    const isDoc=p.origem==='medico';
+    const ob=isDoc?`<span class="badge b-doc" style="font-size:10px;padding:2px 7px">${IC.db} Médico</span>`:`<span class="badge b-llm" style="font-size:10px;padding:2px 7px">${IC.robot} IA</span>`;
+    return `<div class="p4card">
+      <div class="p4h"><span class="p4id">${p.pid}</span><div style="display:flex;gap:5px">${ob}${p4StBadge(p.status)}</div></div>
+      <div class="p4b">
+        <div class="p4origin">${p.label}</div>
+        <div class="p4text">${p.texto}</div>
+        <div class="p4ts">Última atualização: ${p.ts}</div>
+      </div>
+    </div>`;
+  }).join('');
+  openOv('ovPlanos');
+}
+
+/* ── HELPERS ── */
+function metaGrid(emb){
+  const clr=emb.status==='ativo'?'var(--grn)':'var(--warn)';
+  return [`<div style="background:var(--sur2);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px"><div style="font-size:11px;color:var(--dim);margin-bottom:4px">ID</div><div style="font-size:13px;font-family:var(--mono);font-weight:500">${emb.id}</div></div>`,
+    `<div style="background:var(--sur2);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px"><div style="font-size:11px;color:var(--dim);margin-bottom:4px">Especialidade</div><div style="font-size:13px;font-family:var(--mono);font-weight:500">${emb.esp}</div></div>`,
+    `<div style="background:var(--sur2);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px"><div style="font-size:11px;color:var(--dim);margin-bottom:4px">Modelo</div><div style="font-size:13px;font-family:var(--mono);font-weight:500">${emb.modelo}</div></div>`,
+    `<div style="background:var(--sur2);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px"><div style="font-size:11px;color:var(--dim);margin-bottom:4px">Status</div><div style="font-size:13px;font-family:var(--mono);font-weight:500;color:${clr}">${emb.status}</div></div>`,
+    `<div style="background:var(--sur2);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px"><div style="font-size:11px;color:var(--dim);margin-bottom:4px">Dimensões</div><div style="font-size:13px;font-family:var(--mono);font-weight:500">${emb.dim}</div></div>`,
+    `<div style="background:var(--sur2);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px"><div style="font-size:11px;color:var(--dim);margin-bottom:4px">Criado em</div><div style="font-size:13px;font-family:var(--mono);font-weight:500">${emb.criado}</div></div>`].join('');
+}
+function now(){const d=new Date();return d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}
+function openOv(id){document.getElementById(id).classList.add('on')}
+function closeOv(id){document.getElementById(id).classList.remove('on')}
+['ovValVis','ovValLista','ovMain','ovEmb','ovCaso','ovPlanoView','ovEmbDet','ovPlanos'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',e=>{if(e.target===document.getElementById(id))closeOv(id);});
+});
+function toast(msg,type){
+  const t=document.getElementById('toast');
+  document.getElementById('toastMsg').textContent=msg;
+  document.getElementById('toastIc').innerHTML=type==='ok'
+    ?`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--grn)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>`
+    :`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>`;
+  t.classList.add('on');setTimeout(()=>t.classList.remove('on'),3600);
+}
+
+/* INIT */
+renderVal();
+</script>
+</body>
+</html>
