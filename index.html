@@ -256,9 +256,9 @@ textarea.edit-ta:focus{border-color:var(--acc)}
 .val-item-num{font-family:var(--mono);font-size:11px;color:var(--dim);width:28px;flex-shrink:0;font-weight:600}
 .val-item-info{flex:1;min-width:0}
 .val-item-cod{font-size:12px;font-weight:600;color:var(--acc);font-family:var(--mono)}
-.val-item-cond{font-size:13px;font-weight:500;color:var(--txt);margin-top:2px}
-.val-item-med{font-size:11px;color:var(--mut);margin-top:2px}
-.val-item-trecho{font-size:11px;color:var(--warn);font-style:italic;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.val-item-cond{font-size:11px;font-weight:normal;color:var(--mut);margin-top:3px}
+.val-item-med{font-size:11px;color:var(--dim);margin-top:2px}
+.val-item-trecho{font-size:13.5px;font-weight:600;color:var(--warn);font-style:italic;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .val-item-arrow{color:var(--dim);flex-shrink:0;transition:color .18s}
 .val-item-row:hover .val-item-arrow{color:var(--acc)}
 
@@ -384,11 +384,11 @@ textarea.edit-ta:focus{border-color:var(--acc)}
           Informações da Base do Conhecimento
         </div>
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px" id="vvMetaGrid"></div>
-        <div style="font-size:10px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Contexto vetorizado</div>
+        <div style="font-size:10px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Resumo da Regra</div>
         <div style="font-size:13px;line-height:1.7;color:var(--txt);background:var(--pur-bg);border:1px solid var(--pur-br);border-left:3px solid var(--pur);border-radius:var(--rs);padding:14px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden" id="vvContexto"></div>
         <button class="btn btn-outline-pur" style="margin-top:10px;font-size:12px;padding:6px 14px" onclick="openEmbRefFromVal()">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          Visualizar mais
+          Ver regra completa
         </button>
       </div>
 
@@ -530,7 +530,7 @@ textarea.edit-ta:focus{border-color:var(--acc)}
     </div>
     <div style="padding:20px 24px;overflow-y:auto;flex:1">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px" id="embRMeta"></div>
-      <div class="req-sec-lbl" style="margin-bottom:8px">Contexto vetorizado</div>
+      <div class="req-sec-lbl" style="margin-bottom:8px">Resumo da Regra</div>
       <div style="font-size:13px;line-height:1.75;color:var(--txt);background:var(--pur-bg);border:1px solid var(--pur-br);border-left:3px solid var(--pur);border-radius:var(--rs);padding:16px" id="embRText"></div>
     </div>
     <div class="mfoot"><button class="btn btn-ghost" onclick="closeOv('ovEmb')">Fechar</button></div>
@@ -613,7 +613,7 @@ textarea.edit-ta:focus{border-color:var(--acc)}
     </div>
     <div style="padding:20px 24px;overflow-y:auto;flex:1">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px" id="edMeta"></div>
-      <div class="req-sec-lbl" style="margin-bottom:8px">Contexto vetorizado</div>
+      <div class="req-sec-lbl" style="margin-bottom:8px">Resumo da Regra</div>
       <div style="font-size:13px;line-height:1.75;color:var(--txt);background:var(--pur-bg);border:1px solid var(--pur-br);border-left:3px solid var(--pur);border-radius:var(--rs);padding:16px" id="edText"></div>
     </div>
     <div class="mfoot">
@@ -799,77 +799,77 @@ const PLANOS_EMB = {
 /* FILA DE VALIDAÇÃO — 30 itens (EMB-001/PC-0102 e EMB-002/PC-0202) */
 const FILA_BASE = [
   /* EMB-001 · PC-0102 */
-  {fid:1,cod:'RGR-HAS-001',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-01-10 09:00',
+  {fid:1,cod:'VAL-001',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-01-10 09:00',
    med:{nome:'Dr. Rafael Costa',crm:'SP-112233',data:'2025-04-10 14:32',ini:'RC'},
    trecho:'Aumentar losartana para 100mg imediatamente',
-   modificacao:'Substituir escalonamento imediato por ajuste gradual em 4 semanas com monitoramento de PA. Incluir estratificação de risco por Framingham antes de qualquer modificação farmacológica.',
+   modificacao:'Substituir escalonamento imediato por adjustment gradual em 4 semanas com monitoramento de PA. Incluir estratificação de risco por Framingham antes de qualquer modificação farmacológica.',
    caso:{paciente:'João Mendes, 58a',prontuario:'PRN-00342',queixa:'PA = 158/96 mmHg em consulta de rotina.',diagnostico:'HAS Estágio 2 com risco cardiovascular moderado.',conduta_atual:'Losartana 50mg/dia há 3 meses.'}},
-  {fid:2,cod:'RGR-HAS-001',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-01-10 09:00',
+  {fid:2,cod:'VAL-002',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-01-10 09:00',
    med:{nome:'Enf. Patrícia Luz',crm:'COREN-SP-445566',data:'2025-04-14 10:00',ini:'PL'},
    trecho:'Iniciar estatina sem perfil lipídico prévio',
    modificacao:'Exigir perfil lipídico completo antes de qualquer prescrição de estatina. Incluir avaliação de função hepática basal.',
    caso:{paciente:'Maria Souza, 62a',prontuario:'PRN-00519',queixa:'Hipertensa há 5 anos, sem acompanhamento regular.',diagnostico:'HAS grau II não controlada.',conduta_atual:'Amlodipina 5mg/dia sem ajuste há 18 meses.'}},
-  {fid:3,cod:'RGR-HAS-002',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-02-01 10:00',
+  {fid:3,cod:'VAL-003',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-02-01 10:00',
    med:{nome:'Dr. Antônio Silva',crm:'SP-998877',data:'2025-04-20 09:00',ini:'AS'},
    trecho:'Exercício sem avaliação cardíaca',
    modificacao:'Incluir avaliação cardiológica prévia com ergometria para pacientes hipertensos acima de 50 anos antes de prescrever atividade física de intensidade moderada a alta.',
    caso:{paciente:'Pedro Albuquerque, 54a',prontuario:'PRN-00601',queixa:'Hipertensão de difícil controle.',diagnostico:'HAS estágio 1 com obesidade.',conduta_atual:'Losartana + hidroclorotiazida.'}},
-  {fid:4,cod:'RGR-HAS-003',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-02-10 11:00',
+  {fid:4,cod:'VAL-004',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-02-10 11:00',
    med:{nome:'Dra. Luciana Freitas',crm:'RJ-556677',data:'2025-04-25 14:30',ini:'LF'},
    trecho:'Retorno em 90 dias sem monitoramento',
    modificacao:'Reduzir intervalo de retorno para 30 dias em pacientes com HAS não controlada. Incluir telemonitoramento domiciliar de PA como complemento.',
    caso:{paciente:'Carla Mendes, 47a',prontuario:'PRN-00712',queixa:'Cefaleia occipital frequente, PA variável.',diagnostico:'HAS estágio 2 com síndrome metabólica.',conduta_atual:'Nifedipina 30mg retard.'}},
-  {fid:5,cod:'RGR-HAS-004',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-02-20 08:00',
+  {fid:5,cod:'VAL-005',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-02-20 08:00',
    med:{nome:'Dr. Marcos Pereira',crm:'MG-334455',data:'2025-05-01 10:00',ini:'MP'},
    trecho:'Sem estratificação de risco cardiovascular',
    modificacao:'Incluir obrigatoriamente o escore de Framingham antes de definir intensidade terapêutica. Adicionar campo de risco calculado ao plano.',
    caso:{paciente:'Roberto Farias, 61a',prontuario:'PRN-00830',queixa:'Dor precordial leve, dispneia a esforço moderado.',diagnostico:'HAS + suspeita de cardiopatia isquêmica.',conduta_atual:'Captopril 25mg 2x/dia.'}},
-  {fid:6,cod:'RGR-HAS-005',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-03-01 09:00',
+  {fid:6,cod:'VAL-006',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-03-01 09:00',
    med:{nome:'Dra. Ana Beatriz Costa',crm:'SP-112200',data:'2025-05-05 11:00',ini:'AB'},
    trecho:'Sem orientação sobre AMPA',
    modificacao:'Incluir orientação sobre Automonitorização da Pressão Arterial (AMPA) com registro em diário para todos os pacientes hipertensos.',
    caso:{paciente:'Fernanda Lima, 52a',prontuario:'PRN-00944',queixa:'Hipertensão de consultório vs. normotensão domiciliar.',diagnostico:'Hipertensão do avental branco confirmada.',conduta_atual:'Em avaliação sem medicamento.'}},
-  {fid:7,cod:'RGR-HAS-006',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-03-10 10:00',
+  {fid:7,cod:'VAL-007',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-03-10 10:00',
    med:{nome:'Dr. Henrique Moura',crm:'BA-778899',data:'2025-05-08 09:30',ini:'HM'},
    trecho:'Sem avaliação de órgão-alvo',
    modificacao:'Adicionar avaliação anual de órgão-alvo: ECG, ecocardiograma, fundoscopia e microalbuminúria em todos os hipertensos com mais de 2 anos de diagnóstico.',
    caso:{paciente:'Juliana Santos, 58a',prontuario:'PRN-01055',queixa:'Hipertensão de longa data, refratária.',diagnostico:'HAS grau III com suspeita de HVE.',conduta_atual:'Anlodipino + enalapril + hidroclorotiazida.'}},
-  {fid:8,cod:'RGR-HAS-007',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-03-15 14:00',
+  {fid:8,cod:'VAL-008',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-03-15 14:00',
    med:{nome:'Dr. Claudio Batista',crm:'RS-223344',data:'2025-05-10 10:00',ini:'CB'},
    trecho:'Sem abordagem de comorbidades metabólicas',
    modificacao:'Incluir rastreio e manejo integrado de síndrome metabólica: glicemia, perfil lipídico, circunferência abdominal e IMC como parâmetros obrigatórios.',
    caso:{paciente:'Maurício Gomes, 49a',prontuario:'PRN-01167',queixa:'HAS + obesidade + glicemia elevada.',diagnostico:'HAS + pré-diabetes + dislipidemia.',conduta_atual:'Apenas anti-hipertensivo, sem abordagem metabólica.'}},
-  {fid:9,cod:'RGR-HAS-008',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-03-20 09:00',
+  {fid:9,cod:'VAL-009',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-03-20 09:00',
    med:{nome:'Dra. Patricia Nascimento',crm:'SP-556699',data:'2025-05-12 14:00',ini:'PN'},
    trecho:'Sem orientação nutricional formal',
    modificacao:'Incluir encaminhamento obrigatório à nutrição para orientação da dieta DASH com metas específicas de sódio (<2g/dia) e potássio (>4,7g/dia).',
    caso:{paciente:'Silvia Ramos, 55a',prontuario:'PRN-01289',queixa:'HAS associada a dieta hipersódica reconhecida.',diagnostico:'HAS estágio 1, responsiva a dieta.',conduta_atual:'Medicamento suspenso após mudança alimentar parcial.'}},
-  {fid:10,cod:'RGR-HAS-009',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-03-25 10:00',
+  {fid:10,cod:'VAL-010',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-03-25 10:00',
    med:{nome:'Dr. Eduardo Teixeira',crm:'MG-443322',data:'2025-05-14 11:30',ini:'ET'},
    trecho:'Sem avaliação de adesão ao tratamento',
    modificacao:'Adicionar aplicação de escala de Morisky (MMAS-8) a cada consulta para avaliação padronizada de adesão terapêutica.',
    caso:{paciente:'Alexandre Barros, 63a',prontuario:'PRN-01400',queixa:'HAS sem controle apesar de medicação prescrita.',diagnostico:'HAS grau II, suspeita de não-adesão.',conduta_atual:'Três anti-hipertensivos prescritos, PA ainda 160/100.'}},
-  {fid:11,cod:'RGR-HAS-010',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-04-01 09:00',
+  {fid:11,cod:'VAL-011',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-04-01 09:00',
    med:{nome:'Dra. Isabela Cunha',crm:'SP-667788',data:'2025-05-16 10:00',ini:'IC'},
    trecho:'Sem rastreio de hipertensão secundária',
    modificacao:'Em casos de HAS refratária ou de início precoce (<40 anos), incluir investigação de causas secundárias: aldosteronismo primário, estenose de artéria renal, apneia do sono.',
-   caso:{paciente:'Gabriel Oliveira, 32a',prontuario:'PRN-01511',queixa:'HAS grave de início súbito, jovem.',diagnostico:'HAS severa em paciente jovem, sem fator de risco óbvio.',conduta_atual:'Dois anti-hipertensivos sem investigação etiológica.'}},
-  {fid:12,cod:'RGR-HAS-011',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-04-05 10:00',
+   caso:{paciente:'Gabriel Oliveira, 32a',prontuario:'PRN-01511',queixa:'HAS grave de início súbito, jovem.',diagnostico:'HAS severa em paciente jovem, sem factor de risco óbvio.',conduta_atual:'Dois anti-hipertensivos sem investigação etiológica.'}},
+  {fid:12,cod:'VAL-012',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-04-05 10:00',
    med:{nome:'Dr. Leonardo Carvalho',crm:'BA-991100',data:'2025-05-18 09:00',ini:'LC'},
    trecho:'Sem abordagem de estresse e saúde mental',
    modificacao:'Incluir avaliação de fatores psicossociais e de estresse crônico com encaminhamento para psicologia/psiquiatria quando identificados como fator contribuinte.',
    caso:{paciente:'Beatriz Alves, 44a',prontuario:'PRN-01633',queixa:'HAS com piora em períodos de estresse ocupacional.',diagnostico:'HAS associada a transtorno de ansiedade.',conduta_atual:'Anti-hipertensivo sem abordagem psicossocial.'}},
-  {fid:13,cod:'RGR-HAS-012',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-04-10 11:00',
+  {fid:13,cod:'VAL-013',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-04-10 11:00',
    med:{nome:'Dra. Viviane Rocha',crm:'RJ-778822',data:'2025-05-19 14:30',ini:'VR'},
    trecho:'Sem metas de PA individualizadas',
    modificacao:'Definir metas de PA individualizadas conforme perfil: <130/80 mmHg para DM ou DRC; <140/90 para idosos frágeis.',
    caso:{paciente:'Sônia Ferreira, 78a',prontuario:'PRN-01754',queixa:'HAS em idosa com múltiplas comorbidades.',diagnostico:'HAS + DM2 + DRC estágio 3.',conduta_atual:'Meta de PA não individualizada no prontuário.'}},
-  {fid:14,cod:'RGR-HAS-013',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-04-15 09:00',
+  {fid:14,cod:'VAL-014',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-04-15 09:00',
    med:{nome:'Dr. Thiago Moreira',crm:'SP-334411',data:'2025-05-20 10:00',ini:'TM'},
    trecho:'Sem programa de cessação tabágica',
    modificacao:'Para pacientes tabagistas, incluir protocolo de cessação tabágica com terapia de reposição nicotínica e/ou vareniclina, além de suporte psicológico.',
    caso:{paciente:'Carlos Eduardo, 51a',prontuario:'PRN-01876',queixa:'HAS + tabagismo ativo (20 cigarros/dia).',diagnostico:'HAS estágio 2 com risco cardiovascular alto por tabagismo.',conduta_atual:'Anti-hipertensivo sem abordagem do tabagismo.'}},
-  {fid:15,cod:'RGR-HAS-014',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-04-20 10:00',
+  {fid:15,cod:'VAL-015',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-04-20 10:00',
    med:{nome:'Dra. Renata Azevedo',crm:'MG-112233',data:'2025-05-21 11:00',ini:'RA'},
    trecho:'Sem monitoramento de função renal',
    modificacao:'Incluir creatinina sérica, TFGe e relação albumina/creatinina urinária a cada 6 meses para todos os hipertensos em uso de IECA ou BRA.',
@@ -1216,9 +1216,9 @@ function openValLista(embId,pid,plano,reqs){
       <div class="val-item-num">#${i+1}</div>
       <div class="val-item-info">
         <div class="val-item-cod">${r.cod}</div>
-        <div class="val-item-cond">${r.condicao}</div>
-        <div class="val-item-med">${r.med.nome} · ${r.med.crm} · ${r.med.data}</div>
         <div class="val-item-trecho">"…${r.trecho}…"</div>
+        <div class="val-item-med">${r.med.nome} · ${r.med.crm} · ${r.med.data}</div>
+        <div class="val-item-cond">${r.condicao}</div>
       </div>
       <div>${stBadge(r.status)}</div>
       <div class="val-item-arrow">${IC.arrow}</div>
