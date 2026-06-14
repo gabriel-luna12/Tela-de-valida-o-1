@@ -136,7 +136,7 @@ td{padding:12px 14px;vertical-align:middle}
 .ms-val.grn{color:var(--grn)}
 .ms-val.warn{color:var(--warn)}
 
-/* plan cards grid (Embeddings - original 4 cards) */
+/* plan cards grid (Bases do Conhecimento - original 4 cards) */
 .plans-section{padding:20px 24px;border-bottom:1px solid var(--bdr)}
 .sec-title{font-size:11px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
 .p4grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
@@ -285,7 +285,7 @@ textarea.edit-ta:focus{border-color:var(--acc)}
   </div>
   <div style="flex:1"></div>
   <div class="hstat"><div class="live"></div>&nbsp;Sistema ativo</div>
-  <div class="hstat" style="margin-left:16px">Base: <b>public.embeddings</b></div>
+  <div class="hstat" style="margin-left:16px">Base: <b>Base do Conhecimento</b></div>
 </header>
 
 <div class="shell">
@@ -298,7 +298,7 @@ textarea.edit-ta:focus{border-color:var(--acc)}
     </div>
     <div class="nav" id="nav-emb" onclick="goScr('emb')">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
-      <span>Embeddings</span>
+      <span>Bases do Conhecimento</span>
       <span class="nbadge nb-b" id="badgeEmb">—</span>
     </div>
   </aside>
@@ -332,13 +332,13 @@ textarea.edit-ta:focus{border-color:var(--acc)}
       </div>
     </div>
 
-    <!-- ══ EMBEDDINGS ══ -->
+    <!-- ══ BASES DO CONHECIMENTO ══ -->
     <div class="screen" id="screen-emb">
       <div class="pg-title">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
-        Base de Embeddings
+        Base do Conhecimento
       </div>
-      <div class="pg-sub">Cada embedding possui 1 plano médico + 3 planos IA</div>
+      <div class="pg-sub">Cada base do conhecimento possui 1 plano médico + 3 planos IA</div>
       <div class="ecards" id="embCards"></div>
       <div class="toolbar">
         <div class="srch">
@@ -359,7 +359,7 @@ textarea.edit-ta:focus{border-color:var(--acc)}
 </div>
 
 <!-- ══════════════════════════════════════════════════════
-     FLUXO VALIDAÇÃO: MODAL 1 — Embedding + 2 Planos Grandes
+     FLUXO VALIDAÇÃO: MODAL 1 — Base do Conhecimento + 2 Planos Grandes
      ══════════════════════════════════════════════════════ -->
 <div class="ov" id="ovValVis">
   <div class="modal xl">
@@ -367,7 +367,7 @@ textarea.edit-ta:focus{border-color:var(--acc)}
       <div class="mh-l">
         <div class="mtype mt-emb">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
-          Embedding
+          Base do Conhecimento
         </div>
         <div>
           <div class="mtitle" id="vvTitle"></div>
@@ -377,11 +377,11 @@ textarea.edit-ta:focus{border-color:var(--acc)}
       <button class="xbtn" onclick="closeOv('ovValVis')">&#215;</button>
     </div>
     <div class="mbody">
-      <!-- Infos da embedding -->
+      <!-- Infos da base do conhecimento -->
       <div style="padding:16px 24px;border-bottom:1px solid var(--bdr);background:var(--sur2)">
         <div class="sec-title" style="margin-bottom:12px">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
-          Informações da Embedding
+          Informações da Base do Conhecimento
         </div>
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px" id="vvMetaGrid"></div>
         <div style="font-size:10px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Contexto vetorizado</div>
@@ -515,14 +515,14 @@ textarea.edit-ta:focus{border-color:var(--acc)}
   </div>
 </div>
 
-<!-- ══ MODAL EMBEDDING REF (l3 - dentro da validação) ══ -->
+<!-- ══ MODAL BASE DO CONHECIMENTO REF (l3 - dentro da validação) ══ -->
 <div class="ov l3" id="ovEmb">
   <div class="modal sm">
     <div class="mh">
       <div class="mh-l">
         <div class="mtype mt-emb">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
-          Embedding vinculada
+          Base do Conhecimento vinculada
         </div>
         <div><div class="mtitle" id="embRTitle"></div><div class="msub" id="embRSub"></div></div>
       </div>
@@ -597,7 +597,7 @@ textarea.edit-ta:focus{border-color:var(--acc)}
 </div>
 
 <!-- ══════════════════════════════════════════════════════
-     EMBEDDINGS: MODAL DETALHES (original)
+     BASES DO CONHECIMENTO: MODAL DETALHES (original)
      ══════════════════════════════════════════════════════ -->
 <div class="ov" id="ovEmbDet">
   <div class="modal sm">
@@ -605,7 +605,7 @@ textarea.edit-ta:focus{border-color:var(--acc)}
       <div class="mh-l">
         <div class="mtype mt-emb">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
-          Embedding
+          Base do Conhecimento
         </div>
         <div><div class="mtitle" id="edTitle"></div><div class="msub" id="edSub"></div></div>
       </div>
@@ -626,7 +626,7 @@ textarea.edit-ta:focus{border-color:var(--acc)}
   </div>
 </div>
 
-<!-- ══ EMBEDDINGS: MODAL 4 PLANOS (original) ══ -->
+<!-- ══ BASES DO CONHECIMENTO: MODAL 4 PLANOS (original) ══ -->
 <div class="ov l2" id="ovPlanos">
   <div class="modal med">
     <div class="mh">
@@ -684,7 +684,7 @@ const EMBS = [
    texto:'Rinite alérgica crônica persistente grave, obstrução nasal crônica, prurido e espirros frequentes, refratária a anti-histamínicos orais de segunda geração.'},
 ];
 
-/* 4 planos por embedding (original) */
+/* 4 planos por base do conhecimento (original) */
 const PLANOS_EMB = {
   'EMB-001':[
     {pid:'PC-0101',origem:'medico',label:'Dr. Carlos Vieira (Médico)',status:'ok',ts:'2025-04-01 14:22',texto:'Manter losartana 50mg. Dieta DASH, 150min/semana exercício aeróbico. Retorno mensal com PA e perfil lipídico. Estratificação de risco cardiovascular por Framingham.'},
@@ -1126,13 +1126,13 @@ document.getElementById('valSrch').addEventListener('input',e=>{vSrch=e.target.v
    FLUXO VALIDAÇÃO
    ══════════════════════════════════════════════════════ */
 
-/* MODAL 1: Embedding + 2 planos grandes */
+/* MODAL 1: Base do Conhecimento + 2 planos grandes */
 function openValVis(fid){
   const row=FILA.find(r=>r.fid===fid); if(!row) return;
   const emb=EMBS.find(e=>e.id===row.embId); if(!emb) return;
   curValEmb=emb;
 
-  document.getElementById('vvTitle').textContent=`Embedding ${emb.id} — ${emb.esp}`;
+  document.getElementById('vvTitle').textContent=`Base do Conhecimento ${emb.id} — ${emb.esp}`;
   document.getElementById('vvSub').textContent=`${emb.modelo} · ${emb.dim} dimensões · Criado: ${emb.criado}`;
 
   const clr=emb.status==='ativo'?'var(--grn)':'var(--warn)';
@@ -1235,7 +1235,7 @@ function openMain(fid){
   document.getElementById('mMainType').className=typeCls;
   document.getElementById('mMainType').textContent=row.status==='atualizar'?'A atualizar':row.status==='atualizado'?'Atualizado':row.status==='em-atualizacao'?'Em atualização':'Reprovado';
   document.getElementById('mMainTitle').textContent=`${row.cod} — ${row.condicao}`;
-  document.getElementById('mMainSub').textContent=`Plano: ${row.pidAlvo} · Embedding: ${row.embId} · Solicitante: ${row.med.nome}`;
+  document.getElementById('mMainSub').textContent=`Plano: ${row.pidAlvo} · Base do Conhecimento: ${row.embId} · Solicitante: ${row.med.nome}`;
   document.getElementById('metaStrip').innerHTML=`
     <div class="ms-item"><div class="ms-lbl">Cód. Regra</div><div class="ms-val acc">${row.cod}</div></div>
     <div class="ms-item"><div class="ms-lbl">Condição Clínica</div><div class="ms-val">${row.condicao}</div></div>
@@ -1375,7 +1375,7 @@ function doReprovar(){
 function openEmbRef(){
   if(!curRow) return;
   const emb=EMBS.find(e=>e.id===curRow.embId); if(!emb) return;
-  document.getElementById('embRTitle').textContent=`Embedding ${emb.id}`;
+  document.getElementById('embRTitle').textContent=`Base do Conhecimento ${emb.id}`;
   document.getElementById('embRSub').textContent=`${emb.modelo} · ${emb.dim}d · ${emb.esp}`;
   document.getElementById('embRMeta').innerHTML=metaGrid(emb);
   document.getElementById('embRText').textContent=emb.texto;
@@ -1384,7 +1384,7 @@ function openEmbRef(){
 
 function openEmbRefFromVal(){
   if(!curValEmb) return;
-  document.getElementById('embRTitle').textContent=`Embedding ${curValEmb.id}`;
+  document.getElementById('embRTitle').textContent=`Base do Conhecimento ${curValEmb.id}`;
   document.getElementById('embRSub').textContent=`${curValEmb.modelo} · ${curValEmb.dim}d · ${curValEmb.esp}`;
   document.getElementById('embRMeta').innerHTML=metaGrid(curValEmb);
   document.getElementById('embRText').textContent=curValEmb.texto;
@@ -1423,7 +1423,7 @@ function openPlanoView(embId,pid,plano){
     <div class="plano-view-meta-item"><div style="font-size:10px;color:var(--dim);margin-bottom:4px">Origem</div><div style="font-size:13px;font-weight:600;color:var(--txt)">${plano?plano.label:'—'}</div></div>
     <div class="plano-view-meta-item"><div style="font-size:10px;color:var(--dim);margin-bottom:4px">Última atualização</div><div style="font-size:13px;font-family:var(--mono);color:var(--txt)">${plano?plano.ts:'—'}</div></div>
     <div class="plano-view-meta-item"><div style="font-size:10px;color:var(--dim);margin-bottom:4px">Status</div><div style="font-size:13px;font-weight:600;color:var(--grn)">✓ Sem pendências</div></div>
-    <div class="plano-view-meta-item"><div style="font-size:10px;color:var(--dim);margin-bottom:4px">Embedding</div><div style="font-size:13px;font-family:var(--mono);color:var(--mut)">${embId}</div></div>`;
+    <div class="plano-view-meta-item"><div style="font-size:10px;color:var(--dim);margin-bottom:4px">Base do Conhecimento</div><div style="font-size:13px;font-family:var(--mono);color:var(--mut)">${embId}</div></div>`;
 
   const planos=PLANOS_EMB[embId]||[];
   const dropdown=document.getElementById('pvPlanoDropdown');
@@ -1465,7 +1465,7 @@ function toggleEditPlanoView(){
 }
 
 /* ══════════════════════════════════════════════════════
-   EMBEDDINGS — COMPORTAMENTO ORIGINAL
+   BASES DO CONHECIMENTO — COMPORTAMENTO ORIGINAL
    ══════════════════════════════════════════════════════ */
 function renderEmb(){
   const rows=EMBS.filter(e=>{
@@ -1480,7 +1480,7 @@ function renderEmb(){
   const atv=EMBS.filter(e=>e.status==='ativo').length,pend=EMBS.filter(e=>e.status==='pendente-retreino').length;
   const dI=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>`;
   document.getElementById('embCards').innerHTML=`
-    <div class="card"><div class="c-ic ci-p">${dI}</div><div><div class="c-val">${EMBS.length}</div><div class="c-lbl">Total de embeddings</div></div></div>
+    <div class="card"><div class="c-ic ci-p">${dI}</div><div><div class="c-val">${EMBS.length}</div><div class="c-lbl">Total de bases do conhecimento</div></div></div>
     <div class="card"><div class="c-ic ci-g">${dI}</div><div><div class="c-val">${atv}</div><div class="c-lbl">Ativas</div></div></div>
     <div class="card"><div class="c-ic ci-w">${dI}</div><div><div class="c-val">${pend}</div><div class="c-lbl">Pendentes retreino</div></div></div>`;
   document.getElementById('embBody').innerHTML=pg.length===0?'<tr class="empty"><td colspan="6">—</td></tr>'
@@ -1513,7 +1513,7 @@ document.getElementById('embSrch').addEventListener('input',e=>{embSrch=e.target
 function openEmbDet(id){
   const emb=EMBS.find(e=>e.id===id); if(!emb) return;
   curEmb=emb;
-  document.getElementById('edTitle').textContent=`Embedding ${emb.id}`;
+  document.getElementById('edTitle').textContent=`Base do Conhecimento ${emb.id}`;
   document.getElementById('edSub').textContent=`${emb.modelo} · ${emb.dim}d · ${emb.esp}`;
   document.getElementById('edMeta').innerHTML=metaGrid(emb);
   document.getElementById('edText').textContent=emb.texto;
