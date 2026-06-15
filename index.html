@@ -1014,6 +1014,160 @@ condicoesVal.forEach((c) => {
   }
 });
 
+// Enriquecer todos os casos em FILA_BASE com dados clínicos robustos se estiverem ausentes
+const clinData = {
+  'EMB-001': {
+    comorbidades: 'Dislipidemia, Obesidade Leve (IMC 27.8), Sedentarismo.',
+    medicamentos: 'Losartana 50mg/dia, Sinvastatina 20mg/noite.',
+    alergias: 'Nenhuma conhecida.',
+    exames_recentes: 'PA: 148/92 mmHg · Colesterol Total: 232 mg/dL · LDL: 154 mg/dL · Creatinina: 0.95 mg/dL · TFG: 88 mL/min.',
+    ultima_consulta: '2025-04-05',
+    observacoes: 'Paciente relata dores de cabeça ocasionais na região occipital. Nega tabagismo.',
+    idades: ['52a', '58a', '63a', '47a', '61a'],
+    sexos: ['Masculino', 'Feminino']
+  },
+  'EMB-002': {
+    comorbidades: 'HAS, Dislipidemia, Obesidade Grau I (IMC 31.4).',
+    medicamentos: 'Metformina 850mg 2x/dia, Enalapril 10mg/dia.',
+    alergias: 'Nenhuma conhecida.',
+    exames_recentes: 'HbA1c: 8.4% · Glicemia em jejum: 172 mg/dL · Creatinina: 1.1 mg/dL · LDL: 130 mg/dL.',
+    ultima_consulta: '2025-04-12',
+    observacoes: 'Paciente com baixa adesão à dieta recomendada. Relata episódios frequentes de poliúria.',
+    idades: ['48a', '56a', '62a', '51a', '67a'],
+    sexos: ['Feminino', 'Masculino']
+  },
+  'EMB-003': {
+    comorbidades: 'Depressão leve, Síndrome do Intestino Irritável (SII), Insônia Crônica.',
+    medicamentos: 'Amitriptilina 25mg/noite, Paracetamol 500mg SOS.',
+    alergias: 'AINEs (intolerância gástrica).',
+    exames_recentes: 'Hemograma normal · VHS: 14 mm/h · Fator Reumatoide: negativo · TSH: 1.8 mIU/L.',
+    ultima_consulta: '2025-04-20',
+    observacoes: 'Refere fadiga matinal intensa e sono não reparador. Pratica hidroginástica 2x/semana.',
+    idades: ['38a', '44a', '51a', '42a', '59a'],
+    sexos: ['Feminino', 'Feminino', 'Feminino', 'Masculino']
+  },
+  'EMB-004': {
+    comorbidades: 'Rinite Alérgica Persistente, Dermatite Atópica.',
+    medicamentos: 'Budesonida 200mcg 12/12h, Salbutamol spray SOS.',
+    alergias: 'Ácaros, poeira doméstica, dipirona.',
+    exames_recentes: 'Espirometria: distúrbio obstrutivo leve com resposta ao BD · IgE total: 290 UI/mL.',
+    ultima_consulta: '2025-04-22',
+    observacoes: 'Relata uso frequente do broncodilatador de resgate. Sintomas pioram em dias frios.',
+    idades: ['18a', '24a', '31a', '27a', '43a'],
+    sexos: ['Masculino', 'Feminino']
+  },
+  'EMB-005': {
+    comorbidades: 'HAS, Obesidade Grau II (IMC 34.2), Refluxo Gastroesofágico.',
+    medicamentos: 'Amlodipina 5mg/dia, Omeprazol 20mg/dia.',
+    alergias: 'Nenhuma conhecida.',
+    exames_recentes: 'Polissonografia: IAH 28 eventos/hora (moderada) · SatO2 mínima: 80%.',
+    ultima_consulta: '2025-04-18',
+    observacoes: 'Cônjuge relata ronco alto e apneias frequentes. Escala de sonolência de Epworth = 15.',
+    idades: ['45a', '52a', '60a', '57a', '66a'],
+    sexos: ['Masculino', 'Masculino', 'Feminino']
+  },
+  'EMB-006': {
+    comorbidades: 'Dislipidemia leve, Constipação Intestinal.',
+    medicamentos: 'Levotiroxina sódica 75mcg/dia em jejum.',
+    alergias: 'Nenhuma conhecida.',
+    exames_recentes: 'TSH: 7.2 mIU/L · T4 Livre: 0.85 ng/dL · Colesterol Total: 228 mg/dL.',
+    ultima_consulta: '2025-04-26',
+    observacoes: 'Queixa-se de astenia crônica, pele seca e intolerância acentuada ao frio.',
+    idades: ['32a', '41a', '49a', '56a', '63a'],
+    sexos: ['Feminino', 'Feminino', 'Masculino']
+  },
+  'EMB-007': {
+    comorbidades: 'Cefaleia Tensional, Insônia Inicial.',
+    medicamentos: 'Sertralina 50mg/dia, Clonazepam 0.5mg SOS.',
+    alergias: 'Nenhuma conhecida.',
+    exames_recentes: 'Exames laboratoriais normais · Escore GAD-7: 16 (ansiedade grave).',
+    ultima_consulta: '2025-04-29',
+    observacoes: 'Apresenta sintomas persistentes de preocupação e tensão muscular generalizada.',
+    idades: ['26a', '33a', '40a', '48a', '55a'],
+    sexos: ['Feminino', 'Masculino']
+  },
+  'EMB-008': {
+    comorbidades: 'Nenhuma conhecida.',
+    medicamentos: 'Nenhum de uso contínuo.',
+    alergias: 'Penicilina (reação cutânea grave).',
+    exames_recentes: 'VDRL reagente 1/16 · PCR para Clamídia/Gonococo: positivo para Clamídia.',
+    ultima_consulta: '2025-05-02',
+    observacoes: 'Comparece para receber tratamento e orientações sobre prevenção de IST.',
+    idades: ['22a', '29a', '34a', '25a', '38a'],
+    sexos: ['Masculino', 'Feminino']
+  },
+  'EMB-009': {
+    comorbidades: 'HAS, Insuficiência Cardíaca CF II (NYHA), DM2.',
+    medicamentos: 'Rivaroxabana 20mg/dia, Carvedilol 12.5mg 12/12h, Metformina 850mg 2x/dia.',
+    alergias: 'Nenhuma conhecida.',
+    exames_recentes: 'ECG: FA com FC de 82 bpm · ECO: Fração de Ejeção de 48% · Urina: normal.',
+    ultima_consulta: '2025-05-05',
+    observacoes: 'Paciente estável, relata fadiga aos esforços moderados. Escore CHA2DS2-VASc = 5.',
+    idades: ['68a', '72a', '79a', '65a', '83a'],
+    sexos: ['Masculino', 'Feminino']
+  },
+  'EMB-010': {
+    comorbidades: 'Bruxismo, Distimia Leve.',
+    medicamentos: 'Amitriptilina 25mg à noite, Ibuprofeno 600mg nas crises.',
+    alergias: 'Dipirona (induz vômitos).',
+    exames_recentes: 'RM de Crânio normal · Diário de cefaleia registra 16 dias de dor no último mês.',
+    ultima_consulta: '2025-05-08',
+    observacoes: 'Dor com características pulsáteis, associada a náuseas e fotofobia moderada.',
+    idades: ['23a', '30a', '38a', '45a', '52a'],
+    sexos: ['Feminino', 'Feminino', 'Masculino']
+  },
+  'EMB-011': {
+    comorbidades: 'Ansiedade situacional, Intolerância a Lactose.',
+    medicamentos: 'Brometo de pinavério 50mg 3x/dia.',
+    alergias: 'Nenhuma conhecida.',
+    exames_recentes: 'Colonoscopia: normal · Parasitológico de fezes: negativo.',
+    ultima_consulta: '2025-05-12',
+    observacoes: 'Apresenta distensão abdominal crônica e alternância do hábito intestinal.',
+    idades: ['28a', '35a', '42a', '47a', '51a'],
+    sexos: ['Feminino', 'Masculino']
+  },
+  'EMB-012': {
+    comorbidades: 'HAS de longa data, Diabetes Mellitus Tipo 2.',
+    medicamentos: 'Enalapril 20mg 12/12h, Furosemida 40mg/dia, Insulina NPH.',
+    alergias: 'Nenhuma conhecida.',
+    exames_recentes: 'Creatinina: 1.9 mg/dL · TFGe: 34 mL/min · Relação Albumina/Creatinina: 210 mg/g.',
+    ultima_consulta: '2025-05-15',
+    observacoes: 'Doença Renal Crônica estágio 3b em acompanhamento conjunto com nefrologia.',
+    idades: ['58a', '64a', '71a', '76a', '82a'],
+    sexos: ['Masculino', 'Feminino']
+  }
+};
+
+FILA_BASE.forEach(r => {
+  if (!r.caso) r.caso = {};
+  const c = r.caso;
+  const defaults = clinData[r.embId] || clinData['EMB-001'];
+  
+  if (!c.idade) {
+    if (c.paciente && c.paciente.includes(',')) {
+      const parts = c.paciente.split(',');
+      c.paciente = parts[0].trim();
+      c.idade = parts[1].trim();
+    } else {
+      const idades = defaults.idades;
+      c.idade = idades[r.fid % idades.length];
+    }
+  }
+  if (!c.sexo) {
+    const sexos = defaults.sexos;
+    c.sexo = sexos[r.fid % sexos.length];
+  }
+  if (!c.prontuario) {
+    c.prontuario = `PRN-${String(10000 + r.fid).padStart(5, '0')}`;
+  }
+  if (!c.comorbidades) c.comorbidades = defaults.comorbidades;
+  if (!c.medicamentos) c.medicamentos = defaults.medicamentos;
+  if (!c.alergias) c.alergias = defaults.alergias;
+  if (!c.exames_recentes) c.exames_recentes = defaults.exames_recentes;
+  if (!c.ultima_consulta) c.ultima_consulta = defaults.ultima_consulta;
+  if (!c.observacoes) c.observacoes = defaults.observacoes;
+});
+
 // Agrupar por embId + pidAlvo para gerar códigos relativos VAL-1 a VAL-N por plano
 const gruposPorPlano = {};
 FILA_BASE.forEach(r => {
