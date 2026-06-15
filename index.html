@@ -383,7 +383,7 @@ textarea.edit-ta:focus{border-color:var(--acc)}
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
           Informações da Base do Conhecimento
         </div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px" id="vvMetaGrid"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px" id="vvMetaGrid"></div>
         <div style="font-size:10px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Resumo da Regra</div>
         <div style="font-size:13px;line-height:1.7;color:var(--txt);background:var(--pur-bg);border:1px solid var(--pur-br);border-left:3px solid var(--pur);border-radius:var(--rs);padding:14px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden" id="vvContexto"></div>
         <button class="btn btn-outline-pur" style="margin-top:10px;font-size:12px;padding:6px 14px" onclick="openEmbRefFromVal()">
@@ -405,7 +405,7 @@ textarea.edit-ta:focus{border-color:var(--acc)}
     <div class="mfoot">
       <button class="btn btn-ghost" onclick="closeOv('ovValVis')">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-        Fechar
+        Voltar
       </button>
     </div>
   </div>
@@ -429,10 +429,24 @@ textarea.edit-ta:focus{border-color:var(--acc)}
       </div>
       <button class="xbtn" onclick="closeOv('ovValLista')">&#215;</button>
     </div>
+    
+    <!-- Filtros na lista de solicitações -->
+    <div class="toolbar" style="padding: 14px 24px 0; margin-bottom: 0; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+      <div class="srch" style="flex: 1; min-width: 200px; position: relative;">
+        <svg style="position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--dim); pointer-events: none;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input id="vlSrch" placeholder="Buscar por código, médico ou trecho..." oninput="filterVlList()" style="width: 100%; padding: 8px 12px 8px 36px; border-radius: var(--r); border: 1px solid var(--bdr); font-family: var(--font); font-size: 13px; outline: none; transition: border-color 0.2s;">
+      </div>
+      <button class="fbtn on" id="vlf-all" onclick="setVlFilter('all')">Todos</button>
+      <button class="fbtn" id="vlf-atualizar" onclick="setVlFilter('atualizar')"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--warn);margin-right:5px"></span>A atualizar</button>
+      <button class="fbtn" id="vlf-em" onclick="setVlFilter('em')"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--acc);margin-right:5px"></span>Em atualização</button>
+      <button class="fbtn" id="vlf-atualizado" onclick="setVlFilter('atualizado')"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--grn);margin-right:5px"></span>Atualizado</button>
+      <button class="fbtn" id="vlf-reprovado" onclick="setVlFilter('reprovado')"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--red);margin-right:5px"></span>Reprovado</button>
+    </div>
+
     <div class="val-list-header">
       <div class="val-list-title" id="vlCount"></div>
       <div class="val-dropdown-wrap" id="vlDropdownWrap" style="display:none">
-        <select class="val-dropdown-select" id="vlDropdown" onchange="scrollToValItem(this.value)"></select>
+        <select class="val-dropdown-select" id="vlDropdown" onchange="updateVlList()"></select>
         <svg class="val-dropdown-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>
       </div>
     </div>
@@ -472,7 +486,7 @@ textarea.edit-ta:focus{border-color:var(--acc)}
         </div>
         <button class="btn btn-outline-pur" style="border-color:var(--teal-br);color:var(--teal);background:var(--sur);padding:6px 12px;font-size:12px" onclick="openCaso()">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          Visualizar Prontuário
+          Prontuário
         </button>
       </div>
 
@@ -517,7 +531,7 @@ textarea.edit-ta:focus{border-color:var(--acc)}
 
 <!-- ══ MODAL BASE DO CONHECIMENTO REF (l3 - dentro da validação) ══ -->
 <div class="ov l3" id="ovEmb">
-  <div class="modal sm">
+  <div class="modal xl">
     <div class="mh">
       <div class="mh-l">
         <div class="mtype mt-emb">
@@ -529,7 +543,7 @@ textarea.edit-ta:focus{border-color:var(--acc)}
       <button class="xbtn" onclick="closeOv('ovEmb')">&#215;</button>
     </div>
     <div style="padding:20px 24px;overflow-y:auto;flex:1">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px" id="embRMeta"></div>
+      <div style="display:grid;grid-template-columns:repeat(4, 1fr);gap:12px;margin-bottom:16px" id="embRMeta"></div>
       <div class="req-sec-lbl" style="margin-bottom:8px">Resumo da Regra</div>
       <div style="font-size:13px;line-height:1.75;color:var(--txt);background:var(--pur-bg);border:1px solid var(--pur-br);border-left:3px solid var(--pur);border-radius:var(--rs);padding:16px" id="embRText"></div>
     </div>
@@ -539,12 +553,12 @@ textarea.edit-ta:focus{border-color:var(--acc)}
 
 <!-- ══ MODAL CASO CLÍNICO (l3) ══ -->
 <div class="ov l3" id="ovCaso">
-  <div class="modal sm">
+  <div class="modal xl">
     <div class="mh">
       <div class="mh-l">
         <div class="mtype" style="background:var(--teal-bg);color:var(--teal);border:1px solid var(--teal-br)">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          Caso Clínico
+          Prontuário do Paciente
         </div>
         <div><div class="mtitle" id="casoTitle"></div><div class="msub" id="casoSub"></div></div>
       </div>
@@ -585,7 +599,7 @@ textarea.edit-ta:focus{border-color:var(--acc)}
     <div class="mfoot">
       <button class="btn btn-ghost" onclick="closeOv('ovPlanoView')">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-        Fechar
+        Voltar
       </button>
       <div class="sep"></div>
       <button class="btn btn-outline-acc" id="pvBtnEditar" onclick="toggleEditPlanoView()">
@@ -600,7 +614,7 @@ textarea.edit-ta:focus{border-color:var(--acc)}
      BASES DO CONHECIMENTO: MODAL DETALHES (original)
      ══════════════════════════════════════════════════════ -->
 <div class="ov" id="ovEmbDet">
-  <div class="modal sm">
+  <div class="modal xl">
     <div class="mh">
       <div class="mh-l">
         <div class="mtype mt-emb">
@@ -612,7 +626,7 @@ textarea.edit-ta:focus{border-color:var(--acc)}
       <button class="xbtn" onclick="closeOv('ovEmbDet')">&#215;</button>
     </div>
     <div style="padding:20px 24px;overflow-y:auto;flex:1">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px" id="edMeta"></div>
+      <div style="display:grid;grid-template-columns:repeat(4, 1fr);gap:12px;margin-bottom:16px" id="edMeta"></div>
       <div class="req-sec-lbl" style="margin-bottom:8px">Resumo da Regra</div>
       <div style="font-size:13px;line-height:1.75;color:var(--txt);background:var(--pur-bg);border:1px solid var(--pur-br);border-left:3px solid var(--pur);border-radius:var(--rs);padding:16px" id="edText"></div>
     </div>
@@ -637,7 +651,7 @@ textarea.edit-ta:focus{border-color:var(--acc)}
       <button class="xbtn" onclick="closeOv('ovPlanos')">&#215;</button>
     </div>
     <div class="p4grid" style="padding:20px 24px;overflow-y:auto;flex:1" id="plGrid"></div>
-    <div class="mfoot"><button class="btn btn-ghost" onclick="closeOv('ovPlanos')">Fechar</button></div>
+    <div class="mfoot"><button class="btn btn-ghost" onclick="closeOv('ovPlanos')">Voltar</button></div>
   </div>
 </div>
 
@@ -803,88 +817,88 @@ const FILA_BASE = [
    med:{nome:'Dr. Rafael Costa',crm:'SP-112233',data:'2025-04-10 14:32',ini:'RC'},
    trecho:'Aumentar losartana para 100mg imediatamente',
    modificacao:'Substituir escalonamento imediato por adjustment gradual em 4 semanas com monitoramento de PA. Incluir estratificação de risco por Framingham antes de qualquer modificação farmacológica.',
-   caso:{paciente:'João Mendes, 58a',prontuario:'PRN-00342',queixa:'PA = 158/96 mmHg em consulta de rotina.',diagnostico:'HAS Estágio 2 com risco cardiovascular moderado.',conduta_atual:'Losartana 50mg/dia há 3 meses.'}},
+   caso:{paciente:'João Mendes',idade:'58a',sexo:'Masculino',prontuario:'PRN-00342',queixa:'PA = 158/96 mmHg em consulta de rotina.',diagnostico:'HAS Estágio 2 com risco cardiovascular moderado.',conduta_atual:'Losartana 50mg/dia há 3 meses.',comorbidades:'Sobrepeso (IMC 27,4), dislipidemia leve.',medicamentos:'Losartana 50mg, AAS 100mg.',alergias:'Nenhuma conhecida.',exames_recentes:'PA: 158/96 mmHg · Creatinina: 0,9 mg/dL · Colesterol total: 214 mg/dL',ultima_consulta:'2025-03-28',observacoes:'Nega tabagismo, pratica caminhada 2x/semana.'}},
   {fid:2,cod:'VAL-002',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-01-10 09:00',
    med:{nome:'Enf. Patrícia Luz',crm:'COREN-SP-445566',data:'2025-04-14 10:00',ini:'PL'},
    trecho:'Iniciar estatina sem perfil lipídico prévio',
    modificacao:'Exigir perfil lipídico completo antes de qualquer prescrição de estatina. Incluir avaliação de função hepática basal.',
-   caso:{paciente:'Maria Souza, 62a',prontuario:'PRN-00519',queixa:'Hipertensa há 5 anos, sem acompanhamento regular.',diagnostico:'HAS grau II não controlada.',conduta_atual:'Amlodipina 5mg/dia sem ajuste há 18 meses.'}},
+   caso:{paciente:'Maria Souza',idade:'62a',sexo:'Feminino',prontuario:'PRN-00519',queixa:'Hipertensa há 5 anos, sem acompanhamento regular.',diagnostico:'HAS grau II não controlada.',conduta_atual:'Amlodipina 5mg/dia sem ajuste há 18 meses.',comorbidades:'Obesidade grau I, pré-diabetes.',medicamentos:'Amlodipina 5mg.',alergias:'Penicilina (erupção cutânea).',exames_recentes:'PA: 162/98 mmHg · Glicemia em jejum: 112 mg/dL · Creatinina: 1,1 mg/dL',ultima_consulta:'2025-03-15',observacoes:'Tabagista (15 cigarros/dia), sedentária, relata tontura ocasional.'}},
   {fid:3,cod:'VAL-003',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-02-01 10:00',
    med:{nome:'Dr. Antônio Silva',crm:'SP-998877',data:'2025-04-20 09:00',ini:'AS'},
    trecho:'Exercício sem avaliação cardíaca',
    modificacao:'Incluir avaliação cardiológica prévia com ergometria para pacientes hipertensos acima de 50 anos antes de prescrever atividade física de intensidade moderada a alta.',
-   caso:{paciente:'Pedro Albuquerque, 54a',prontuario:'PRN-00601',queixa:'Hipertensão de difícil controle.',diagnostico:'HAS estágio 1 com obesidade.',conduta_atual:'Losartana + hidroclorotiazida.'}},
+   caso:{paciente:'Pedro Albuquerque',idade:'54a',sexo:'Masculino',prontuario:'PRN-00601',queixa:'Hipertensão de difícil controle.',diagnostico:'HAS estágio 1 com obesidade.',conduta_atual:'Losartana + hidroclorotiazida.',comorbidades:'Obesidade grau II (IMC 33,2), apneia do sono leve.',medicamentos:'Losartana 100mg, HCTZ 25mg.',alergias:'Nenhuma conhecida.',exames_recentes:'PA: 150/92 mmHg · IMC: 33,2 · TSH normal',ultima_consulta:'2025-04-12',observacoes:'Refere roncos noturnos. Encaminhado para avaliação do sono.'}},
   {fid:4,cod:'VAL-004',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-02-10 11:00',
    med:{nome:'Dra. Luciana Freitas',crm:'RJ-556677',data:'2025-04-25 14:30',ini:'LF'},
    trecho:'Retorno em 90 dias sem monitoramento',
    modificacao:'Reduzir intervalo de retorno para 30 dias em pacientes com HAS não controlada. Incluir telemonitoramento domiciliar de PA como complemento.',
-   caso:{paciente:'Carla Mendes, 47a',prontuario:'PRN-00712',queixa:'Cefaleia occipital frequente, PA variável.',diagnostico:'HAS estágio 2 com síndrome metabólica.',conduta_atual:'Nifedipina 30mg retard.'}},
+   caso:{paciente:'Carla Mendes',idade:'47a',sexo:'Feminino',prontuario:'PRN-00712',queixa:'Cefaleia occipital frequente, PA variável.',diagnostico:'HAS estágio 2 com síndrome metabólica.',conduta_atual:'Nifedipina 30mg retard.',comorbidades:'Síndrome metabólica, glicemia limítrofe, dislipidemia mista.',medicamentos:'Nifedipina 30mg, Atorvastatina 20mg.',alergias:'AINEs (broncoespasmo).',exames_recentes:'PA: 156/97 mmHg · Triglicérides: 192 mg/dL · Glicemia: 108 mg/dL',ultima_consulta:'2025-04-18',observacoes:'IMC 29,1. Histórico familiar de DCV. Nega tabagismo.'}},
   {fid:5,cod:'VAL-005',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-02-20 08:00',
    med:{nome:'Dr. Marcos Pereira',crm:'MG-334455',data:'2025-05-01 10:00',ini:'MP'},
    trecho:'Sem estratificação de risco cardiovascular',
    modificacao:'Incluir obrigatoriamente o escore de Framingham antes de definir intensidade terapêutica. Adicionar campo de risco calculado ao plano.',
-   caso:{paciente:'Roberto Farias, 61a',prontuario:'PRN-00830',queixa:'Dor precordial leve, dispneia a esforço moderado.',diagnostico:'HAS + suspeita de cardiopatia isquêmica.',conduta_atual:'Captopril 25mg 2x/dia.'}},
+   caso:{paciente:'Roberto Farias',idade:'61a',sexo:'Masculino',prontuario:'PRN-00830',queixa:'Dor precordial leve, dispneia a esforço moderado.',diagnostico:'HAS + suspeita de cardiopatia isquêmica.',conduta_atual:'Captopril 25mg 2x/dia.',comorbidades:'Tabagismo 30 anos (ex-tabagista há 2 anos), dislipidemia.',medicamentos:'Captopril 25mg 2x/dia, Sinvastatina 40mg.',alergias:'Nenhuma conhecida.',exames_recentes:'PA: 148/90 mmHg · ECG: S-T discretamente alterado · LDL: 138 mg/dL',ultima_consulta:'2025-04-25',observacoes:'Aguarda agendamento de cintilografia miocárdica. Framingham: risco intermediário.'}},
   {fid:6,cod:'VAL-006',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-03-01 09:00',
    med:{nome:'Dra. Ana Beatriz Costa',crm:'SP-112200',data:'2025-05-05 11:00',ini:'AB'},
    trecho:'Sem orientação sobre AMPA',
    modificacao:'Incluir orientação sobre Automonitorização da Pressão Arterial (AMPA) com registro em diário para todos os pacientes hipertensos.',
-   caso:{paciente:'Fernanda Lima, 52a',prontuario:'PRN-00944',queixa:'Hipertensão de consultório vs. normotensão domiciliar.',diagnostico:'Hipertensão do avental branco confirmada.',conduta_atual:'Em avaliação sem medicamento.'}},
+   caso:{paciente:'Fernanda Lima',idade:'52a',sexo:'Feminino',prontuario:'PRN-00944',queixa:'Hipertensão de consultório vs. normotensão domiciliar.',diagnostico:'Hipertensão do avental branco confirmada.',conduta_atual:'Em avaliação sem medicamento.',comorbidades:'Ansiedade situacional, enxaqueca crônica.',medicamentos:'Bromazepam 1,5mg SOS, Propranolol 20mg para enxaqueca.',alergias:'Sulfa.',exames_recentes:'MRPA: média 127/81 mmHg domiciliar · ECG normal · Cr: 0,8 mg/dL',ultima_consulta:'2025-05-02',observacoes:'Profissional da saúde, alta exposição ao estresse. MRPA confirmou diferença consultório vs. domicílio.'}},
   {fid:7,cod:'VAL-007',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-03-10 10:00',
    med:{nome:'Dr. Henrique Moura',crm:'BA-778899',data:'2025-05-08 09:30',ini:'HM'},
    trecho:'Sem avaliação de órgão-alvo',
    modificacao:'Adicionar avaliação anual de órgão-alvo: ECG, ecocardiograma, fundoscopia e microalbuminúria em todos os hipertensos com mais de 2 anos de diagnóstico.',
-   caso:{paciente:'Juliana Santos, 58a',prontuario:'PRN-01055',queixa:'Hipertensão de longa data, refratária.',diagnostico:'HAS grau III com suspeita de HVE.',conduta_atual:'Anlodipino + enalapril + hidroclorotiazida.'}},
+   caso:{paciente:'Juliana Santos',idade:'58a',sexo:'Feminino',prontuario:'PRN-01055',queixa:'Hipertensão de longa data, refratária.',diagnostico:'HAS grau III com suspeita de HVE.',conduta_atual:'Anlodipino + enalapril + hidroclorotiazida.',comorbidades:'HVE (ecocardiograma 2023), intolerância ao exercício.',medicamentos:'Anlodipino 10mg, Enalapril 20mg 2x/dia, HCTZ 25mg.',alergias:'Dipirona (intolerância GI).',exames_recentes:'PA: 172/106 mmHg · ECO: HVE leve · Cr: 1,2 mg/dL',ultima_consulta:'2025-05-06',observacoes:'Refratária a 3 classes de anti-hipertensivos. Encaminhada à cardiologia.'}},
   {fid:8,cod:'VAL-008',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-03-15 14:00',
    med:{nome:'Dr. Claudio Batista',crm:'RS-223344',data:'2025-05-10 10:00',ini:'CB'},
    trecho:'Sem abordagem de comorbidades metabólicas',
    modificacao:'Incluir rastreio e manejo integrado de síndrome metabólica: glicemia, perfil lipídico, circunferência abdominal e IMC como parâmetros obrigatórios.',
-   caso:{paciente:'Maurício Gomes, 49a',prontuario:'PRN-01167',queixa:'HAS + obesidade + glicemia elevada.',diagnostico:'HAS + pré-diabetes + dislipidemia.',conduta_atual:'Apenas anti-hipertensivo, sem abordagem metabólica.'}},
+   caso:{paciente:'Maurício Gomes',idade:'49a',sexo:'Masculino',prontuario:'PRN-01167',queixa:'HAS + obesidade + glicemia elevada.',diagnostico:'HAS + pré-diabetes + dislipidemia.',conduta_atual:'Apenas anti-hipertensivo, sem abordagem metabólica.',comorbidades:'Obesidade grau II, pré-diabetes, esteatose hepática.',medicamentos:'Losartana 50mg.',alergias:'Nenhuma conhecida.',exames_recentes:'PA: 145/88 mmHg · Glicemia: 116 mg/dL · TGO/TGP elevados · IMC: 34',ultima_consulta:'2025-05-08',observacoes:'IMC 34. Circunferência abdominal 102cm. Sem mudanças de estilo de vida até o momento.'}},
   {fid:9,cod:'VAL-009',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-03-20 09:00',
    med:{nome:'Dra. Patricia Nascimento',crm:'SP-556699',data:'2025-05-12 14:00',ini:'PN'},
    trecho:'Sem orientação nutricional formal',
    modificacao:'Incluir encaminhamento obrigatório à nutrição para orientação da dieta DASH com metas específicas de sódio (<2g/dia) e potássio (>4,7g/dia).',
-   caso:{paciente:'Silvia Ramos, 55a',prontuario:'PRN-01289',queixa:'HAS associada a dieta hipersódica reconhecida.',diagnostico:'HAS estágio 1, responsiva a dieta.',conduta_atual:'Medicamento suspenso após mudança alimentar parcial.'}},
+   caso:{paciente:'Silvia Ramos',idade:'55a',sexo:'Feminino',prontuario:'PRN-01289',queixa:'HAS associada a dieta hipersódica reconhecida.',diagnostico:'HAS estágio 1, responsiva a dieta.',conduta_atual:'Medicamento suspenso após mudança alimentar parcial.',comorbidades:'Sobrepeso, uso de AINE crônico por artrose.',medicamentos:'Nenhum atualmente (suspendeu anti-hipertensivo).',alergias:'Nenhuma conhecida.',exames_recentes:'PA: 138/86 mmHg · Sódio urinário: 220 mEq/dia · Creatinina: 0,9 mg/dL',ultima_consulta:'2025-05-10',observacoes:'Boa adesão à dieta DASH parcial. Uso frequente de AINEs pode estar elevando a PA.'}},
   {fid:10,cod:'VAL-010',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-03-25 10:00',
    med:{nome:'Dr. Eduardo Teixeira',crm:'MG-443322',data:'2025-05-14 11:30',ini:'ET'},
    trecho:'Sem avaliação de adesão ao tratamento',
    modificacao:'Adicionar aplicação de escala de Morisky (MMAS-8) a cada consulta para avaliação padronizada de adesão terapêutica.',
-   caso:{paciente:'Alexandre Barros, 63a',prontuario:'PRN-01400',queixa:'HAS sem controle apesar de medicação prescrita.',diagnostico:'HAS grau II, suspeita de não-adesão.',conduta_atual:'Três anti-hipertensivos prescritos, PA ainda 160/100.'}},
+   caso:{paciente:'Alexandre Barros',idade:'63a',sexo:'Masculino',prontuario:'PRN-01400',queixa:'HAS sem controle apesar de medicação prescrita.',diagnostico:'HAS grau II, suspeita de não-adesão.',conduta_atual:'Três anti-hipertensivos prescritos, PA ainda 160/100.',comorbidades:'Tabagismo ativo, diabetes mellitus tipo 2.',medicamentos:'Losartana 100mg, Anlodipino 10mg, HCTZ 25mg, Metformina 850mg 2x/dia.',alergias:'Nenhuma conhecida.',exames_recentes:'PA: 162/101 mmHg · HbA1c: 7,8% · Creatinina: 1,3 mg/dL',ultima_consulta:'2025-05-12',observacoes:'MMAS-8 indicou baixa adesão. Relata esquecer medicamentos rotineiramente.'}},
   {fid:11,cod:'VAL-011',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-04-01 09:00',
    med:{nome:'Dra. Isabela Cunha',crm:'SP-667788',data:'2025-05-16 10:00',ini:'IC'},
    trecho:'Sem rastreio de hipertensão secundária',
    modificacao:'Em casos de HAS refratária ou de início precoce (<40 anos), incluir investigação de causas secundárias: aldosteronismo primário, estenose de artéria renal, apneia do sono.',
-   caso:{paciente:'Gabriel Oliveira, 32a',prontuario:'PRN-01511',queixa:'HAS grave de início súbito, jovem.',diagnostico:'HAS severa em paciente jovem, sem factor de risco óbvio.',conduta_atual:'Dois anti-hipertensivos sem investigação etiológica.'}},
+   caso:{paciente:'Gabriel Oliveira',idade:'32a',sexo:'Masculino',prontuario:'PRN-01511',queixa:'HAS grave de início súbito, jovem.',diagnostico:'HAS severa em paciente jovem, sem factor de risco óbvio.',conduta_atual:'Dois anti-hipertensivos sem investigação etiológica.',comorbidades:'Nenhuma conhecida. Atleta amador.',medicamentos:'Enalapril 20mg, Anlodipino 5mg.',alergias:'Nenhuma conhecida.',exames_recentes:'PA: 176/108 mmHg · Aldosterona/Renina elevado · Ultrassom renal: normal',ultima_consulta:'2025-05-14',observacoes:'Aldosteronismo primário em investigação. TC de adrenal solicitada.'}},
   {fid:12,cod:'VAL-012',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-04-05 10:00',
    med:{nome:'Dr. Leonardo Carvalho',crm:'BA-991100',data:'2025-05-18 09:00',ini:'LC'},
    trecho:'Sem abordagem de estresse e saúde mental',
    modificacao:'Incluir avaliação de fatores psicossociais e de estresse crônico com encaminhamento para psicologia/psiquiatria quando identificados como fator contribuinte.',
-   caso:{paciente:'Beatriz Alves, 44a',prontuario:'PRN-01633',queixa:'HAS com piora em períodos de estresse ocupacional.',diagnostico:'HAS associada a transtorno de ansiedade.',conduta_atual:'Anti-hipertensivo sem abordagem psicossocial.'}},
+   caso:{paciente:'Beatriz Alves',idade:'44a',sexo:'Feminino',prontuario:'PRN-01633',queixa:'HAS com piora em períodos de estresse ocupacional.',diagnostico:'HAS associada a transtorno de ansiedade.',conduta_atual:'Anti-hipertensivo sem abordagem psicossocial.',comorbidades:'Transtorno de ansiedade generalizada (TAG), insônia crônica.',medicamentos:'Losartana 50mg, Escitalopram 10mg.',alergias:'Nenhuma conhecida.',exames_recentes:'PA: 146/90 mmHg · GAD-7: 12 (moderado) · Cortisol matinal: normal',ultima_consulta:'2025-05-16',observacoes:'Psicóloga particular 1x/semana. Solicita licença do trabalho frequentemente.'}},
   {fid:13,cod:'VAL-013',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-04-10 11:00',
    med:{nome:'Dra. Viviane Rocha',crm:'RJ-778822',data:'2025-05-19 14:30',ini:'VR'},
    trecho:'Sem metas de PA individualizadas',
    modificacao:'Definir metas de PA individualizadas conforme perfil: <130/80 mmHg para DM ou DRC; <140/90 para idosos frágeis.',
-   caso:{paciente:'Sônia Ferreira, 78a',prontuario:'PRN-01754',queixa:'HAS em idosa com múltiplas comorbidades.',diagnostico:'HAS + DM2 + DRC estágio 3.',conduta_atual:'Meta de PA não individualizada no prontuário.'}},
+   caso:{paciente:'Sônia Ferreira',idade:'78a',sexo:'Feminino',prontuario:'PRN-01754',queixa:'HAS em idosa com múltiplas comorbidades.',diagnostico:'HAS + DM2 + DRC estágio 3.',conduta_atual:'Meta de PA não individualizada no prontuário.',comorbidades:'DM2 há 12 anos, DRC estágio 3, hipotireoidismo, osteoporose.',medicamentos:'Enalapril 10mg, Metformina 500mg (dose reduzida), Levotiroxina 50mcg, Cálcio + VitD.',alergias:'Captopril (tosse seca).',exames_recentes:'PA: 148/86 mmHg · TFGe: 42 mL/min · HbA1c: 7,2% · TSH normal',ultima_consulta:'2025-05-17',observacoes:'Frágil, risco de quedas elevado. Meta PA individualizada indicada (<140/90 mmHg).'}},
   {fid:14,cod:'VAL-014',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-04-15 09:00',
    med:{nome:'Dr. Thiago Moreira',crm:'SP-334411',data:'2025-05-20 10:00',ini:'TM'},
    trecho:'Sem programa de cessação tabágica',
    modificacao:'Para pacientes tabagistas, incluir protocolo de cessação tabágica com terapia de reposição nicotínica e/ou vareniclina, além de suporte psicológico.',
-   caso:{paciente:'Carlos Eduardo, 51a',prontuario:'PRN-01876',queixa:'HAS + tabagismo ativo (20 cigarros/dia).',diagnostico:'HAS estágio 2 com risco cardiovascular alto por tabagismo.',conduta_atual:'Anti-hipertensivo sem abordagem do tabagismo.'}},
+   caso:{paciente:'Carlos Eduardo',idade:'51a',sexo:'Masculino',prontuario:'PRN-01876',queixa:'HAS + tabagismo ativo (20 cigarros/dia).',diagnostico:'HAS estágio 2 com risco cardiovascular alto por tabagismo.',conduta_atual:'Anti-hipertensivo sem abordagem do tabagismo.',comorbidades:'Tabagismo pesado (carga: 30 anos-maço), bronquite crônica leve.',medicamentos:'Atenolol 50mg, AAS 100mg.',alergias:'Nenhuma conhecida.',exames_recentes:'PA: 158/98 mmHg · Espirometria: CVF 78% · Rx tórax: normal',ultima_consulta:'2025-05-19',observacoes:'Motivado a parar de fumar após diagnóstico de HAS. Encaminhado para grupo de cessação.'}},
   {fid:15,cod:'VAL-015',condicao:'Hipertensão Arterial Sistêmica',embId:'EMB-001',pidAlvo:'PC-0102',criacao:'2025-04-20 10:00',
    med:{nome:'Dra. Renata Azevedo',crm:'MG-112233',data:'2025-05-21 11:00',ini:'RA'},
    trecho:'Sem monitoramento de função renal',
    modificacao:'Incluir creatinina sérica, TFGe e relação albumina/creatinina urinária a cada 6 meses para todos os hipertensos em uso de IECA ou BRA.',
-   caso:{paciente:'Rita Santos, 65a',prontuario:'PRN-01999',queixa:'HAS de longa data em uso de enalapril.',diagnostico:'HAS com DRC incipiente não detectada.',conduta_atual:'Enalapril sem monitoramento renal por 2 anos.'}},
+   caso:{paciente:'Rita Santos',idade:'65a',sexo:'Feminino',prontuario:'PRN-01999',queixa:'HAS de longa data em uso de enalapril.',diagnostico:'HAS com DRC incipiente não detectada.',conduta_atual:'Enalapril sem monitoramento renal por 2 anos.',comorbidades:'DRC estágio 2 (TFGe 68), proteinúria leve.',medicamentos:'Enalapril 10mg 2x/dia, Furosemida 40mg.',alergias:'Nenhuma conhecida.',exames_recentes:'PA: 144/88 mmHg · Creatinina: 1,4 mg/dL · TFGe: 68 · Albumin/Creatinina: 52 mg/g',ultima_consulta:'2025-05-20',observacoes:'Microproteinúria detectada em exame recente. Sem monitoramento renal nos últimos 24 meses.'}},
   /* EMB-002 · PC-0202 */
   {fid:16,cod:'RGR-DM2-001',condicao:'Diabetes Mellitus Tipo 2',embId:'EMB-002',pidAlvo:'PC-0202',criacao:'2025-01-15 10:00',
    med:{nome:'Dra. Helena Matos',crm:'RJ-234567',data:'2025-04-18 09:30',ini:'HM'},
    trecho:'Reduzir metformina para 500mg',
    modificacao:'Manter metformina 850mg 2x/dia conforme ADA 2024. Incluir avaliação de TFG antes de qualquer ajuste de dose.',
-   caso:{paciente:'Carlos Ferreira, 55a',prontuario:'PRN-00781',queixa:'DM2 há 8 anos. HbA1c = 8,2%.',diagnostico:'DM2 descompensada com intolerância leve à metformina.',conduta_atual:'Metformina 850mg 2x/dia.'}},
+   caso:{paciente:'Carlos Ferreira',idade:'55a',sexo:'Masculino',prontuario:'PRN-00781',queixa:'DM2 há 8 anos. HbA1c = 8,2%.',diagnostico:'DM2 descompensada com intolerância leve à metformina.',conduta_atual:'Metformina 850mg 2x/dia.',comorbidades:'HAS controlada, dislipidemia mista.',medicamentos:'Metformina 850mg 2x/dia, Enalapril 10mg, Atorvastatina 20mg.',alergias:'Nenhuma conhecida.',exames_recentes:'HbA1c: 8,2% · Glicemia jejum: 168 mg/dL · Creatinina: 1,0 mg/dL · LDL: 118 mg/dL',ultima_consulta:'2025-04-15',observacoes:'Relata desconforto gástrico com metformina. Considerar formulação XR ou iSGLT2.'}},
   {fid:17,cod:'RGR-DM2-002',condicao:'Diabetes Mellitus Tipo 2',embId:'EMB-002',pidAlvo:'PC-0202',criacao:'2025-01-20 11:00',
    med:{nome:'Dr. Rodrigo Vaz',crm:'SP-998811',data:'2025-04-22 10:00',ini:'RV'},
    trecho:'Retorno semestral sem acompanhamento',
    modificacao:'Reduzir intervalo de retorno para 90 dias em DM2 descompensada. Incluir HbA1c a cada consulta e automonitoramento glicêmico capilar.',
-   caso:{paciente:'Ana Carolina, 48a',prontuario:'PRN-00892',queixa:'DM2 com HbA1c oscilante sem controle.',diagnostico:'DM2 moderada com má adesão.',conduta_atual:'Metformina isolada, sem ajuste há 1 ano.'}},
+   caso:{paciente:'Ana Carolina',idade:'48a',sexo:'Feminino',prontuario:'PRN-00892',queixa:'DM2 com HbA1c oscilante sem controle.',diagnostico:'DM2 moderada com má adesão.',conduta_atual:'Metformina isolada, sem ajuste há 1 ano.',comorbidades:'Obesidade grau I, histórico de depressão leve.',medicamentos:'Metformina 850mg 2x/dia.',alergias:'Nenhuma conhecida.',exames_recentes:'HbA1c: 8,9% · IMC: 30,2 · Glicemia: 187 mg/dL · PHQ-9: 8 (leve)',ultima_consulta:'2025-04-20',observacoes:'Relata dificuldades de adesão relacionadas ao humor. Considerar encaminhamento psicológico.'}},
   {fid:18,cod:'RGR-DM2-003',condicao:'Diabetes Mellitus Tipo 2',embId:'EMB-002',pidAlvo:'PC-0202',criacao:'2025-02-01 09:00',
    med:{nome:'Dra. Luciane Ribeiro',crm:'RS-667744',data:'2025-04-28 14:00',ini:'LR'},
    trecho:'Sem acompanhamento nutricional',
@@ -998,6 +1012,20 @@ condicoesVal.forEach((c) => {
       }
     });
   }
+});
+
+// Agrupar por embId + pidAlvo para gerar códigos relativos VAL-1 a VAL-N por plano
+const gruposPorPlano = {};
+FILA_BASE.forEach(r => {
+  const chave = `${r.embId}_${r.pidAlvo}`;
+  if (!gruposPorPlano[chave]) gruposPorPlano[chave] = [];
+  gruposPorPlano[chave].push(r);
+});
+Object.keys(gruposPorPlano).forEach(chave => {
+  gruposPorPlano[chave].sort((a, b) => a.fid - b.fid);
+  gruposPorPlano[chave].forEach((r, idx) => {
+    r.cod = `VAL-${idx + 1}`;
+  });
 });
 
 /* histórico */
@@ -1136,11 +1164,7 @@ function openValVis(fid){
   document.getElementById('vvSub').textContent=`${emb.modelo} · ${emb.dim} dimensões · Criado: ${emb.criado}`;
 
   const clr=emb.status==='ativo'?'var(--grn)':'var(--warn)';
-  document.getElementById('vvMetaGrid').innerHTML=`
-    <div style="background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px"><div style="font-size:10px;color:var(--dim);margin-bottom:4px">Modelo</div><div style="font-size:12px;font-family:var(--mono);font-weight:500">${emb.modelo}</div></div>
-    <div style="background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px"><div style="font-size:10px;color:var(--dim);margin-bottom:4px">Dimensões</div><div style="font-size:12px;font-family:var(--mono);font-weight:500">${emb.dim}d</div></div>
-    <div style="background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px"><div style="font-size:10px;color:var(--dim);margin-bottom:4px">Status</div><div style="font-size:12px;font-family:var(--mono);font-weight:500;color:${clr}">${emb.status}</div></div>
-    <div style="background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px"><div style="font-size:10px;color:var(--dim);margin-bottom:4px">Criado em</div><div style="font-size:12px;font-family:var(--mono);font-weight:500">${emb.criado}</div></div>`;
+  document.getElementById('vvMetaGrid').innerHTML=metaGrid(emb, false);
   document.getElementById('vvContexto').textContent=emb.texto;
 
   /* Montar os 2 planos: médico + IA alvo */
@@ -1187,7 +1211,7 @@ function openValVis(fid){
 
 /* Ao clicar num plano dentro do Modal 1 */
 function onValPlanoClick(embId, pid){
-  const reqs=FILA.filter(r=>r.embId===embId&&r.pidAlvo===pid&&r.status==='atualizar');
+  const reqs=FILA.filter(r=>r.embId===embId&&r.pidAlvo===pid);
   const planos=PLANOS_EMB[embId]||[];
   const plano=planos.find(p=>p.pid===pid);
   if(reqs.length>0){
@@ -1197,21 +1221,71 @@ function onValPlanoClick(embId, pid){
   }
 }
 
-/* MODAL 2: Lista de validações */
-function openValLista(embId,pid,plano,reqs){
-  const emb=EMBS.find(e=>e.id===embId);
-  const isMed=plano&&plano.origem==='medico';
-  document.getElementById('vlTitle').textContent=`${pid} — ${emb?emb.esp:''}`;
-  document.getElementById('vlSub').textContent=`${isMed?'Plano Médico':'Plano IA'} · ${reqs.length} solicitaç${reqs.length===1?'ão':'ões'} de validação`;
-  document.getElementById('vlCount').textContent=`${reqs.length} solicitaç${reqs.length===1?'ão':'ões'} encontrada${reqs.length===1?'':'s'}`;
-  const dw=document.getElementById('vlDropdownWrap');
-  if(reqs.length>8){
-    dw.style.display='block';
-    document.getElementById('vlDropdown').innerHTML=reqs.map((r,i)=>`<option value="vl-item-${r.fid}">#${i+1} — ${r.cod} · ${r.med.nome}</option>`).join('');
-  } else {
-    dw.style.display='none';
-  }
-  document.getElementById('vlList').innerHTML=reqs.map((r,i)=>`
+/* MODAL 2 STATE & FILTER LOGIC */
+let curVlEmbId = '';
+let curVlPid = '';
+let curVlFilt = 'all';
+let curVlSrch = '';
+
+function setVlFilter(f){
+  curVlFilt = f;
+  ['all','atualizar','em','atualizado','reprovado'].forEach(x=>{
+    const el = document.getElementById('vlf-'+x);
+    if(el) el.classList.remove('on');
+  });
+  const el = document.getElementById('vlf-'+f);
+  if(el) el.classList.add('on');
+  
+  const dropdownEl = document.getElementById('vlDropdown');
+  if(dropdownEl) dropdownEl.value = 'all';
+  
+  updateVlList();
+}
+
+function filterVlList(){
+  const input = document.getElementById('vlSrch');
+  curVlSrch = input ? input.value.trim().toLowerCase() : '';
+  
+  const dropdownEl = document.getElementById('vlDropdown');
+  if(dropdownEl) dropdownEl.value = 'all';
+
+  updateVlList();
+}
+
+function updateVlList(){
+  if(!curVlEmbId || !curVlPid) return;
+  const plano = (PLANOS_EMB[curVlEmbId]||[]).find(p=>p.pid===curVlPid);
+  const allReqs = FILA.filter(r=>r.embId===curVlEmbId && r.pidAlvo===curVlPid);
+  
+  const dropdownEl = document.getElementById('vlDropdown');
+  const selVal = dropdownEl ? dropdownEl.value : 'all';
+  
+  const filtered = allReqs.filter(r => {
+    // Dropdown filter
+    if(selVal !== 'all' && `vl-item-${r.fid}` !== selVal) return false;
+
+    // Status filter
+    if(curVlFilt==='atualizar' && r.status!=='atualizar') return false;
+    if(curVlFilt==='em' && r.status!=='em-atualizacao') return false;
+    if(curVlFilt==='atualizado' && r.status!=='atualizado') return false;
+    if(curVlFilt==='reprovado' && r.status!=='reprovado') return false;
+    
+    // Search filter
+    if(curVlSrch){
+      const matchCod = `val-${r.fid}`.toLowerCase().includes(curVlSrch) || (r.cod && r.cod.toLowerCase().includes(curVlSrch));
+      const matchMed = r.med && r.med.nome && r.med.nome.toLowerCase().includes(curVlSrch);
+      const matchTrecho = r.trecho && r.trecho.toLowerCase().includes(curVlSrch);
+      const matchCond = r.condicao && r.condicao.toLowerCase().includes(curVlSrch);
+      if(!matchCod && !matchMed && !matchTrecho && !matchCond) return false;
+    }
+    return true;
+  });
+
+  document.getElementById('vlCount').textContent=`${filtered.length} solicitaç${filtered.length===1?'ão':'ões'} encontrada${filtered.length===1?'':'s'}`;
+  
+  document.getElementById('vlList').innerHTML=filtered.length === 0 
+    ? '<div style="text-align:center;color:var(--dim);padding:40px;font-size:13px">Nenhuma solicitação encontrada</div>'
+    : filtered.map((r,i)=>`
     <div class="val-item-row" id="vl-item-${r.fid}" onclick="openMain(${r.fid})">
       <div class="val-item-num">#${i+1}</div>
       <div class="val-item-info">
@@ -1223,6 +1297,41 @@ function openValLista(embId,pid,plano,reqs){
       <div>${stBadge(r.status)}</div>
       <div class="val-item-arrow">${IC.arrow}</div>
     </div>`).join('');
+}
+
+/* MODAL 2: Lista de validações */
+function openValLista(embId,pid,plano,reqs){
+  curVlEmbId = embId;
+  curVlPid = pid;
+  curVlFilt = 'all';
+  curVlSrch = '';
+  
+  const srchInput = document.getElementById('vlSrch');
+  if(srchInput) srchInput.value = '';
+  
+  ['all','atualizar','em','atualizado','reprovado'].forEach(x=>{
+    const el = document.getElementById('vlf-'+x);
+    if(el) el.classList.remove('on');
+  });
+  const allBtn = document.getElementById('vlf-all');
+  if(allBtn) allBtn.classList.add('on');
+
+  const emb=EMBS.find(e=>e.id===embId);
+  const isMed=plano&&plano.origem==='medico';
+  document.getElementById('vlTitle').textContent=`${pid} — ${emb?emb.esp:''}`;
+  document.getElementById('vlSub').textContent=`${isMed?'Plano Médico':'Plano IA'} · ${reqs.length} solicitaç${reqs.length===1?'ão':'ões'} de atualização`;
+  
+  const dw=document.getElementById('vlDropdownWrap');
+  if(reqs.length>0){
+    dw.style.display='block';
+    document.getElementById('vlDropdown').innerHTML=`
+      <option value="all">Todas as solicitações</option>
+      ` + reqs.map((r,i)=>`<option value="vl-item-${r.fid}">#${i+1} — ${r.cod} · ${r.med.nome}</option>`).join('');
+  } else {
+    dw.style.display='none';
+  }
+
+  updateVlList();
   openOv('ovValLista');
 }
 function scrollToValItem(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'nearest'});}
@@ -1237,7 +1346,7 @@ function openMain(fid){
   document.getElementById('mMainTitle').textContent=`${row.cod} — ${row.condicao}`;
   document.getElementById('mMainSub').textContent=`Plano: ${row.pidAlvo} · Base do Conhecimento: ${row.embId} · Solicitante: ${row.med.nome}`;
   document.getElementById('metaStrip').innerHTML=`
-    <div class="ms-item"><div class="ms-lbl">Cód. Regra</div><div class="ms-val acc">${row.cod}</div></div>
+    <div class="ms-item"><div class="ms-lbl">Cód. Validação</div><div class="ms-val acc">${row.cod}</div></div>
     <div class="ms-item"><div class="ms-lbl">Condição Clínica</div><div class="ms-val">${row.condicao}</div></div>
     <div class="ms-item"><div class="ms-lbl">Plano solicitado</div><div class="ms-val acc">${row.pidAlvo}</div></div>
     <div class="ms-item"><div class="ms-lbl">Médico solicitante</div><div class="ms-val">${row.med.nome}</div></div>
@@ -1394,17 +1503,30 @@ function openEmbRefFromVal(){
 function openCaso(){
   if(!curRow||!curRow.caso) return;
   const c=curRow.caso;
-  document.getElementById('casoTitle').textContent=c.paciente;
-  document.getElementById('casoSub').textContent=`Prontuário: ${c.prontuario}`;
-  document.getElementById('casoBody').innerHTML=`<div style="display:flex;flex-direction:column;gap:12px">
-    ${casoCard('Queixa principal',c.queixa,'var(--teal-bg)','var(--teal-br)','var(--teal)')}
-    ${casoCard('Diagnóstico',c.diagnostico,'var(--pur-bg)','var(--pur-br)','var(--pur)')}
-    ${casoCard('Conduta atual',c.conduta_atual,'var(--sur2)','var(--bdr)','var(--mut)')}
-  </div>`;
+  document.getElementById('casoTitle').textContent=`${c.paciente}${c.idade ? ' • '+c.idade : ''}`;
+  document.getElementById('casoSub').textContent=`Prontuário: ${c.prontuario}${c.sexo ? ' · '+c.sexo : ''}`;
+
+  function metaCell(label, value, span=2, color='var(--txt)', bg='var(--sur)', br='var(--bdr)', accent='') {
+    return `<div style="background:${bg};border:1px solid ${br};${accent?`border-left:3px solid ${accent};`:''}border-radius:var(--rs);padding:10px 14px;grid-column:span ${span}">
+      <div style="font-size:10px;color:var(--dim);margin-bottom:5px;text-transform:uppercase;font-weight:600">${label}</div>
+      <div style="font-size:12.5px;font-weight:500;color:${color};line-height:1.6">${value}</div>
+    </div>`;
+  }
+
+  document.getElementById('casoBody').innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+      ${metaCell('Queixa Principal', c.queixa, 4, 'var(--txt)', 'var(--teal-bg)', 'var(--teal-br)', 'var(--teal)')}
+      ${metaCell('Diagnóstico', c.diagnostico, 4, 'var(--txt)', 'var(--pur-bg)', 'var(--pur-br)', 'var(--pur)')}
+      ${metaCell('Conduta Atual', c.conduta_atual, 4, 'var(--txt)', 'var(--sur2)', 'var(--bdr)', 'var(--acc)')}
+      ${c.comorbidades ? metaCell('Comorbidades', c.comorbidades, 2) : ''}
+      ${c.alergias ? metaCell('Alergias / Reações', c.alergias, 2, c.alergias==='Nenhuma conhecida.'?'var(--grn)':'var(--red)') : ''}
+      ${c.medicamentos ? metaCell('Medicamentos em Uso', c.medicamentos, 4) : ''}
+      ${c.exames_recentes ? metaCell('Resultados Recentes de Exames', c.exames_recentes, 4, 'var(--txt)', 'var(--warn-bg)', 'var(--warn-br)', 'var(--warn)') : ''}
+      ${c.ultima_consulta ? metaCell('Última Consulta', c.ultima_consulta, 2, 'var(--mut)') : ''}
+      ${c.observacoes ? metaCell('Observações Clínicas', c.observacoes, 2, 'var(--mut)') : ''}
+    </div>`;
   openOv('ovCaso');
 }
-function casoCard(l,t,bg,br,cl){return `<div style="background:${bg};border:1px solid ${br};border-left:3px solid ${cl};border-radius:var(--rs);padding:13px"><div style="font-size:10px;font-weight:600;color:${cl};text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">${l}</div><div style="font-size:13px;color:var(--txt);line-height:1.65">${t}</div></div>`;}
-
 /* Modal: Plano sem requisições */
 function openPlanoView(embId,pid,plano){
   const emb=EMBS.find(e=>e.id===embId);
@@ -1541,15 +1663,219 @@ function openPlanosAssoc(){
   openOv('ovPlanos');
 }
 
+const MEDICAL_INFO = {
+  'EMB-001': {
+    sintomas: 'Cefaleia, tontura, palpitações, dor torácica, dispneia.',
+    complicacoes: 'Infarto (IAM), AVC, Insuficiência Renal, Insuficiência Cardíaca.',
+    fatores: 'Sedentarismo, tabagismo, obesidade, dieta rica em sódio, histórico familiar.',
+    diagnosticos: 'Hipertensão Arterial Estágios 1, 2 e 3; Emergência Hipertensiva.',
+    diretrizes: 'Diretrizes Brasileiras de Hipertensão Arterial (SBC/SBH/SBN 2020).',
+    tratamento: 'Monoterapia ou terapia combinada (IECA/BRA, BCC, Diuréticos Tiazídicos) + mudança de estilo de vida.',
+    exames: 'Creatinina, Potássio sérico, ECG, Perfil Lipídico, Relação Albumina/Creatinina.',
+    monitoramento: 'Aferição de PA diária; consulta a cada 30 dias até controle da meta.',
+    alertas: 'PA > 180/120 mmHg, dor torácica, dispneia súbita, síncope, angioedema.'
+  },
+  'EMB-002': {
+    sintomas: 'Poliúria, polidipsia, fadiga, perda ponderal inexplicada, visão turva.',
+    complicacoes: 'Retinopatia, Nefropatia, Neuropatia Periférica, Pé Diabético, Cetoacidose.',
+    fatores: 'Obesidade abdominal, sedentarismo, dislipidemia, histórico familiar.',
+    diagnosticos: 'Diabetes Mellitus Tipo 2, Pré-Diabetes, Síndrome Metabólica.',
+    diretrizes: 'Diretriz da Sociedade Brasileira de Diabetes (SBD 2024).',
+    tratamento: 'Metformina posologia padrão, iSGLT2 ou GLP-1a se alto risco cardiovascular, terapia insulínica se HbA1c > 9%.',
+    exames: 'Hemoglobina Glicada (HbA1c), TFGe, Creatinina, Microalbuminúria, Perfil Lipídico.',
+    monitoramento: 'Auto-monitoração glicêmica capilar; consulta trimestral com exames.',
+    alertas: 'Glicemia < 70 mg/dL (hipoglicemia severa), cetoacidose, pé diabético infeccionado.'
+  },
+  'EMB-003': {
+    sintomas: 'Dor muscular difusa crônica, fadiga persistente, distúrbios do sono, rigidez matinal.',
+    complicacoes: 'Declínio funcional, ansiedade e depressão graves, dependência laboral.',
+    fatores: 'Sexo feminino, histórico familiar, estresse pós-traumático, ansiedade/depressão.',
+    diagnosticos: 'Síndrome Fibromiálgica, Dor Crônica Generalizada.',
+    diretrizes: 'Consenso da Sociedade Brasileira de Reumatologia (SBR 2017).',
+    tratamento: 'Abordagem não farmacológica (exercício físico, psicoterapia) e farmacológica (duloxetina, pregabalina).'
+  },
+  'EMB-004': {
+    sintomas: 'Dispneia sibilante, tosse crônica noturna, sensação de aperto torácico.',
+    complicacoes: 'Crise asmática aguda grave, insuficiência respiratória, remodelação das vias aéreas.',
+    fatores: 'Atopia familiar, exposição a poeira/ácaros/fumaça, infecções respiratórias na infância.',
+    diagnosticos: 'Asma Brônquica (Intermitente/Persistente), Alergia Respiratória.',
+    diretrizes: 'Global Initiative for Asthma (GINA 2024).',
+    tratamento: 'Corticosteroides inalatórios (CI) + LABA como manutenção; broncodilatadores de curta ação SOS.'
+  },
+  'EMB-005': {
+    sintomas: 'Roncos intensos, apneias presenciadas pelo cônjuge, sonolência diurna, cefaleia matinal.',
+    complicacoes: 'Hipertensão secundária, arritmias, infarto, AVC, risco de acidentes automobilísticos.',
+    fatores: 'Obeso (IMC >30), sexo masculino, pescoço largo, álcool/sedativos à noite.',
+    diagnosticos: 'Apneia Obstrutiva do Sono (Leve, Moderada ou Grave).',
+    diretrizes: 'Diretrizes da Associação Brasileira do Sono (ABS 2022).',
+    tratamento: 'CPAP autoajustável, higiene do sono, controle ponderal, terapia miofuncional.'
+  },
+  'EMB-006': {
+    sintomas: 'Fadiga, ganho de peso inexplicado, intolerância ao frio, obstipação, pele seca.',
+    complicacoes: 'Coma mixedematoso, dislipidemia grave, infertilidade, anemia crônica.',
+    fatores: 'Sexo feminino, histórico familiar de tireoidites autoimunes, cirurgias cervicais prévias.',
+    diagnosticos: 'Hipotireoidismo Primário, Tireoidite de Hashimoto.',
+    diretrizes: 'Consenso Brasileiro de Hipotireoidismo (SBD/SBEM 2023).',
+    tratamento: 'Reposição de levotirorixina sódica (1,6 a 1,8 mcg/kg/dia) em jejum diário.'
+  },
+  'EMB-007': {
+    sintomas: 'Preocupação excessiva incontrolável, irritabilidade, insônia de manutenção, tension muscular.',
+    complicacoes: 'Abuso de substâncias (álcool/sedativos), depressão maior, isolamento social.',
+    fatores: 'Predisposição genética, fatores de estresse crônico (trabalho/família).',
+    diagnosticos: 'Transtorno de Ansiedade Generalizada (TAG), Crise de Pânico.',
+    diretrizes: 'Diretrizes da Associação Brasileira de Psiquiatria (ABP).',
+    tratamento: 'Inibidores seletivos de recaptação de serotonina (ISRS) e Terapia Cognitivo-Comportamental.'
+  },
+  'EMB-008': {
+    sintomas: 'Corrimento genital anormal, disúria, prurido, úlceras ou vesículas genitais dolorosas.',
+    complicacoes: 'Infertilidade, doença inflamatória pélvica (DIP), facilitação da transmissão de HIV.',
+    fatores: 'Comportamento sexual de risco, múltiplos parceiros, não uso de preservativos.',
+    diagnosticos: 'Infecção por Clamídia, Gonorreia, Sífilis, Herpes Genital.',
+    diretrizes: 'Protocolo Clínico e Diretrizes Terapêuticas do Ministério da Saúde (PCDT IST 2023).',
+    tratamento: 'Ceftriaxona 500mg IM + Azitromicina 1g VO (dose única) para gonorreia/clamídia; tratar parceiros.'
+  },
+  'EMB-009': {
+    sintomas: 'Palpitações súbitas, cansaço fácil aos esforços, tonturas, síncope.',
+    complicacoes: 'Tromboembolismo arterial (AVC), taquicardimiopatia, parada cardíaca.',
+    fatores: 'Idade avançada, hipertensão, diabetes mellitus, valvulopatias cardíacas.',
+    diagnosticos: 'Fibrilação Atrial Paroxística/Persistente, Flutter Atrial.',
+    diretrizes: 'Diretrizes Brasileiras de Fibrilação Atrial (SBC 2023).',
+    tratamento: 'Anticoagulação oral (DOACs/Varfarina) conforme escore CHA2DS2-VASc, controle de ritmo ou frequência.'
+  },
+  'EMB-010': {
+    sintomas: 'Cefaleia unilateral de caráter pulsátil, fotofobia, fonofobia, náuseas, aura visual.',
+    complicacoes: 'Cefaleia crônica por abuso de analgésicos, estado de mal enxaquecoso.',
+    fatores: 'Estresse emocional, privação de sono, jejum prolongado, flutuações hormonais.',
+    diagnosticos: 'Enxaqueca com/sem Aura, Cefaleia Tensional Crônica.',
+    diretrizes: 'Consenso da Sociedade Brasileira de Cefaleia (SBCe 2022).',
+    tratamento: 'Profilaxia com beta-bloqueadores, anticonvulsivantes ou antidepressivos; tratamento agudo com triptanos.'
+  },
+  'EMB-011': {
+    sintomas: 'Dor e desconforto abdominal relacionados à evacuação, distensão, diarreia/obstipação.',
+    complicacoes: 'Restrições alimentares extremas, desnutrição leve, prejuízo social significativo.',
+    fatores: 'Sensibilidade alimentar, estresse/ansiedade, infecções intestinais prévias.',
+    diagnosticos: 'Síndrome do Intestino Irritável (SII-D, SII-C, SII-M).',
+    diretrizes: 'Federação Brasileira de Gastroenterologia (FBG 2021).',
+    tratamento: 'Dieta Low-FODMAP, antiespasmódicos, moduladores da microbiota ou antidepressivos em baixas doses.'
+  },
+  'EMB-012': {
+    sintomas: 'Edema de membros inferiores, nictúria, prurido difuso, anemia, fadiga intensa.',
+    complicacoes: 'Insuficiência renal terminal, uremia, hipercalemia, doença mineral óssea.',
+    fatores: 'Hipertensão não controlada, diabetes de longa data, nefrolitíase de repetição.',
+    diagnosticos: 'Doença Renal Crônica (Estágios 1 a 5).',
+    diretrizes: 'Diretriz KDIGO (Kidney Disease: Improving Global Outcomes 2024).',
+    tratamento: 'Bloqueio do SRAA (IECA/BRA), controle rigoroso de PA (<120/80 mmHg), iSGLT2 e restrição proteica.'
+  },
+  'EMB-013': {
+    sintomas: 'Placas eritematosas cobertas por escamas prateadas, coceira, dor articular associada.',
+    complicacoes: 'Artrite psoriásica mutilante, depressão profunda, síndrome metabólica.',
+    fatores: 'Genética (HLA-Cw6), estresse psicológico, infecções agudas por estreptocos.',
+    diagnosticos: 'Psoríase em Placas, Artrite Psoriásica.',
+    diretrizes: 'Consenso Brasileiro de Psoríase (SBD 2020).',
+    tratamento: 'Corticoides tópicos, fototerapia ou imunobiológicos sistêmicos (anti-TNF, anti-IL17/23).'
+  },
+  'EMB-014': {
+    sintomas: 'Dor articular crônica de início insidioso, rigidez matinal (<30 min), crepitação.',
+    complicacoes: 'Limitação funcional grave, necessidade de artroplastia total (prótese).',
+    fatores: 'Idade avançada, excesso de peso/obesidade, histórico de trauma ou cirurgia articular.',
+    diagnosticos: 'Osteoartrite de Joelho (Gonartrose), Osteoartrose Geral.',
+    diretrizes: 'OARSI Guidelines (Osteoarthritis Research Society International 2023).',
+    tratamento: 'Reabilitação física, perda ponderal, analgésicos simples sob demanda, viscossuplementação.'
+  },
+  'EMB-015': {
+    sintomas: 'Perda de memória progressiva, desorientação têmpora-espacial, alterações comportamentais.',
+    complicacoes: 'Dependência funcional total, desnutrição, disfagia/aspiração pulmonar.',
+    fatores: 'Idade, baixo nível educacional, sedentarismo, comorbidades cardiovasculares.',
+    diagnosticos: 'Doença de Alzheimer (Fase Leve, Moderada ou Grave).',
+    diretrizes: 'Protocolo de Demência do Ministério da Saúde (PCDT 2022).',
+    tratamento: 'Inibidores da acetilcolinesterase (donepezila, galantamina) e memantina.'
+  },
+  'EMB-016': {
+    sintomas: 'Dismenorreia progressiva severa, dor pélvica crônica não menstrual, dispareunia.',
+    complicacoes: 'Infertilidade secundária, aderências pélvicas dolorosas, dor neuropática crônica.',
+    fatores: 'História familiar de endometriose, menarca precoce, nuliparidade.',
+    diagnosticos: 'Endometriose Profunda Reto-Vaginal/Ovariana.',
+    diretrizes: 'Consenso da FEBRASGO (Endometriose 2021).',
+    tratamento: 'Bloqueio hormonal contínuo (dienogeste, análogos de GnRH), cirurgia laparoscópica se refratário.'
+  },
+  'EMB-017': {
+    sintomas: 'Fadiga extrema, palidez cutâneo-mucosa, unhas quebradiças, perversão do apetite (pica).',
+    complicacoes: 'Insuficiência cardíaca compensatória, comprometimento imunológico.',
+    fatores: 'Sangramentos menstruais excessivos, dieta pobre em ferro, distúrbios absortivos.',
+    diagnosticos: 'Anemia Ferropriva Refratária, Anemia por Deficiência de Ferro.',
+    diretrizes: 'Diretrizes da Associação Brasileira de Hematologia e Hemoterapia (ABHH).',
+    tratamento: 'Reposição de ferro por via oral (sulfato ferroso) ou parenteral (ferro carboximaltose/sacarato).'
+  },
+  'EMB-018': {
+    sintomas: 'Obstrução nasal bilateral, prurido nasal/ocular, espirros em salva, coriza hialina.',
+    complicacoes: 'Sinusites bacterianas secundárias, pólipos nasais, asma grave associada.',
+    fatores: 'Hipersensibilidade a aeroalérgenos (ácaros, pelos de animais, polens).',
+    diagnosticos: 'Rinite Alérgica Crônica Persistente (Moderada a Grave).',
+    diretrizes: 'Associação Brasileira de Alergia e Imunologia (ASBAI 2022).',
+    tratamento: 'Corticosteroide intranasal spray diário, anti-histamínicos de 2ª geração, imunoterapia específica.'
+  }
+};
+
 /* ── HELPERS ── */
-function metaGrid(emb){
-  const clr=emb.status==='ativo'?'var(--grn)':'var(--warn)';
-  return [`<div style="background:var(--sur2);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px"><div style="font-size:11px;color:var(--dim);margin-bottom:4px">ID</div><div style="font-size:13px;font-family:var(--mono);font-weight:500">${emb.id}</div></div>`,
-    `<div style="background:var(--sur2);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px"><div style="font-size:11px;color:var(--dim);margin-bottom:4px">Especialidade</div><div style="font-size:13px;font-family:var(--mono);font-weight:500">${emb.esp}</div></div>`,
-    `<div style="background:var(--sur2);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px"><div style="font-size:11px;color:var(--dim);margin-bottom:4px">Modelo</div><div style="font-size:13px;font-family:var(--mono);font-weight:500">${emb.modelo}</div></div>`,
-    `<div style="background:var(--sur2);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px"><div style="font-size:11px;color:var(--dim);margin-bottom:4px">Status</div><div style="font-size:13px;font-family:var(--mono);font-weight:500;color:${clr}">${emb.status}</div></div>`,
-    `<div style="background:var(--sur2);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px"><div style="font-size:11px;color:var(--dim);margin-bottom:4px">Dimensões</div><div style="font-size:13px;font-family:var(--mono);font-weight:500">${emb.dim}</div></div>`,
-    `<div style="background:var(--sur2);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px"><div style="font-size:11px;color:var(--dim);margin-bottom:4px">Criado em</div><div style="font-size:13px;font-family:var(--mono);font-weight:500">${emb.criado}</div></div>`].join('');
+function metaGrid(emb, showAll = true){
+  const med = MEDICAL_INFO[emb.id] || {};
+  const sintomas = med.sintomas || '—';
+  const complicacoes = med.complicacoes || '—';
+  const fatores = med.fatores || '—';
+  const diagnosticos = med.diagnosticos || '—';
+  const diretrizes = med.diretrizes || '—';
+  const tratamento = med.tratamento || '—';
+  const exames = med.exames || 'Hemograma completo, perfil metabólico básico.';
+  const monitoramento = med.monitoramento || 'Acompanhamento clínico regular a cada 3 meses.';
+  const alertas = med.alertas || 'Aparecimento de novos sintomas graves ou reações alérgicas.';
+
+  const items = [
+    `<div style="background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px;grid-column: span 1">
+      <div style="font-size:10px;color:var(--dim);margin-bottom:4px;text-transform:uppercase;font-weight:600">ID da Base</div>
+      <div style="font-size:13px;font-family:var(--mono);font-weight:600">${emb.id}</div>
+    </div>`,
+    `<div style="background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px;grid-column: span 1">
+      <div style="font-size:10px;color:var(--dim);margin-bottom:4px;text-transform:uppercase;font-weight:600">Especialidade</div>
+      <div style="font-size:13px;font-weight:600;color:var(--acc)">${emb.esp}</div>
+    </div>`,
+    `<div style="background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px;grid-column: span 2">
+      <div style="font-size:10px;color:var(--dim);margin-bottom:4px;text-transform:uppercase;font-weight:600">Diagnósticos Associados</div>
+      <div style="font-size:12.5px;font-weight:500;color:var(--txt)">${diagnosticos}</div>
+    </div>`,
+    `<div style="background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px;grid-column: span 2">
+      <div style="font-size:10px;color:var(--dim);margin-bottom:4px;text-transform:uppercase;font-weight:600">Sintomas Comuns</div>
+      <div style="font-size:12.5px;font-weight:500;color:var(--txt)">${sintomas}</div>
+    </div>`,
+    `<div style="background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px;grid-column: span 2">
+      <div style="font-size:10px;color:var(--dim);margin-bottom:4px;text-transform:uppercase;font-weight:600">Fatores de Risco</div>
+      <div style="font-size:12.5px;font-weight:500;color:var(--txt)">${fatores}</div>
+    </div>`,
+    `<div style="background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px;grid-column: span 2">
+      <div style="font-size:10px;color:var(--dim);margin-bottom:4px;text-transform:uppercase;font-weight:600">Complicações Possíveis</div>
+      <div style="font-size:12.5px;font-weight:500;color:var(--txt)">${complicacoes}</div>
+    </div>`,
+    `<div style="background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px;grid-column: span 2">
+      <div style="font-size:10px;color:var(--dim);margin-bottom:4px;text-transform:uppercase;font-weight:600">Diretrizes Clínicas</div>
+      <div style="font-size:12.5px;font-weight:500;color:var(--txt)">${diretrizes}</div>
+    </div>`,
+    `<div style="background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px;grid-column: span 2">
+      <div style="font-size:10px;color:var(--dim);margin-bottom:4px;text-transform:uppercase;font-weight:600">Tratamento Sugerido</div>
+      <div style="font-size:12.5px;font-weight:500;color:var(--txt)">${tratamento}</div>
+    </div>`,
+    `<div style="background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px;grid-column: span 2">
+      <div style="font-size:10px;color:var(--dim);margin-bottom:4px;text-transform:uppercase;font-weight:600">Exames Recomendados</div>
+      <div style="font-size:12.5px;font-weight:500;color:var(--txt)">${exames}</div>
+    </div>`,
+    `<div style="background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px;grid-column: span 2">
+      <div style="font-size:10px;color:var(--dim);margin-bottom:4px;text-transform:uppercase;font-weight:600">Monitoramento Requerido</div>
+      <div style="font-size:12.5px;font-weight:500;color:var(--txt)">${monitoramento}</div>
+    </div>`,
+    `<div style="background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px;grid-column: span 2">
+      <div style="font-size:10px;color:var(--dim);margin-bottom:4px;text-transform:uppercase;font-weight:600">Alertas de Segurança</div>
+      <div style="font-size:12.5px;font-weight:500;color:var(--txt)">${alertas}</div>
+    </div>`
+  ];
+  return (showAll ? items : items.slice(0, 3)).join('');
 }
 function now(){const d=new Date();return d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}
 function openOv(id){document.getElementById(id).classList.add('on')}
