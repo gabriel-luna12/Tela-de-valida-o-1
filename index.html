@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gestão de Planos de Cuidados</title>
+<title>Gestão de Regras e Validações</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -285,7 +285,7 @@ textarea.edit-ta:focus{border-color:var(--acc)}
     <div class="logo-ic">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
     </div>
-    Planos de Cuidados
+    Regras e Validações
   </div>
   <div style="flex:1"></div>
   <div class="hstat"><div class="live"></div>&nbsp;Sistema ativo</div>
@@ -363,7 +363,7 @@ textarea.edit-ta:focus{border-color:var(--acc)}
       <div class="tcard">
         <table>
           <colgroup><col class="ce1"><col class="ce2"><col style="width:260px"><col class="ce5"><col class="ce6"></colgroup>
-          <thead><tr><th>ID</th><th>Contexto clínico</th><th>Especialidade/ Sub-especialidade</th><th>Status</th><th>Ação</th></tr></thead>
+          <thead><tr><th>ID</th><th>Contexto clínico</th><th style="text-transform: none;">Especialidade/ Sub-especialidade</th><th>Status</th><th>Ação</th></tr></thead>
           <tbody id="embBody"></tbody>
         </table>
         <div class="pag" id="embPag"></div>
@@ -477,7 +477,7 @@ textarea.edit-ta:focus{border-color:var(--acc)}
           Informações da Base do Conhecimento
         </div>
         <!-- Grade de metadados clínicos (Diagnósticos + Sintomas) -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px" id="vvMetaGrid"></div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px" id="vvMetaGrid"></div>
         <!-- Resumo da Regra — estruturado e expandido -->
         <div style="font-size:10px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;display:flex;align-items:center;gap:6px">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -731,6 +731,16 @@ textarea.edit-ta:focus{border-color:var(--acc)}
       <div style="display:grid;grid-template-columns:repeat(4, 1fr);gap:12px;margin-bottom:16px" id="edMeta"></div>
       <div class="req-sec-lbl" style="margin-bottom:8px">Resumo da Regra</div>
       <div style="font-size:13px;line-height:1.75;color:var(--txt);background:var(--pur-bg);border:1px solid var(--pur-br);border-left:3px solid var(--pur);border-radius:var(--rs);padding:16px" id="edText"></div>
+
+      <!-- Planos associados -->
+      <div style="padding:20px 0 6px">
+        <div class="sec-title">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Planos de Cuidados vinculados
+          <span style="font-size:11px;color:var(--mut);font-weight:400;text-transform:none;letter-spacing:0">— clique para ver detalhes</span>
+        </div>
+      </div>
+      <div class="planos-grid" id="edPlanosGrid"></div>
     </div>
     <div class="mfoot">
       <button class="btn btn-ghost" onclick="closeOv('ovEmbDet')">Voltar</button>
@@ -854,15 +864,8 @@ textarea.edit-ta:focus{border-color:var(--acc)}
       </div>
       <button class="xbtn" onclick="closeOv('ovHistEmbDetail')">&#215;</button>
     </div>
-    <div class="mbody">
-      <div style="display:grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--bdr)">
-        <div style="padding:16px 24px; background:var(--sur2); border-right:1px solid var(--bdr); font-size:11px; font-weight:600; color:var(--mut); text-transform:uppercase;">Versão Anterior</div>
-        <div style="padding:16px 24px; background:var(--sur2); font-size:11px; font-weight:600; color:var(--acc); text-transform:uppercase;">Nova Versão</div>
-      </div>
-      <div style="display:grid; grid-template-columns: 1fr 1fr; height: 60vh; overflow-y: auto;">
-        <div id="hedLeft" style="padding:24px; border-right:1px solid var(--bdr); background:var(--sur)"></div>
-        <div id="hedRight" style="padding:24px; background:var(--sur)"></div>
-      </div>
+    <div class="mbody" style="overflow-y: auto; background: var(--sur2); padding: 0;">
+      <div id="hedContent"></div>
     </div>
     <div class="mfoot"><button class="btn btn-ghost" onclick="closeOv('ovHistEmbDetail')">Voltar</button></div>
   </div>
@@ -872,7 +875,7 @@ textarea.edit-ta:focus{border-color:var(--acc)}
      MODAL HISTÓRICO 5: Adição/Exclusão (Bloco Único)
      ======================================================================= -->
 <div class="ov l2" id="ovHistEmbSingle">
-  <div class="modal med">
+  <div class="modal xl">
     <div class="mh">
       <div class="mh-l">
         <div id="hesType"></div>
@@ -1745,7 +1748,7 @@ function fRows(){
     if(vFilt==='atualizado'&&r.status!=='atualizado') return;
     if(vSrch){
       const q=vSrch.toLowerCase();
-      if(!r.cod.toLowerCase().includes(q)&&!r.condicao.toLowerCase().includes(q)&&!r.med.nome.toLowerCase().includes(q)&&!r.pidAlvo.toLowerCase().includes(q)) return;
+      if(!r.cod.toLowerCase().includes(q)&&!r.condicao.toLowerCase().includes(q)&&!r.med.nome.toLowerCase().includes(q)&&!r.pidAlvo.toLowerCase().includes(q)&&!r.embId.toLowerCase().includes(q)) return;
     }
     if(!groups[r.embId]) groups[r.embId] = [];
     groups[r.embId].push(r);
@@ -1830,36 +1833,54 @@ function openValVis(fid){
   document.getElementById('vvTitle').textContent=`Base do Conhecimento ${emb.id} — ${emb.esp}`;
   document.getElementById('vvSub').textContent=`${emb.modelo} · ${emb.dim} dimensões · Criado: ${emb.criado}`;
 
-  const clr=emb.status==='ativo'?'var(--grn)':'var(--warn)';
   document.getElementById('vvMetaGrid').innerHTML=metaGrid(emb, false);
-
-  /* Contexto Clínico — apenas o texto principal; demais blocos via "Ver regra completa" */
   document.getElementById('vvContexto').textContent = emb.texto;
 
-  /* Montar os 2 planos: médico + IA alvo */
-  const todosPlanos=PLANOS_EMB[emb.id]||[];
-  const planMed=todosPlanos.find(p=>p.origem==='medico');
-  const planIA=todosPlanos.find(p=>p.pid===row.pidAlvo);
-  const planosMostrar=[planMed,planIA].filter(Boolean);
+  /* Montar os 2 planos: médico + IA alvo (visualização padrão de validação, não read-only) */
+  document.getElementById('vvPlanosGrid').innerHTML = renderPlanosGridHtml(emb.id, row.pidAlvo);
 
-  document.getElementById('vvPlanosGrid').innerHTML=planosMostrar.map((p,idx)=>{
-    const isMed=p.origem==='medico';
-    const reqs=FILA.filter(r=>r.embId===emb.id&&r.pidAlvo===p.pid&&r.status==='atualizar');
-    const n=reqs.length;
-    const originClass=isMed?'medico':'ia';
-    const originBadge=isMed
-      ?`<span class="plano-origin-badge medico">${IC.db} Médico</span>`
-      :`<span class="plano-origin-badge ia">${IC.robot} IA</span>`;
-    const notif=n>0
-      ?`<span class="notif-badge" title="${n} solicitação(ões)">${n}</span>`
-      :`<span style="font-size:11px;color:var(--grn);font-family:var(--mono);font-weight:600">✓ OK</span>`;
-    const hint=n>0
-      ?`<span class="click-hint">${IC.arrow} Ver ${n} solicitaç${n===1?'ão':'ões'}</span>`
-      :`<span class="click-hint-gray">${IC.arrow} Ver plano</span>`;
-    return `<div class="plano-container ${n>0?'has-requests':''}" onclick="onValPlanoClick('${emb.id}','${p.pid}')">
+  openOv('ovValVis');
+}
+
+/* Helper para renderizar a grade de planos (usado em múltiplos modais) */
+function renderPlanosGridHtml(embId, pidAlvo = null, readOnly = false) {
+  const todosPlanos = PLANOS_EMB[embId] || [];
+  const planMed = todosPlanos.find(p => p.origem === 'medico');
+  const planIA = pidAlvo ? todosPlanos.find(p => p.pid === pidAlvo) : (todosPlanos.find(p => p.origem === 'ia') || todosPlanos[1]);
+  const planosMostrar = [planMed, planIA].filter(Boolean);
+
+  return planosMostrar.map((p, idx) => {
+    const isMed = p.origem === 'medico';
+    const reqs = readOnly ? [] : FILA.filter(r => r.embId === embId && r.pidAlvo === p.pid && r.status === 'atualizar');
+    const n = reqs.length;
+    const originClass = isMed ? 'medico' : 'ia';
+    const originBadge = isMed
+      ? `<span class="plano-origin-badge medico">${IC.db} Médico</span>`
+      : `<span class="plano-origin-badge ia">${IC.robot} IA</span>`;
+    
+    let notif = '';
+    if (!readOnly) {
+      if (n > 0) {
+        notif = `<span class="notif-badge" title="${n} solicitação(ões)">${n}</span>`;
+      } else {
+        const isUpdated = FILA.some(r => r.embId === embId && r.pidAlvo === p.pid && r.status === 'atualizado');
+        notif = isUpdated 
+          ? `<span class="badge b-atualizado" style="font-size:10px;padding:2px 7px">✓ Atualizado</span>`
+          : `<span style="font-size:11px;color:var(--grn);font-family:var(--mono);font-weight:600">✓ OK</span>`;
+      }
+    }
+
+    const clickFn = readOnly ? `openPlanoView('${embId}','${p.pid}')` : `onValPlanoClick('${embId}','${p.pid}')`;
+    const hint = readOnly
+      ? `<span class="click-hint-gray">${IC.eye} Visualizar detalhes</span>`
+      : (n > 0
+          ? `<span class="click-hint">${IC.arrow} Ver ${n} solicitaç${n===1?'ão':'ões'}</span>`
+          : `<span class="click-hint-gray">${IC.arrow} Ver plano</span>`);
+
+    return `<div class="plano-container ${n > 0 ? 'has-requests' : ''}" onclick="${clickFn}">
       <div class="plano-hdr ${originClass}">
         <div style="display:flex;align-items:center;gap:10px">
-          <div class="plano-num">Plano ${idx+1}</div>
+          <div class="plano-num">Plano ${idx + 1}</div>
           ${originBadge}
         </div>
         ${notif}
@@ -1874,9 +1895,9 @@ function openValVis(fid){
       </div>
     </div>`;
   }).join('');
-
-  openOv('ovValVis');
 }
+  openOv('ovValVis');
+
 
 /* Ao clicar num plano dentro do Modal 1 */
 function onValPlanoClick(embId, pid){
@@ -2358,7 +2379,7 @@ function renderEmb(){
       return `<tr onclick="openEmbDet('${e.id}')" style="cursor:pointer">
         <td class="mono">${e.id}</td>
         <td class="tcell" title="${planoFullText(e).replace(/"/g,'&quot;')}">${planoFullText(e)}</td>
-        <td style="font-size:12px;color:var(--mut)">Pediatria/${e.esp.toUpperCase()}</td>
+        <td style="font-size:12px;color:var(--mut)">Pediatria/${e.esp}</td>
         <td>${st}</td>
         <td><button class="icnbtn" onclick="event.stopPropagation();openEmbDet('${e.id}')">${IC.eye}</button></td>
       </tr>`;
@@ -2383,9 +2404,11 @@ function openEmbDet(id){
   document.getElementById('edSub').textContent=`${emb.modelo} · ${emb.dim}d · ${emb.esp}`;
   document.getElementById('edMeta').innerHTML=metaGrid(emb);
   document.getElementById('edText').textContent=emb.texto;
+  document.getElementById('edPlanosGrid').innerHTML = renderPlanosGridHtml(emb.id, null, true);
   openOv('ovEmbDet');
 }
 
+/* MEDICAL_INFO: Dados clínicos detalhados para os embeddings */
 const MEDICAL_INFO = {
   'EMB-001': {
     sintomas: 'Cefaleia, tontura, palpitações, dor torácica, dispneia.',
@@ -2415,7 +2438,10 @@ const MEDICAL_INFO = {
     fatores: 'Sexo feminino, histórico familiar, estresse pós-traumático, ansiedade/depressão.',
     diagnosticos: 'Síndrome Fibromiálgica, Dor Crônica Generalizada.',
     diretrizes: 'Consenso da Sociedade Brasileira de Reumatologia (SBR 2017).',
-    tratamento: 'Abordagem não farmacológica (exercício físico, psicoterapia) e farmacológica (duloxetina, pregabalina).'
+    tratamento: 'Abordagem não farmacológica (exercício físico, psicoterapia) e farmacológica (duloxetina, pregabalina).',
+    exames: 'Velocidade de sedimentação globular (VSG), Proteína C-Reativa (PCR), TSH.',
+    monitoramento: 'Escalas de impacto da fibromialgia (FIQ) a cada 2 meses.',
+    alertas: 'Ideação suicida, fadiga incapacitante súbita, efeitos adversos de antidepressivos.'
   },
   'EMB-004': {
     sintomas: 'Dispneia sibilante, tosse crônica noturna, sensação de aperto torácico.',
@@ -2423,7 +2449,10 @@ const MEDICAL_INFO = {
     fatores: 'Atopia familiar, exposição a poeira/ácaros/fumaça, infecções respiratórias na infância.',
     diagnosticos: 'Asma Brônquica (Intermitente/Persistente), Alergia Respiratória.',
     diretrizes: 'Global Initiative for Asthma (GINA 2024).',
-    tratamento: 'Corticosteroides inalatórios (CI) + LABA como manutenção; broncodilatadores de curta ação SOS.'
+    tratamento: 'Corticosteroides inalatórios (CI) + LABA como manutenção; broncodilatadores de curta ação SOS.',
+    exames: 'Espirometria com prova broncodilatadora, Testes cutâneos de leitura imediata (Prick test).',
+    monitoramento: 'Teste de Controle da Asma (ACT) mensal; Espirometria anual.',
+    alertas: 'Uso de broncodilatador > 3x/semana, despertar noturno por tosse, queda no pico de fluxo.'
   },
   'EMB-005': {
     sintomas: 'Roncos intensos, apneias presenciadas pelo cônjuge, sonolência diurna, cefaleia matinal.',
@@ -2431,7 +2460,10 @@ const MEDICAL_INFO = {
     fatores: 'Obeso (IMC >30), sexo masculino, pescoço largo, álcool/sedativos à noite.',
     diagnosticos: 'Apneia Obstrutiva do Sono (Leve, Moderada ou Grave).',
     diretrizes: 'Diretrizes da Associação Brasileira do Sono (ABS 2022).',
-    tratamento: 'CPAP autoajustável, higiene do sono, controle ponderal, terapia miofuncional.'
+    tratamento: 'CPAP autoajustável, higiene do sono, controle ponderal, terapia miofuncional.',
+    exames: 'Polissonografia basal e de titulação, Escala de Sonolência de Epworth.',
+    monitoramento: 'Leitura dos dados do CPAP (adesão e IAH residual) a cada 3 meses.',
+    alertas: 'Sonolência severa ao dirigir, arritmias noturnas, IAH > 30 eventos/hora.'
   },
   'EMB-006': {
     sintomas: 'Fadiga, ganho de peso inexplicado, intolerância ao frio, obstipação, pele seca.',
@@ -2439,7 +2471,10 @@ const MEDICAL_INFO = {
     fatores: 'Sexo feminino, histórico familiar de tireoidites autoimunes, cirurgias cervicais prévias.',
     diagnosticos: 'Hipotireoidismo Primário, Tireoidite de Hashimoto.',
     diretrizes: 'Consenso Brasileiro de Hipotireoidismo (SBD/SBEM 2023).',
-    tratamento: 'Reposição de levotirorixina sódica (1,6 a 1,8 mcg/kg/dia) em jejum diário.'
+    tratamento: 'Reposição de levotirorixina sódica (1,6 a 1,8 mcg/kg/dia) em jejum diário.',
+    exames: 'Dosagem de TSH, T4 Livre, Anti-TPO.',
+    monitoramento: 'TSH a cada 6 semanas até a eutiroidismo; depois semestral.',
+    alertas: 'Tachycardia, perda de peso súbita (sinais de hipertiroidismo factual), mixedema.'
   },
   'EMB-007': {
     sintomas: 'Preocupação excessiva incontrolável, irritabilidade, insônia de manutenção, tension muscular.',
@@ -2447,7 +2482,10 @@ const MEDICAL_INFO = {
     fatores: 'Predisposição genética, fatores de estresse crônico (trabalho/família).',
     diagnosticos: 'Transtorno de Ansiedade Generalizada (TAG), Crise de Pânico.',
     diretrizes: 'Diretrizes da Associação Brasileira de Psiquiatria (ABP).',
-    tratamento: 'Inibidores seletivos de recaptação de serotonina (ISRS) e Terapia Cognitivo-Comportamental.'
+    tratamento: 'Inibidores seletivos de recaptação de serotonina (ISRS) e Terapia Cognitivo-Comportamental.',
+    exames: 'Escala GAD-7, Inventário de Ansiedade de Beck (BAI).',
+    monitoramento: 'Reavaliação de sintomas a cada 2-4 semanas durante ajuste medicamentoso.',
+    alertas: 'Aumento da agitação motora inicial, ideação suicida, síndrome serotoninérgica.'
   },
   'EMB-008': {
     sintomas: 'Corrimento genital anormal, disúria, prurido, úlceras ou vesículas genitais dolorosas.',
@@ -2455,7 +2493,10 @@ const MEDICAL_INFO = {
     fatores: 'Comportamento sexual de risco, múltiplos parceiros, não uso de preservativos.',
     diagnosticos: 'Infecção por Clamídia, Gonorreia, Sífilis, Herpes Genital.',
     diretrizes: 'Protocolo Clínico e Diretrizes Terapêuticas do Ministério da Saúde (PCDT IST 2023).',
-    tratamento: 'Ceftriaxona 500mg IM + Azitromicina 1g VO (dose única) para gonorreia/clamídia; tratar parceiros.'
+    tratamento: 'Ceftriaxona 500mg IM + Azitromicina 1g VO (dose única) para gonorreia/clamídia; tratar parceiros.',
+    exames: 'PCR para clamídia/gonococo, Sorologias (HIV, Sífilis, Hepatites), VDRL.',
+    monitoramento: 'Teste de cura para clamídia em gestantes; rastreio de novas ISTs em 3 meses.',
+    alertas: 'Dor pélvica aguda (suspeita de DIP), úlceras genitais indolores (sífilis primária).'
   },
   'EMB-009': {
     sintomas: 'Palpitações súbitas, cansaço fácil aos esforços, tonturas, síncope.',
@@ -2463,7 +2504,10 @@ const MEDICAL_INFO = {
     fatores: 'Idade avançada, hipertensão, diabetes mellitus, valvulopatias cardíacas.',
     diagnosticos: 'Fibrilação Atrial Paroxística/Persistente, Flutter Atrial.',
     diretrizes: 'Diretrizes Brasileiras de Fibrilação Atrial (SBC 2023).',
-    tratamento: 'Anticoagulação oral (DOACs/Varfarina) conforme escore CHA2DS2-VASc, controle de ritmo ou frequência.'
+    tratamento: 'Anticoagulação oral (DOACs/Varfarina) conforme escore CHA2DS2-VASc, controle de ritmo ou frequência.',
+    exames: 'ECG, Holter 24h, Ecocardiograma, Função Renal (Clearance de Creatinina).',
+    monitoramento: 'Avaliação de sangramentos e função renal semestral; controle de RNI se uso de varfarina.',
+    alertas: 'Sinais de déficit neurológico focal (AVC), melena ou hematúria (sangramentos).'
   },
   'EMB-010': {
     sintomas: 'Cefaleia unilateral de caráter pulsátil, fotofobia, fonofobia, náuseas, aura visual.',
@@ -2471,7 +2515,10 @@ const MEDICAL_INFO = {
     fatores: 'Estresse emocional, privação de sono, jejum prolongado, flutuações hormonais.',
     diagnosticos: 'Enxaqueca com/sem Aura, Cefaleia Tensional Crônica.',
     diretrizes: 'Consenso da Sociedade Brasileira de Cefaleia (SBCe 2022).',
-    tratamento: 'Profilaxia com beta-bloqueadores, anticonvulsivantes ou antidepressivos; tratamento agudo com triptanos.'
+    tratamento: 'Profilaxia com beta-bloqueadores, anticonvulsivantes ou antidepressivos; tratamento agudo com triptanos.',
+    exames: 'Diário de Cefaleia, RM de crânio (se sinais de alarme / Red Flags).',
+    monitoramento: 'Número de dias de dor/mês; Escala MIDAS (disponibilidade funcional).',
+    alertas: 'Cefaleia súbita ("trovoada"), alteração do padrão de dor, déficits neurológicos.'
   },
   'EMB-011': {
     sintomas: 'Dor e desconforto abdominal relacionados à evacuação, distensão, diarreia/obstipação.',
@@ -2479,7 +2526,10 @@ const MEDICAL_INFO = {
     fatores: 'Sensibilidade alimentar, estresse/ansiedade, infecções intestinais prévias.',
     diagnosticos: 'Síndrome do Intestino Irritável (SII-D, SII-C, SII-M).',
     diretrizes: 'Federação Brasileira de Gastroenterologia (FBG 2021).',
-    tratamento: 'Dieta Low-FODMAP, antiespasmódicos, moduladores da microbiota ou antidepressivos em baixas doses.'
+    tratamento: 'Dieta Low-FODMAP, antiespasmódicos, moduladores da microbiota ou antidepressivos em baixas doses.',
+    exames: 'Parasitológico de fezes, Calprotectina fecal (se dúvida de DII), Colonoscopia (>45 anos).',
+    monitoramento: 'Resposta clínica global e consistência das fezes (Escala de Bristol).',
+    alertas: 'Perda de peso não intencional, sangramento retal, dor noturna, febre persistente.'
   },
   'EMB-012': {
     sintomas: 'Edema de membros inferiores, nictúria, prurido difuso, anemia, fadiga intensa.',
@@ -2487,7 +2537,10 @@ const MEDICAL_INFO = {
     fatores: 'Hipertensão não controlada, diabetes de longa data, nefrolitíase de repetição.',
     diagnosticos: 'Doença Renal Crônica (Estágios 1 a 5).',
     diretrizes: 'Diretriz KDIGO (Kidney Disease: Improving Global Outcomes 2024).',
-    tratamento: 'Bloqueio do SRAA (IECA/BRA), controle rigoroso de PA (<120/80 mmHg), iSGLT2 e restrição proteica.'
+    tratamento: 'Bloqueio do SRAA (IECA/BRA), controle rigoroso de PA (<120/80 mmHg), iSGLT2 e restrição proteica.',
+    exames: 'TFGe (CKD-EPI), Relação Albumina/Creatinina (RAC), Gasometria venosa, Potássio.',
+    monitoramento: 'Exames laboratoriais trimestrais; cálculo da taxa de declínio da função renal.',
+    alertas: 'Potássio > 5.5 mEq/L, sobrecarga volêmica refratária, pericardite urêmica.'
   },
   'EMB-013': {
     sintomas: 'Placas eritematosas cobertas por escamas prateadas, coceira, dor articular associada.',
@@ -2495,7 +2548,10 @@ const MEDICAL_INFO = {
     fatores: 'Genética (HLA-Cw6), estresse psicológico, infecções agudas por estreptocos.',
     diagnosticos: 'Psoríase em Placas, Artrite Psoriásica.',
     diretrizes: 'Consenso Brasileiro de Psoríase (SBD 2020).',
-    tratamento: 'Corticoides tópicos, fototerapia ou imunobiológicos sistêmicos (anti-TNF, anti-IL17/23).'
+    tratamento: 'Corticoides tópicos, fototerapia ou imunobiológicos sistêmicos (anti-TNF, anti-IL17/23).',
+    exames: 'Avaliação clínica (PASI/DLQI), Radiografia de mãos/pés (se suspeita de artrite).',
+    monitoramento: 'Monitoramento de efeitos adversos de terapias sistêmicas; rastreio de TB latente.',
+    alertas: 'Psoríase eritrodérmica, febre, dor articular inflamatória aguda.'
   },
   'EMB-014': {
     sintomas: 'Dor articular crônica de início insidioso, rigidez matinal (<30 min), crepitação.',
@@ -2503,7 +2559,10 @@ const MEDICAL_INFO = {
     fatores: 'Idade avançada, excesso de peso/obesidade, histórico de trauma ou cirurgia articular.',
     diagnosticos: 'Osteoartrite de Joelho (Gonartrose), Osteoartrose Geral.',
     diretrizes: 'OARSI Guidelines (Osteoarthritis Research Society International 2023).',
-    tratamento: 'Reabilitação física, perda ponderal, analgésicos simples sob demanda, viscossuplementação.'
+    tratamento: 'Reabilitação física, perda ponderal, analgésicos simples sob demanda, viscossuplementação.',
+    exames: 'Radiografia de joelhos com carga, Ultrassonografia articular para avaliar sinovite.',
+    monitoramento: 'Escala Visual Analógica (EVA) de dor e funcionalidade (WOMAC).',
+    alertas: 'Sinais de artrite séptica (calor, rubor e febre), bloqueio articular súbito.'
   },
   'EMB-015': {
     sintomas: 'Perda de memória progressiva, desorientação têmpora-espacial, alterações comportamentais.',
@@ -2511,7 +2570,10 @@ const MEDICAL_INFO = {
     fatores: 'Idade, baixo nível educacional, sedentarismo, comorbidades cardiovasculares.',
     diagnosticos: 'Doença de Alzheimer (Fase Leve, Moderada ou Grave).',
     diretrizes: 'Protocolo de Demência do Ministério da Saúde (PCDT 2022).',
-    tratamento: 'Inibidores da acetilcolinesterase (donepezila, galantamina) e memantina.'
+    tratamento: 'Inibidores da acetilcolinesterase (donepezila, galantamina) e memantina.',
+    exames: 'Mini Exame do Estado Mental (MEEM), MoCA Test, RM de encéfalo.',
+    monitoramento: 'Avaliação da carga do cuidador semestral; revisão da segurança domiciliar.',
+    alertas: 'Delirium agudo, quedas frequentes, recusa alimentar severa, agressividade.'
   },
   'EMB-016': {
     sintomas: 'Dismenorreia progressiva severa, dor pélvica crônica não menstrual, dispareunia.',
@@ -2519,7 +2581,10 @@ const MEDICAL_INFO = {
     fatores: 'História familiar de endometriose, menarca precoce, nuliparidade.',
     diagnosticos: 'Endometriose Profunda Reto-Vaginal/Ovariana.',
     diretrizes: 'Consenso da FEBRASGO (Endometriose 2021).',
-    tratamento: 'Bloqueio hormonal contínuo (dienogeste, análogos de GnRH), cirurgia laparoscópica se refratário.'
+    tratamento: 'Bloqueio hormonal contínuo (dienogeste, análogos de GnRH), cirurgia laparoscópica se refratário.',
+    exames: 'USG Transvaginal com preparo intestinal, RM de pelve com protocolo para endometriose.',
+    monitoramento: 'Níveis de dor e qualidade de vida; marcadores (CA-125) têm valor limitado.',
+    alertas: 'Obstrução intestinal ou ureteral por implantes, rotura de endometrioma.'
   },
   'EMB-017': {
     sintomas: 'Fadiga extrema, palidez cutâneo-mucosa, unhas quebradiças, perversão do apetite (pica).',
@@ -2527,7 +2592,10 @@ const MEDICAL_INFO = {
     fatores: 'Sangramentos menstruais excessivos, dieta pobre em ferro, distúrbios absortivos.',
     diagnosticos: 'Anemia Ferropriva Refratária, Anemia por Deficiência de Ferro.',
     diretrizes: 'Diretrizes da Associação Brasileira de Hematologia e Hemoterapia (ABHH).',
-    tratamento: 'Reposição de ferro por via oral (sulfato ferroso) ou parenteral (ferro carboximaltose/sacarato).'
+    tratamento: 'Reposição de ferro por via oral (sulfato ferroso) ou parenteral (ferro carboximaltose/sacarato).',
+    exames: 'Hemograma, Ferritina, Saturação de Transferrina, Pesquisa de Sangue Oculto nas Fezes.',
+    monitoramento: 'Controle de Hemoglobina em 30-60 dias; Ferritina trimestral.',
+    alertas: 'Melena, síncope, taquicardia ao repouso, sintomas de descompensação cardíaca.'
   },
   'EMB-018': {
     sintomas: 'Obstrução nasal bilateral, prurido nasal/ocular, espirros em salva, coriza hialina.',
@@ -2535,27 +2603,129 @@ const MEDICAL_INFO = {
     fatores: 'Hipersensibilidade a aeroalérgenos (ácaros, pelos de animais, polens).',
     diagnosticos: 'Rinite Alérgica Crônica Persistente (Moderada a Grave).',
     diretrizes: 'Associação Brasileira de Alergia e Imunologia (ASBAI 2022).',
-    tratamento: 'Corticosteroide intranasal spray diário, anti-histamínicos de 2ª geração, imunoterapia específica.'
+    tratamento: 'Corticosteroide intranasal spray diário, anti-histamínicos de 2ª geração, imunoterapia específica.',
+    exames: 'IgE específica para inalantes, Teste cutâneo de leitura imediata.',
+    monitoramento: 'Escala Visual Analógica (EVA) de sintomas nasais mensal.',
+    alertas: 'Epistaxe frequente, dor facial intensa, anosmia (perda de olfato).'
+  },
+  'EMB-019': {
+    sintomas: 'Tosse persistente > 3 semanas, febre vespertina, sudorese noturna, emagrecimento.',
+    complicacoes: 'Cavitação pulmonar, disseminação extrapulmonar, insuficiência respiratória.',
+    fatores: 'Contato próximo com caso ativo, imunossupressão, áreas de alta densidade demográfica.',
+    diagnosticos: 'Tuberculose Pulmonar Ativa, Tuberculose Latente.',
+    diretrizes: 'Manual de Recomendações para o Controle da TB no Brasil (MS 2024).',
+    tratamento: 'Esquema básico (RIPE): Rifampicina, Isoniazida, Pirazinamida e Etambutol por 6 meses.',
+    exames: 'Baciloscopia de escarro, Teste Rápido Molecular (TRM-TB), Cultura para micobactérias, Rx Tórax.',
+    monitoramento: 'Baciloscopia mensal de controle; acompanhamento de função hepática.',
+    alertas: 'Icterícia, vômitos (toxicidade hepática), hemoptise volumosa.'
+  },
+  'EMB-020': {
+    sintomas: 'Tosse, sibilância e dispneia relacionadas à exposição ocupacional (poeira/químicos).',
+    complicacoes: 'Remodelação brônquica irreversível, incapacidade laboral definitiva.',
+    fatores: 'Trabalho em indústrias químicas, têxteis ou construção civil sem EPI adequado.',
+    diagnosticos: 'Asma Ocupacional, Pneumoconiose.',
+    diretrizes: 'Protocolos de Saúde do Trabalhador (Ministério da Saúde).',
+    tratamento: 'Afastamento imediato do agente causal, CI + LABA para controle de sintomas.',
+    exames: 'Espirometria pré e pós-jornada de trabalho, Pico de fluxo domiciliar.',
+    monitoramento: 'Avaliação periódica da função respiratória após afastamento.',
+    alertas: 'Exacerbação grave à reexposição, cianose, uso de musculatura acessória.'
+  },
+  'EMB-024': {
+    sintomas: 'Diarreia crônica, flatulência, dor abdominal, anemia ferropriva inexplicada.',
+    complicacoes: 'Linfoma intestinal, osteoporose prematura, infertilidade, dermatite herpetiforme.',
+    fatores: 'Genética (HLA-DQ2/DQ8), presença de outras doenças autoimunes (DM1).',
+    diagnosticos: 'Doença Celíaca, Sensibilidade ao Glúten Não-Celíaca.',
+    diretrizes: 'Protocolo Clínico e Diretrizes Terapêuticas da Doença Celíaca (PCDT 2022).',
+    tratamento: 'Dieta estritamente isenta de glúten (trigo, centeio, cevada) por toda a vida.',
+    exames: 'Anticorpo Antitransglutaminase Tecidual IgA, IgA Total, Biópsia de Duodeno (Marsh).',
+    monitoramento: 'Negativação de anticorpos em 6-12 meses; acompanhamento nutricional.',
+    alertas: 'Ataxia, perda ponderal contínua mesmo com dieta, dor abdominal persistente.'
+  },
+  'EMB-025': {
+    sintomas: 'Dor oncológica de forte intensidade, contínua ou incidental (ao movimento).',
+    complicacoes: 'Sofrimento existencial, depressão reativa, imobilismo, caquexia.',
+    fatores: 'Avanço da doença neoplásica, compressão nervosa, metástases ósseas.',
+    diagnosticos: 'Dor Crônica Oncológica, Dor Neuropática Pós-Quimio.',
+    diretrizes: 'Diretrizes de Cuidados Paliativos (OMS / Academia Nacional de Cuidados Paliativos).',
+    tratamento: 'Escada analgésica da OMS (Opióides fortes, analgésicos e adjuvantes), bloqueios nervosos.',
+    exames: 'Escala Visual Analógica (EVA), Avaliação multidimensional da dor.',
+    monitoramento: 'Reavaliação diária em ambiente hospitalar ou semanal em domicílio.',
+    alertas: 'Depressão respiratória (toxicidade por opióides), constipação severa, delírio.'
+  },
+  'EMB-026': {
+    sintomas: 'Frequentemente assintomático; edema unilateral de membro inferior, dor na panturrilha.',
+    complicacoes: 'Embolia Pulmonar (TEP), Síndrome Pós-Trombótica, Morte súbita.',
+    fatores: 'Cirurgias de grande porte, imobilização prolongada, câncer ativo, obesidade.',
+    diagnosticos: 'Tromboembolismo Venoso (TEV), Trombose Venosa Profunda (TVP).',
+    diretrizes: 'Diretrizes da SBACV (Sociedade Brasileira de Angiologia e Cirurgia Vascular).',
+    tratamento: 'Profilaxia mecânica e química (Enoxaparina/Fondaparinux) conforme escore Caprini.',
+    exames: 'D-Dímero, Doppler Venoso de membros inferiores, Angio-TC de tórax (se suspeita de TEP).',
+    monitoramento: 'Sinais vitais e circunferência de panturrilhas em pacientes acamados.',
+    alertas: 'Dispneia súbita, dor pleurítica, hemoptise, taquicardia (sinais de TEP).'
+  },
+  'EMB-027': {
+    sintomas: 'Frequentemente assintomático nas fases iniciais; alteração do hábito intestinal, sangramento.',
+    complicacoes: 'Obstrução intestinal, perfuração, metástases hepáticas/pulmonares.',
+    fatores: 'Idade > 45 anos, histórico familiar de pólipos/câncer, dieta pobre em fibras.',
+    diagnosticos: 'Câncer Colorretal, Pólipos Adenomatosos Transmitidos.',
+    diretrizes: 'Diretrizes do INCA / Sociedade Brasileira de Coloproctologia.',
+    tratamento: 'Rastreamento com colonoscopia ou pesquisa de sangue oculto fecal; cirurgia + quimio se câncer.',
+    exames: 'Colonoscopia a cada 10 anos (risco médio), CEA (marcador tumoral para seguimento).',
+    monitoramento: 'Rastreio periódico conforme achados da colonoscopia anterior.',
+    alertas: 'Anemia ferropriva em homens ou mulheres pós-menopausa, fezes "em fita".'
+  },
+  'EMB-028': {
+    sintomas: 'Hipertensão surgida após 20ª semana, edema súbito, cefaleia, alterações visuais.',
+    complicacoes: 'Eclâmpsia, Síndrome HELLP, Descolamento Prematuro de Placenta, Prematuridade.',
+    fatores: 'Primeira gestação, idade extrema (>35 anos), obesidade, história prévia de DHEG.',
+    diagnosticos: 'Pré-eclâmpsia, Hipertensão Gestacional, Hipertensão Crônica sobreposta.',
+    diretrizes: 'Diretrizes da FEBRASGO (DHEG 2023).',
+    tratamento: 'Controle pressórico (Metildopa/Nifedipino), Sulfato de Magnésio para prevenção de convulsões.',
+    exames: 'Proteinúria de 24h ou relação prot/creat, Plaquetas, Enzimas hepáticas (TGO/TGP), LDH.',
+    monitoramento: 'Perfil biofísico fetal; Ultrassom Doppler de artérias uterinas.',
+    alertas: 'Escotomas (pontos brilhantes), dor no epigástrio, cefaleia refratária.'
+  },
+  'EMB-029': {
+    sintomas: 'Fadiga, infecções de repetição, sangramentos prolongados (conforme o grau de supressão).',
+    complicacoes: 'Sepse grave, infecções oportunistas (fungos/vírus), rejeição em transplantados.',
+    fatores: 'Quimioterapia, uso de corticoides em altas doses, transplantes, HIV/AIDS.',
+    diagnosticos: 'Imunossupressão Secundária, Neutropenia Febril.',
+    diretrizes: 'Consenso da Sociedade Brasileira de Infectologia (SBI).',
+    tratamento: 'Profilaxia antibiótica/antifúngica se indicado, vacinação especial, isolamento protetor.',
+    exames: 'Hemograma com contagem absoluta de neutrófilos, CD4/CD8, Imunoglobulinas.',
+    monitoramento: 'Monitoramento contínuo de picos febris e focos infecciosos.',
+    alertas: 'Febre (T > 38.0°C) em paciente neutropênico (Emergência Médica).'
+  },
+  'EMB-030': {
+    sintomas: 'Tristeza profunda, anedonia, choro fácil, sentimentos de culpa, dificuldade de vínculo com o bebê.',
+    complicacoes: 'Prejuízo no desenvolvimento infantil, infanticídio (raro), suicídio materno.',
+    fatores: 'Histórico prévio de depressão, falta de rede de apoio, parto traumático.',
+    diagnosticos: 'Depressão Pós-Parto (Puerperal), Psicose Puerperal.',
+    diretrizes: 'Diretrizes da Associação Brasileira de Psiquiatria (ABP) / Ministério da Saúde.',
+    tratamento: 'Psicoterapia interpessoal, suporte social, ISRS (avaliar segurança na amamentação).',
+    exames: 'Escala de Depressão Pós-natal de Edimburgo (EPDS).',
+    monitoramento: 'Triagem sistemática em consultas de puerpério e puericultura.',
+    alertas: 'Ideação de ferir o bebê ou a si mesma, sintomas psicóticos (alucinações/delírios).'
   }
 };
 
 /* ── HELPERS ── */
 function metaGrid(emb, showAll = true){
   const med = MEDICAL_INFO[emb.id] || {};
-  const sintomas = med.sintomas || '—';
-  const complicacoes = med.complicacoes || '—';
-  const fatores = med.fatores || '—';
-  const diagnosticos = med.diagnosticos || '—';
-  const diretrizes = med.diretrizes || '—';
-  const tratamento = med.tratamento || '—';
-  const exames = med.exames || 'Hemograma completo, perfil metabólico básico.';
-  const monitoramento = med.monitoramento || 'Acompanhamento clínico regular a cada 3 meses.';
-  const alertas = med.alertas || 'Aparecimento de novos sintomas graves ou reações alérgicas.';
+  const sintomas = med.sintomas || 'Sintomas não específicos relatados pelo paciente.';
+  const complicacoes = med.complicacoes || 'Risco de evolução para cronicidade sem tratamento adequado.';
+  const fatores = med.fatores || 'Idade avançada, comorbidades prévias e estilo de vida.';
+  const diagnosticos = med.diagnosticos || 'Hipótese diagnóstica clínica baseada em anamnese.';
+  const diretrizes = med.diretrizes || 'Protocolos Clínicos e Diretrizes Terapêuticas (PCDT).';
+  const tratamento = med.tratamento || 'Conduta expectante e monitoramento de sinais e sintomas.';
+  const exames = med.exames || 'Hemograma completo, PCR, Função Renal e Eletrólitos.';
+  const monitoramento = med.monitoramento || 'Acompanhamento clínico periódico conforme evolução.';
+  const alertas = med.alertas || 'Febre alta, dor intensa refratária ou alteração do nível de consciência.';
 
   const items = [
     `<div style="background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px;grid-column: span 2">
-      <div style="font-size:10px;color:var(--dim);margin-bottom:4px;text-transform:uppercase;font-weight:600">Especialidade/Sub-especialidades</div>
-      <div style="font-size:12.5px;font-weight:500;color:var(--txt)">Pediatria/${emb.esp.toUpperCase()}</div>
+      <div style="font-size:10px;color:var(--dim);margin-bottom:4px;text-transform:none;font-weight:600">Especialidade/Sub-especialidades</div>
+      <div style="font-size:12.5px;font-weight:500;color:var(--txt)">Pediatria/${emb.esp}</div>
     </div>`,
     `<div style="background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px;grid-column: span 2">
       <div style="font-size:10px;color:var(--dim);margin-bottom:4px;text-transform:uppercase;font-weight:600">Diagnósticos Associados</div>
@@ -2843,36 +3013,40 @@ function renderHistEmbScreen() {
 function renderEmbFields(embId, altText = null) {
   const emb = EMBS.find(e => e.id === embId) || { id: embId, esp: 'Clínica Médica', texto: altText || '—' };
   
-  function field(lbl, val, span=2, accent='') {
-    return `<div style="background:var(--sur);border:1px solid var(--bdr);${accent?`border-left:3px solid ${accent};`:''}border-radius:var(--rs);padding:10px 14px;grid-column:span ${span}">
-      <div style="font-size:10px;color:var(--dim);margin-bottom:5px;text-transform:uppercase;font-weight:600">${lbl}</div>
-      <div style="font-size:12.5px;font-weight:500;color:var(--txt);line-height:1.6">${val}</div>
-    </div>`;
-  }
-
-  // Melhora o preenchimento para itens que não estão na base principal
-  let med = MEDICAL_INFO[embId];
-  if (!med) {
-    // Mock information for history items not in current EMBS
-    med = {
-      diagnosticos: 'CID-10 relacionado à especialidade informada.',
-      sintomas: 'Sintomas clássicos observados em casos similares.',
-      fatores: 'Fatores genéticos e ambientais associados.',
-      diretrizes: 'Diretriz institucional atualizada (2025).',
-      tratamento: 'Protocolo clínico de primeira linha disponível na base.'
-    };
-  }
-  
   return `
-    <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
-      ${field('Especialidade', emb.esp, 2)}
-      ${field('Resumo da Regra', altText || emb.texto, 2, 'var(--acc)')}
-      ${field('Diagnósticos Associados', med.diagnosticos || '—', 2)}
-      ${field('Sintomas Comuns', med.sintomas || '—', 2)}
-      ${field('Fatores de Risco', med.fatores || '—', 2)}
-      ${field('Diretrizes Clínicas', med.diretrizes || '—', 2)}
-      ${field('Tratamento Sugerido', med.tratamento || '—', 2)}
-    </div>`;
+    <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom:16px">
+      ${metaGrid(emb)}
+    </div>
+    <div style="font-size:10px;font-weight:700;color:var(--warn);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Resumo da Regra</div>
+    <div style="font-size:13.5px;line-height:1.8;color:var(--txt);background:var(--pur-bg);border:1px solid var(--pur-br);border-left:4px solid var(--pur);border-radius:var(--rs);padding:18px">
+      ${altText || emb.texto}
+    </div>
+    
+    <!-- Planos associados no histórico -->
+    <div style="padding:24px 0 10px">
+       <div class="sec-title">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          
+          <span style="font-size:11px;color:var(--mut);font-weight:400;text-transform:none;letter-spacing:0">— visualização histórica</span>
+       </div>
+    </div>
+    <div class="planos-grid" style="display:none">${renderPlanosGridHtml(embId)}</div>`;
+}
+
+function renderEmbCompRow(label, before, after) {
+  // Padrao dos outros itens: background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px;
+  return `
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; padding: 12px 24px; background: var(--sur);">
+       <div style="background:var(--sur); border:1px solid var(--bdr); border-radius:var(--rs); padding:10px 14px;">
+          <div style="font-size:10px; color:var(--dim); margin-bottom:4px; text-transform:uppercase; font-weight:600">${label}</div>
+          <div style="font-size:12.5px; font-weight:500; color:var(--txt)">${before}</div>
+       </div>
+       <div style="background:var(--sur); border:1px solid var(--acc)40; border-radius:var(--rs); padding:10px 14px;">
+          <div style="font-size:10px; color:var(--acc); margin-bottom:4px; text-transform:uppercase; font-weight:600">${label} (Posterior)</div>
+          <div style="font-size:12.5px; font-weight:500; color:var(--txt)">${after}</div>
+       </div>
+    </div>
+  `;
 }
 
 function openHistEmbDetail(hId) {
@@ -2880,7 +3054,6 @@ function openHistEmbDetail(hId) {
   if (!e) return;
   
   if (e.status === 'editado') {
-     // USES MODAL 1: Comparison
      const stColor = 'var(--acc)';
      const stLabel = '✎ Editado';
      
@@ -2888,15 +3061,30 @@ function openHistEmbDetail(hId) {
      document.getElementById('hedTitle').textContent = `Comparação da Regra — ${e.embId}`;
      document.getElementById('hedSub').textContent = `Modificação em: ${e.data}`;
      
-     const leftSide = document.getElementById('hedLeft');
-     const rightSide = document.getElementById('hedRight');
+     // Cabeçalho de colunas
+     const header = `
+        <div style="display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--bdr); background: var(--sur2);">
+          <div style="padding:14px 24px; border-right:1px solid var(--bdr); font-size:11px; font-weight:600; color:var(--mut); text-transform:uppercase;">Versão Anterior</div>
+          <div style="padding:14px 24px; font-size:11px; font-weight:600; color:var(--acc); text-transform:uppercase;">Nova Versão</div>
+        </div>
+     `;
      
-     leftSide.innerHTML = renderEmbFields(e.embId, e.antes);
-     rightSide.innerHTML = renderEmbFields(e.embId, e.depois);
+     // Dois painéis lado a lado com o MESMO layout de renderEmbFields
+     const panels = `
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0;">
+          <div style="padding:24px; border-right:1px solid var(--bdr); background:var(--sur);">
+            ${renderEmbFields(e.embId, e.antes)}
+          </div>
+          <div style="padding:24px; background:var(--sur);">
+            ${renderEmbFields(e.embId, e.depois)}
+          </div>
+        </div>
+     `;
      
+     document.getElementById('hedContent').innerHTML = header + panels;
      openOv('ovHistEmbDetail');
+
   } else {
-     // USES MODAL 2: Single Rule (Add/Delete)
      const st = e.status;
      const stColor = st === 'apagado' ? 'var(--red)' : 'var(--grn)';
      const stLabel = st === 'apagado' ? '✗ Apagado' : '+ Adicionado';
@@ -2906,7 +3094,6 @@ function openHistEmbDetail(hId) {
      document.getElementById('hesSub').textContent = `Data: ${e.data}`;
      
      document.getElementById('hesBody').innerHTML = renderEmbFields(e.embId, st === 'adicionado' ? e.depois : e.antes);
-     
      openOv('ovHistEmbSingle');
   }
 }
