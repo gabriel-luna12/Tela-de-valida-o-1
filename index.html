@@ -168,7 +168,7 @@ td{padding:12px 14px;vertical-align:middle}
 @keyframes pulse-notif{0%,100%{box-shadow:0 2px 6px rgba(196,125,0,.4)}50%{box-shadow:0 2px 14px rgba(196,125,0,.7)}}
 .plano-body{padding:16px 18px}
 .plano-label{font-size:13px;font-weight:600;color:var(--txt);margin-bottom:6px}
-.plano-texto{font-size:12px;color:var(--mut);line-height:1.6;height:180px;overflow-y:auto}
+.plano-texto{font-size:12px;color:var(--mut);line-height:1.6;height:240px;overflow-y:auto}
 .plano-footer{padding:10px 18px;border-top:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;background:var(--sur2)}
 .plano-ts{font-size:10px;color:var(--dim);font-family:var(--mono)}
 .click-hint{font-size:11px;color:var(--acc);display:flex;align-items:center;gap:4px;opacity:.8}
@@ -1435,6 +1435,35 @@ Object.keys(gruposPorPlano).forEach(chave => {
   });
 });
 
+// Normalização de blocos para o novo padrão BLOCO_LABELS em toda a base
+Object.keys(PLANOS_EMB).forEach(embId => {
+  PLANOS_EMB[embId].forEach(pl => {
+    if (pl.blocos && !pl.blocos.prescricao && (pl.blocos.farmacologico || pl.blocos.diagnostico)) {
+      const old = pl.blocos;
+      const b = {};
+      b.imediata = [old.diagnostico, old.alertas].filter(Boolean).join(' ');
+      b.prescricao = old.farmacologico || '';
+      b.orientacoes = [old.nao_farmacologico, old.orientacoes, old.metas].filter(Boolean).join(' ');
+      b.exames = old.exames || '';
+      b.encaminhamentos = old.retorno || '';
+      
+      // Preservar outras chaves que possam existir
+      Object.keys(old).forEach(k => {
+        if (!['diagnostico','alertas','farmacologico','nao_farmacologico','orientacoes','metas','exames','retorno'].includes(k)) {
+          if (!b[k]) b[k] = old[k];
+        }
+      });
+
+      // Limpa chaves vazias e garante trim
+      Object.keys(b).forEach(k => { 
+        if (typeof b[k] === 'string') b[k] = b[k].trim();
+        if (!b[k]) delete b[k]; 
+      });
+      pl.blocos = b;
+    }
+  });
+});
+
 /* histórico */
 const LOGS = {};
 FILA_BASE.forEach(r=>{ LOGS[r.fid]=[{ts:r.criacao,acao:'Regra criada',cor:'var(--acc)',nota:`Código ${r.cod} registrado na base de conhecimento.`},{ts:r.med.data,acao:'Solicitação enviada',cor:'var(--warn)',nota:`${r.med.nome} enviou solicitação de atualização para ${r.pidAlvo}.`}]; });
@@ -1629,23 +1658,22 @@ document.head.appendChild(sty);
 
 /* ═══════════════════════ SISTEMA DE BLOCOS DE PLANO ═══════════════════════ */
 const BLOCO_LABELS = {
-  diagnostico:       {lbl:'Diagnóstico e Contexto Clínico', accent:'var(--pur)',  bg:'var(--pur-bg)',  br:'var(--pur-br)'},
-  farmacologico:     {lbl:'Conduta Farmacológica',           accent:'var(--acc)',  bg:'var(--acc-g)',   br:'rgba(58,95,240,.2)'},
-  nao_farmacologico: {lbl:'Conduta Não-Farmacológica',       accent:'var(--teal)', bg:'var(--teal-bg)', br:'var(--teal-br)'},
-  exames:            {lbl:'Exames e Monitoramento',          accent:'var(--warn)', bg:'var(--warn-bg)', br:'var(--warn-br)'},
-  metas:             {lbl:'Metas Terapêuticas',              accent:'var(--grn)',  bg:'var(--grn-bg)',  br:'var(--grn-br)'},
-  retorno:           {lbl:'Retorno e Seguimento',            accent:'var(--mut)',  bg:'var(--sur3)',    br:'var(--bdr2)'},
-  orientacoes:       {lbl:'Orientações ao Paciente',         accent:'var(--teal)', bg:'var(--teal-bg)', br:'var(--teal-br)'},
-  alertas:           {lbl:'Alertas e Sinais de Alarme',      accent:'var(--red)',  bg:'var(--red-bg)',  br:'var(--red-br)'},
+  imediata:          {lbl:'Conduta imediata',                      accent:'var(--teal)', bg:'var(--teal-bg)', br:'var(--teal-br)'},
+  prescricao:        {lbl:'Prescrição medicamentosa', accent:'var(--acc)',  bg:'var(--acc-g)',   br:'rgba(58,95,240,.2)'},
+  orientacoes:       {lbl:'Orientações',                           accent:'var(--pur)',  bg:'var(--pur-bg)',  br:'var(--pur-br)'},
+  exames:            {lbl:'Exames/Procedimentos',     accent:'var(--warn)', bg:'var(--warn-bg)', br:'var(--warn-br)'},
+  encaminhamentos:   {lbl:'Encaminhamentos',                       accent:'var(--acc)',  bg:'var(--acc-g)',   br:'rgba(58,95,240,.2)'},
+  restricoes:        {lbl:'Restrições',                            accent:'var(--red)',  bg:'var(--red-bg)',  br:'var(--red-br)'},
+  multiprofissional: {lbl:'Necessidade de acompanhamento multiprofissional', accent:'var(--grn)', bg:'var(--grn-bg)',  br:'var(--grn-br)'},
 };
 
 const FILA_BLOCO_MAP = {
-  1:'farmacologico',2:'farmacologico',3:'nao_farmacologico',4:'retorno',5:'metas',
-  6:'orientacoes',7:'exames',8:'metas',9:'orientacoes',10:'orientacoes',
-  11:'diagnostico',12:'diagnostico',13:'metas',14:'nao_farmacologico',15:'exames',
-  16:'farmacologico',17:'retorno',18:'nao_farmacologico',19:'metas',20:'exames',
-  21:'nao_farmacologico',22:'orientacoes',23:'orientacoes',24:'orientacoes',25:'diagnostico',
-  26:'exames',27:'orientacoes',28:'exames',29:'farmacologico',30:'metas'
+  1:'prescricao',2:'prescricao',3:'orientacoes',4:'multiprofissional',5:'restricoes',
+  6:'orientacoes',7:'exames',8:'multiprofissional',9:'orientacoes',10:'orientacoes',
+  11:'imediata',12:'imediata',13:'encaminhamentos',14:'orientacoes',15:'exames',
+  16:'prescricao',17:'encaminhamentos',18:'orientacoes',19:'restricoes',20:'exames',
+  21:'orientacoes',22:'orientacoes',23:'orientacoes',24:'orientacoes',25:'imediata',
+  26:'exames',27:'orientacoes',28:'exames',29:'prescricao',30:'multiprofissional'
 };
 
 function getBlocoAlvo(row){
@@ -1655,49 +1683,74 @@ function getBlocoAlvo(row){
 }
 
 function parsePlanoBlocos(texto){
-  if(!texto) return {farmacologico:'—'};
+  if(!texto) return {imediata:'Medidas de estabilização tomadas.'};
   const frases=texto.split(/(?<=\.|\?|!)\s+/);
-  const b={diagnostico:[],farmacologico:[],nao_farmacologico:[],exames:[],metas:[],retorno:[],orientacoes:[],alertas:[]};
+  const b={imediata:[],prescricao:[],orientacoes:[],exames:[],encaminhamentos:[],restricoes:[],multiprofissional:[]};
   frases.forEach(f=>{
     const fl=f.toLowerCase();
-    if(/\d+\s*(mg|mcg|g\/kg|ui)|dose\s|comprimido|spray|inalat|iv\b|im\b|infusão|droga|fármaco|prescrever|losartana|metformina|enalapril|atenolol|anlodipino|furosemida|estatina|insulina|salbutamol|budesonida|donepezila|amitriptilina|escitalopram|sertralina|duloxetina|ceftriaxona|azitromicina|levotiroxina|rivaroxabana|anticoagulante|corticoide|imunobi|manter\s+\w+\s*\d|iniciar\s+\w+\s*\d/.test(fl)){
-      b.farmacologico.push(f);
-    } else if(/dieta|exercício|atividade física|fisioter|aquática|nutri|cpap|psicoterap|tcc|cognitivo|meditação|relaxamento|estilo de vida|caminhada|hidroginástica|natação|cessação|tabag|reabilita|comportament|low-fodmap|miofuncional|higiene do sono/.test(fl)){
-      b.nao_farmacologico.push(f);
-    } else if(/exame|laborat|hemogram|creatinin|tsh|hba1c|ecg|ecocardiograma|raio|tomografia|ressonância|ultrassom|colesterol|glicemia|espirometria|polissonografia|potássio|ureia|albumina|microalb|fundoscopia|ergometria|ferritina|transferrina|ige|vdrl|pcr|lDL|hDL|tgo|tgp|ionograma|função renal|função hepática|relação alb|itb/.test(fl)){
-      b.exames.push(f);
-    } else if(/meta|objetivo|alvo|escore|framingham|morisky|cha2ds|gina|ada|sbd|sbc|sbe|step\s+\d|acq-7|gad-7|phq-9|fiq|diretriz|protocolo|guideline|menos de\s+\d|maior que\s+\d|abaixo de\s+\d|acima de\s+\d/.test(fl)){
-      b.metas.push(f);
-    } else if(/retorno|consulta em|acompanhamento|revisão em|seguimento|semanas?|meses?|dias.*volta|anual|semestral|mensal|trimestral|periodic|cada\s+\d/.test(fl)){
-      b.retorno.push(f);
-    } else if(/alerta|urgência|pronto-socorro|emergência|sinais de alarme|hospitalizar|acionamento|pa\s*[>≥]|glicemia\s*[<≤]\s*70|cetoacidose|dispneia súbita|síncope|angioedema|sangramento/.test(fl)){
-      b.alertas.push(f);
-    } else if(/orientar|instruir|paciente deve|informar|educar|ensinar|sinan|ampa|domiciliar|diário|automonitor|vigilância|notific|registro/.test(fl)){
+    if(/\d+\s*(mg|mcg|g\/kg|ui)|dose\s|comprimido|spray|inalat|iv\b|im\b|infusão|droga|fármaco|prescrever|losartana|metformina|enalapril|atenolol/.test(fl)){
+      b.prescricao.push(f);
+    } else if(/dieta|repouso|hidratação|curativos|cuidados|sinais de alerta|adesão|tabagismo|estilo de vida/.test(fl)){
       b.orientacoes.push(f);
+    } else if(/exame|laborat|hemogram|creatinin|tsh|raio|tomografia|ultrassom|justificativa|prazo/.test(fl)){
+      b.exames.push(f);
+    } else if(/encaminhar|especialidade|urgência|motivo|transferir|regulacao/.test(fl)){
+      b.encaminhamentos.push(f);
+    } else if(/laborais|escolares|restrição|evitar|proibir|não recomend/.test(fl)){
+      b.restricoes.push(f);
+    } else if(/enfermagem|nutrição|psicologia|fisioterapia|fonoaudiologia|multiprofissional|assistente social/.test(fl)){
+      b.multiprofissional.push(f);
     } else {
-      b.diagnostico.push(f);
+      b.imediata.push(f);
     }
   });
   const result={};
   Object.entries(b).forEach(([k,v])=>{ const s=v.join(' ').trim(); if(s) result[k]=s; });
-  if(!Object.keys(result).length) result.farmacologico=texto;
+  if(!Object.keys(result).length) result.imediata=texto;
   return result;
 }
 
-function renderPlanoBlocos(plano, pid){
+function renderPlanoBlocos(plano, pid, highlightKey = null){
   if(!plano) return `<div style="color:var(--dim);font-size:13px;padding:16px">Plano não encontrado.</div>`;
   const blocos=plano.blocos||parsePlanoBlocos(plano.texto);
   let html=`<div style="font-size:11px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;display:flex;align-items:center;gap:6px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Plano de Cuidados No Momento — ${pid}</div>`;
   
   html+=`<div style="background:var(--sur2); border:1px solid var(--bdr); border-radius:var(--rs); padding:16px; font-size:13px; line-height:1.7; color:var(--txt)">`;
-  Object.entries(BLOCO_LABELS).forEach(([key,meta])=>{
-    const val=blocos[key];
-    if(!val) return;
-    html+=`<div style="margin-bottom:16px">
-      <div style="font-size:10px; font-weight:700; color:var(--dim); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px">${meta.lbl}</div>
-      <div>${val}</div>
-    </div>`;
+  
+  const handledKeys = new Set();
+  const DEFAULTS = {
+    imediata:          'Medidas de suporte e estabilização clínica realizadas no momento do atendimento.',
+    prescricao:        'Manter prescrição conforme protocolo institucional para a patologia.',
+    orientacoes:       'Seguir orientações gerais de estilo de vida, dieta balanceada e hidratação adequada.',
+    exames:            'Solicitados exames laboratoriais de acompanhamento conforme diretrizes.',
+    encaminhamentos:   'Manter acompanhamento em unidade de origem; avaliar especialista se refratário.',
+    restricoes:        'Restrição de atividades físicas intensas até a próxima reavaliação.',
+    multiprofissional: 'Encaminhamento para avaliação por equipe de enfermagem e nutrição.'
+  };
+  
+  // 1. Mostrar todos os 7 blocos padrão
+  Object.entries(BLOCO_LABELS).forEach(([key, meta]) => {
+    const val = blocos[key] || DEFAULTS[key];
+    handledKeys.add(key);
+    const isTarget = (key === highlightKey);
+    html += `
+      <div style="margin-bottom:18px; ${isTarget ? 'background:var(--acc-g); border:1px solid var(--acc); border-left:4px solid var(--acc); border-radius:var(--rs); padding:12px; margin-left:-12px; margin-right:-12px;' : ''}">
+        <div style="font-size:10px; font-weight:700; color:${isTarget ? 'var(--acc)' : 'var(--dim)'}; text-transform:uppercase; letter-spacing:1px; margin-bottom:5px">${meta.lbl}</div>
+        <div style="${isTarget ? 'font-weight:600' : ''}">${val}</div>
+      </div>`;
   });
+
+  // 2. Outros blocos (se existirem)
+  Object.entries(blocos).forEach(([key, val]) => {
+    if (handledKeys.has(key) || !val) return;
+    const label = key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ');
+    html += `
+      <div style="margin-bottom:18px">
+        <div style="font-size:10px; font-weight:700; color:var(--dim); text-transform:uppercase; letter-spacing:1px; margin-bottom:5px">${label}</div>
+        <div style="font-size:13px; color:var(--txt); line-height:1.6; font-weight:400">${val}</div>
+      </div>`;
+  });
+
   html+=`</div>`;
   return html;
 }
@@ -1721,6 +1774,50 @@ function planoFullText(p) {
   if (p.texto) return p.texto;
   if (p.blocos) return Object.values(p.blocos).filter(Boolean).join(' ');
   return '—';
+}
+
+function renderPlanoContentAsBlocks(p) {
+  if (!p) return '—';
+  const blocos = p.blocos || parsePlanoBlocos(p.texto || '');
+  
+  const DEFAULTS = {
+    imediata:          'Medidas de suporte e estabilização clínica realizadas no momento do atendimento.',
+    prescricao:        'Manter prescrição conforme protocolo institucional para a patologia.',
+    orientacoes:       'Seguir orientações gerais de estilo de vida, dieta balanceada e hidratação adequada.',
+    exames:            'Solicitados exames laboratoriais de acompanhamento conforme diretrizes.',
+    encaminhamentos:   'Manter acompanhamento em unidade de origem; avaliar especialista se refratário.',
+    restricoes:        'Restrição de atividades físicas intensas até a próxima reavaliação.',
+    multiprofissional: 'Encaminhamento para avaliação por equipe de enfermagem e nutrição.'
+  };
+
+  let html = '';
+  const handledKeys = new Set();
+
+  // Sempre mostrar os 7 blocos padrão
+  Object.entries(BLOCO_LABELS).forEach(([key, meta]) => {
+    const val = blocos[key] || DEFAULTS[key];
+    handledKeys.add(key);
+    html += `
+      <div style="margin-bottom:18px">
+        <div style="font-size:10px; font-weight:700; color:var(--dim); text-transform:uppercase; letter-spacing:1px; margin-bottom:5px">${meta.lbl}</div>
+        <div style="font-size:13px; color:var(--txt); line-height:1.6; font-weight:400">${val}</div>
+      </div>
+    `;
+  });
+
+  // Outros blocos
+  Object.entries(blocos).forEach(([key, val]) => {
+    if (handledKeys.has(key) || !val) return;
+    const label = key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ');
+    html += `
+      <div style="margin-bottom:18px">
+        <div style="font-size:10px; font-weight:700; color:var(--dim); text-transform:uppercase; letter-spacing:1px; margin-bottom:5px">${label}</div>
+        <div style="font-size:13px; color:var(--txt); line-height:1.6; font-weight:400">${val}</div>
+      </div>
+    `;
+  });
+
+  return html || '—';
 }
 
 /* ── SCREENS ── */
@@ -1870,14 +1967,14 @@ function renderPlanosGridHtml(embId, pidAlvo = null, readOnly = false) {
       }
     }
 
-    const clickFn = readOnly ? `openPlanoView('${embId}','${p.pid}')` : `onValPlanoClick('${embId}','${p.pid}')`;
+    const clickFn = readOnly ? '' : `onclick="onValPlanoClick('${embId}','${p.pid}')"`;
     const hint = readOnly
-      ? `<span class="click-hint-gray">${IC.eye} Visualizar detalhes</span>`
+      ? ''
       : (n > 0
           ? `<span class="click-hint">${IC.arrow} Ver ${n} solicitaç${n===1?'ão':'ões'}</span>`
           : `<span class="click-hint-gray">${IC.arrow} Ver plano</span>`);
 
-    return `<div class="plano-container ${n > 0 ? 'has-requests' : ''}" onclick="${clickFn}">
+    return `<div class="plano-container ${n > 0 ? 'has-requests' : ''}" ${clickFn}>
       <div class="plano-hdr ${originClass}">
         <div style="display:flex;align-items:center;gap:10px">
           <div class="plano-num">Plano ${idx + 1}</div>
@@ -1887,7 +1984,7 @@ function renderPlanosGridHtml(embId, pidAlvo = null, readOnly = false) {
       </div>
       <div class="plano-body">
         <div class="plano-label">${p.label} · <span style="font-family:var(--mono);font-size:11px;color:var(--mut)">${p.pid}</span></div>
-        <div class="plano-texto">${planoFullText(p)}</div>
+        <div class="plano-texto">${renderPlanoContentAsBlocks(p)}</div>
       </div>
       <div class="plano-footer">
         <span class="plano-ts">Atualizado: ${p.ts}</span>
@@ -2067,7 +2164,8 @@ function openMain(fid){
 
   const planos=PLANOS_EMB[row.embId]||[];
   const pl=planos.find(p=>p.pid===row.pidAlvo);
-  document.getElementById('spLeft').innerHTML = renderPlanoBlocos(pl, row.pidAlvo);
+  const blocoAlvo = getBlocoAlvo(row);
+  document.getElementById('spLeft').innerHTML = renderPlanoBlocos(pl, row.pidAlvo, blocoAlvo);
   renderSolicitacao(row);
   const done=row.status==='atualizado'||row.status==='reprovado';
   document.getElementById('btnAprovar').disabled=done;
@@ -2130,31 +2228,54 @@ function _applyEditModeUI(done) {
 function renderSolicitacao(row){
   const planos=PLANOS_EMB[row.embId]||[];
   const pl=planos.find(p=>p.pid===row.pidAlvo);
-  const blocos=pl?(pl.blocos||parsePlanoBlocos(pl.texto)):{};
+  const blocosOriginais=pl?(pl.blocos||parsePlanoBlocos(pl.texto)):{};
   const blocoAlvo=getBlocoAlvo(row);
-  const blocoOriginal=blocos[blocoAlvo]||'(Conteúdo não disponível)';
-  const blocoMeta=BLOCO_LABELS[blocoAlvo]||{lbl:blocoAlvo,accent:'var(--warn)',bg:'var(--warn-bg)',br:'var(--warn-br)'};
+  const meta = BLOCO_LABELS[blocoAlvo];
+  
+  // Header com info do médico
+  let html = `
+    <div class="req-author" style="padding: 14px 20px; background: var(--sur2); border-bottom: 1px solid var(--bdr); margin: -18px -20px 18px">
+      <div class="av">${row.med.ini}</div>
+      <div>
+        <div class="av-name" style="font-size:13px">${row.med.nome}</div>
+        <div class="av-crm" style="font-size:11px">${row.med.crm}</div>
+      </div>
+      <div class="av-date" style="font-size:11px; margin-left:auto; color:var(--dim)">${row.med.data}</div>
+    </div>
+    <div style="font-size:11px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;display:flex;align-items:center;gap:6px">
+       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+       Solicitação de Ajuste do Médico
+    </div>
+  `;
 
-  document.getElementById('spRight').innerHTML=`
-    <div class="req-box">
-      <div class="req-author">
-        <div class="av">${row.med.ini}</div>
-        <div><div class="av-name">${row.med.nome}</div><div class="av-crm">${row.med.crm}</div></div>
-      </div>
-      <div class="req-sec">
-        <div class="req-sec-lbl" style="color:var(--dim)">Bloco Selecionado pelo Médico: <span style="color:${blocoMeta.accent}">${blocoMeta.lbl}</span></div>
-      </div>
-      <div style="display:flex; flex-direction:column; gap:12px; margin-top:10px">
-        <div class="req-sec">
-          <div class="req-sec-lbl" style="color:var(--dim)">Conteúdo Original</div>
-          <div style="background:var(--sur2); border:1px solid var(--bdr); border-radius:var(--rs); padding:12px; font-size:12.5px; color:var(--mut); line-height:1.6; font-style:italic">"${blocoOriginal}"</div>
+  html += `<div style="background:var(--sur); border:1px solid var(--bdr); border-radius:var(--rs); padding:16px; font-size:13px; line-height:1.7; color:var(--txt)">`;
+  
+  if (meta) {
+    // 1. Bloco em sua versão atual (sem modificação)
+    html += `
+      <div style="margin-bottom:24px; opacity: 0.85;">
+        <div style="font-size:10px; font-weight:700; color:var(--dim); text-transform:uppercase; letter-spacing:1px; margin-bottom:5px">
+          ${meta.lbl} — Versão Atual
         </div>
-        <div class="req-sec">
-          <div class="req-sec-lbl" style="color:var(--acc)">Versão com Ajuste Solicitado</div>
-          <div class="req-text" id="modTexto" style="background:#fff; border:1px solid var(--acc); border-left:4px solid var(--acc); border-radius:var(--rs); padding:14px; font-size:13px; font-weight:500; color:var(--txt); line-height:1.6">${row.modificacao}</div>
-        </div>
+        <div style="font-size:13px; color:var(--txt); line-height:1.6; font-weight:400">${blocosOriginais[blocoAlvo] || '—'}</div>
       </div>
-    </div>`;
+    `;
+
+    // 2. Bloco já modificado pelo médico (versão solicitada)
+    html += `
+      <div style="background:var(--acc-g); border:1px solid var(--acc); border-left:4px solid var(--acc); border-radius:var(--rs); padding:12px; margin-left:-12px; margin-right:-12px;">
+        <div style="font-size:10px; font-weight:700; color:var(--acc); text-transform:uppercase; letter-spacing:1px; margin-bottom:5px">
+          ${meta.lbl} — Versão Solicitada pelo Médico
+        </div>
+        <div id="modTexto" style="font-size:13px; color:var(--txt); line-height:1.6; font-weight:600">${row.modAtual}</div>
+      </div>
+    `;
+  } else {
+    html += `<div style="color:var(--dim)">Bloco solicitado não identificado.</div>`;
+  }
+  
+  html += `</div>`;
+  document.getElementById('spRight').innerHTML = html;
 }
 
 
@@ -2307,7 +2428,7 @@ function openPlanoView(embId,pid,plano){
   document.getElementById('pvPlanoLabel').textContent=`Conteúdo do plano — ${pid}`;
   const bc=isMed?'var(--grn)':'var(--pur)';
   document.getElementById('pvPlanoText').style.borderLeftColor=bc;
-  document.getElementById('pvPlanoText').textContent=plano?planoFullText(plano):'—';
+  document.getElementById('pvPlanoText').innerHTML=plano?renderPlanoContentAsBlocks(plano):'—';
   document.getElementById('pvPlanoMeta').innerHTML=`
     <div class="plano-view-meta-item"><div style="font-size:10px;color:var(--dim);margin-bottom:4px">Origem</div><div style="font-size:13px;font-weight:600;color:var(--txt)">${plano?plano.label:'—'}</div></div>
     <div class="plano-view-meta-item"><div style="font-size:10px;color:var(--dim);margin-bottom:4px">Última atualização</div><div style="font-size:13px;font-family:var(--mono);color:var(--txt)">${plano?plano.ts:'—'}</div></div>
@@ -2345,8 +2466,11 @@ function toggleEditPlanoView(){
     if(ta){
       const nv=ta.value.trim();
       if(!nv){toast('O texto não pode estar vazio.','warn');pvEditMode=true;return;}
-      if(curPlanoView&&curPlanoView.plano) curPlanoView.plano.texto=nv;
-      textEl.textContent=nv;
+      if(curPlanoView&&curPlanoView.plano) {
+        curPlanoView.plano.texto=nv;
+        curPlanoView.plano.blocos=parsePlanoBlocos(nv);
+      }
+      textEl.innerHTML=renderPlanoContentAsBlocks(curPlanoView.plano);
       toast('Plano atualizado com sucesso.','ok');
     }
     btn.textContent='Editar';btn.className='btn btn-outline-acc';
@@ -3020,15 +3144,7 @@ function renderEmbFields(embId, altText = null) {
     <div style="font-size:13.5px;line-height:1.8;color:var(--txt);background:var(--pur-bg);border:1px solid var(--pur-br);border-left:4px solid var(--pur);border-radius:var(--rs);padding:18px">
       ${altText || emb.texto}
     </div>
-    
-    <!-- Planos associados no histórico -->
-    <div style="padding:24px 0 10px">
-       <div class="sec-title">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          
-          <span style="font-size:11px;color:var(--mut);font-weight:400;text-transform:none;letter-spacing:0">— visualização histórica</span>
-       </div>
-    </div>
+
     <div class="planos-grid" style="display:none">${renderPlanosGridHtml(embId)}</div>`;
 }
 
