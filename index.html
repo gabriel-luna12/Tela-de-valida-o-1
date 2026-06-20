@@ -276,6 +276,10 @@ textarea.edit-ta:focus{border-color:var(--acc)}
 </style>
 </head>
 <body>
+
+<!-- =======================================================================
+     ITEM TELA: CABEÇALHO / HEADER PRINCIPAL
+     ======================================================================= -->
 <header>
   <div class="logo">
     <div class="logo-ic">
@@ -289,6 +293,9 @@ textarea.edit-ta:focus{border-color:var(--acc)}
 </header>
 
 <div class="shell">
+  <!-- =======================================================================
+       ITEM TELA: MENU LATERAL / SIDEBAR
+       ======================================================================= -->
   <aside class="sidebar">
     <div class="sb-lbl">Menu</div>
     <div class="nav on" id="nav-val" onclick="goScr('val')">
@@ -301,10 +308,19 @@ textarea.edit-ta:focus{border-color:var(--acc)}
       <span>Base</span>
       <span class="nbadge nb-b" id="badgeEmb">—</span>
     </div>
+    <div class="nav" id="nav-hist" onclick="goScr('hist')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span>Histórico</span>
+      <span class="nbadge nb-b" id="badgeHist" style="background:var(--pur)">—</span>
+    </div>
   </aside>
 
+  <!-- =======================================================================
+       ÁREA DE CONTEÚDO PRINCIPAL (TELAS DO SISTEMA)
+       ======================================================================= -->
   <div class="content">
-    <!-- ══ VALIDAÇÃO ══ -->
+    
+    <!-- ══ TELA: FLUXO VALIDAÇÃO (PLANOS DE CUIDADOS) ══ -->
     <div class="screen on" id="screen-val">
       <div class="pg-title">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
@@ -320,25 +336,23 @@ textarea.edit-ta:focus{border-color:var(--acc)}
         <button class="fbtn on" id="f-all"      onclick="setF('all')">Todos</button>
         <button class="fbtn"    id="f-atualizar" onclick="setF('atualizar')"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--warn)"></span>A atualizar</button>
         <button class="fbtn"    id="f-em"        onclick="setF('em')"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--acc)"></span>Em atualização</button>
-        <button class="fbtn"    id="f-atualizado" onclick="setF('atualizado')"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--grn)"></span>Atualizado</button>
       </div>
       <div class="tcard">
         <table>
-          <colgroup><col class="cc1"><col class="cc2"><col class="cc3"><col class="cc4"><col class="cc5"><col class="cc6"></colgroup>
-          <thead><tr><th>Cód. Regra</th><th>Condição Clínica</th><th>Plano Solicitado</th><th>Médico Solicitante</th><th>Status</th><th></th></tr></thead>
+          <colgroup><col class="cc1"><col class="cc2"><col style="width:180px; padding-right:20px"><col class="cc5"><col class="cc6"></colgroup>
+          <thead><tr><th>Cód. Regra</th><th>Condição Clínica</th><th>Solicitações</th><th>Status</th><th></th></tr></thead>
           <tbody id="valBody"></tbody>
         </table>
         <div class="pag" id="valPag"></div>
       </div>
     </div>
 
-    <!-- ══ BASES DO CONHECIMENTO ══ -->
+    <!-- ══ TELA: BASES DO CONHECIMENTO (ORIGINAL) ══ -->
     <div class="screen" id="screen-emb">
       <div class="pg-title">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
         Base do Conhecimento
-      </div>
-      <div class="pg-sub">Cada base do conhecimento possui 1 plano médico + 3 planos IA</div>
+      </div>      
       <div class="ecards" id="embCards"></div>
       <div class="toolbar">
         <div class="srch">
@@ -348,19 +362,98 @@ textarea.edit-ta:focus{border-color:var(--acc)}
       </div>
       <div class="tcard">
         <table>
-          <colgroup><col class="ce1"><col class="ce2"><col class="ce3"><col class="ce4"><col class="ce5"><col class="ce6"></colgroup>
-          <thead><tr><th>ID</th><th>Contexto clínico</th><th>Especialidade</th><th>Planos</th><th>Status</th><th>Ação</th></tr></thead>
+          <colgroup><col class="ce1"><col class="ce2"><col style="width:260px"><col class="ce5"><col class="ce6"></colgroup>
+          <thead><tr><th>ID</th><th>Contexto clínico</th><th>Especialidade/ Sub-especialidade</th><th>Status</th><th>Ação</th></tr></thead>
           <tbody id="embBody"></tbody>
         </table>
         <div class="pag" id="embPag"></div>
       </div>
     </div>
+
+    <!-- ══ TELA: HISTÓRICO (NOVA TELA) ══ -->
+    <div class="screen" id="screen-hist">
+      <div class="pg-title">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Histórico
+      </div>
+      <div class="pg-sub">Selecione uma categoria de histórico para visualizar</div>
+
+      <!-- Seletor Principal -->
+      <div id="hist-selector" style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 22px;">
+        <div class="plano-container" onclick="showHistSection('val')" style="padding: 28px; display: flex; flex-direction: column; gap: 14px; height: 180px; justify-content: center; align-items: center; border-radius: 12px; border: 1px solid var(--bdr);">
+          <div class="c-ic ci-b" style="width: 44px; height: 44px; border-radius: 50%;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </div>
+          <div style="text-align: center;">
+            <div style="font-size: 15px; font-weight: 600; color: var(--txt);">Histórico de Validações</div>
+            <div style="font-size: 12px; color: var(--mut); margin-top: 4px;">Lista de regras avaliadas, planos e decisões tomadas</div>
+          </div>
+        </div>
+
+        <div class="plano-container" onclick="showHistSection('emb')" style="padding: 28px; display: flex; flex-direction: column; gap: 14px; height: 180px; justify-content: center; align-items: center; border-radius: 12px; border: 1px solid var(--bdr);">
+          <div class="c-ic ci-p" style="width: 44px; height: 44px; border-radius: 50%;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
+          </div>
+          <div style="text-align: center;">
+            <div style="font-size: 15px; font-weight: 600; color: var(--txt);">Histórico da Base de Conhecimento</div>
+            <div style="font-size: 12px; color: var(--mut); margin-top: 4px;">Lista de regras adicionadas, editadas ou apagadas</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sub-tela: Histórico de Validações -->
+      <div id="hist-val-screen" style="display: none;">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+          <button class="btn btn-ghost" onclick="backToHistSelector()" style="padding: 6px 12px; font-size: 12px;">
+            ← Voltar
+          </button>
+          <div style="font-size: 14px; font-weight: 600; color: var(--txt);">Histórico de Validações</div>
+        </div>
+        <div class="toolbar">
+          <div class="srch">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input id="histValSrch" placeholder="Buscar por código ou condição clínica..." oninput="renderHistVal()">
+          </div>
+        </div>
+        <div class="tcard">
+          <table>
+            <colgroup><col class="cc1"><col class="cc2"><col class="cc4"><col class="cc5"><col class="cc6"></colgroup>
+            <thead><tr><th>Cód. Regra</th><th>Condição Clínica</th><th>Status</th><th>Ações</th></tr></thead>
+            <tbody id="histValBody"></tbody>
+          </table>
+          <div class="pag" id="histValPag"></div>
+        </div>
+      </div>
+
+      <!-- Sub-tela: Histórico da Base de Conhecimento -->
+      <div id="hist-emb-screen" style="display: none;">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+          <button class="btn btn-ghost" onclick="backToHistSelector()" style="padding: 6px 12px; font-size: 12px;">
+            ← Voltar
+          </button>
+          <div style="font-size: 14px; font-weight: 600; color: var(--txt);">Histórico da Base de Conhecimento</div>
+        </div>
+        <div class="toolbar">
+          <div class="srch">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input id="histEmbSrch" placeholder="Buscar por ID ou contexto..." oninput="renderHistEmbScreen()">
+          </div>
+        </div>
+        <div class="tcard">
+          <table>
+            <thead><tr><th>ID</th><th>Contexto clínico</th><th>Data modificação/adição</th><th>Status</th><th>Ações</th></tr></thead>
+            <tbody id="histEmbBody"></tbody>
+          </table>
+          <div class="pag" id="histEmbPag"></div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════
-     FLUXO VALIDAÇÃO: MODAL 1 — Base do Conhecimento + 2 Planos Grandes
-     ══════════════════════════════════════════════════════ -->
+<!-- =======================================================================
+     MODAL 1: VISUALIZAÇÃO DA VALIDAÇÃO (Base do Conhecimento + 2 Planos Grandes)
+     ======================================================================= -->
 <div class="ov" id="ovValVis">
   <div class="modal xl">
     <div class="mh">
@@ -378,16 +471,20 @@ textarea.edit-ta:focus{border-color:var(--acc)}
     </div>
     <div class="mbody">
       <!-- Infos da base do conhecimento -->
-      <div style="padding:16px 24px;border-bottom:1px solid var(--bdr);background:var(--sur2)">
+      <div style="padding:16px 24px 20px;border-bottom:1px solid var(--bdr);background:var(--sur2)">
         <div class="sec-title" style="margin-bottom:12px">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
           Informações da Base do Conhecimento
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px" id="vvMetaGrid"></div>
-        <div style="font-size:10px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Resumo da Regra</div>
-        <div style="font-size:13px;line-height:1.7;color:var(--txt);background:var(--pur-bg);border:1px solid var(--pur-br);border-left:3px solid var(--pur);border-radius:var(--rs);padding:14px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden" id="vvContexto"></div>
-        <button class="btn btn-outline-pur" style="margin-top:10px;font-size:12px;padding:6px 14px" onclick="openEmbRefFromVal()">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <!-- Grade de metadados clínicos (Diagnósticos + Sintomas) -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px" id="vvMetaGrid"></div>
+        <!-- Resumo da Regra — estruturado e expandido -->
+        <div style="font-size:10px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;display:flex;align-items:center;gap:6px">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Resumo da Regra
+        </div>
+        <div id="vvContexto" style="font-size:13px;line-height:1.75;color:var(--txt);background:rgba(58,95,240,0.08);border:1px solid rgba(58,95,240,0.3);border-radius:var(--rs);padding:14px 16px"></div>
+        <button class="btn" onclick="openEmbRefFromVal()" style="margin-top:12px;font-size:12px;background:var(--acc);color:#fff;border:1px solid var(--acc);">
           Ver regra completa
         </button>
       </div>
@@ -411,9 +508,9 @@ textarea.edit-ta:focus{border-color:var(--acc)}
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════
-     FLUXO VALIDAÇÃO: MODAL 2 — Lista de Validações do Plano
-     ══════════════════════════════════════════════════════ -->
+<!-- =======================================================================
+     MODAL 2: LISTA DE VALIDAÇÕES DO PLANO (Validações Pendentes)
+     ======================================================================= -->
 <div class="ov l2" id="ovValLista">
   <div class="modal" style="max-width:880px;min-height:70vh">
     <div class="mh">
@@ -439,8 +536,6 @@ textarea.edit-ta:focus{border-color:var(--acc)}
       <button class="fbtn on" id="vlf-all" onclick="setVlFilter('all')">Todos</button>
       <button class="fbtn" id="vlf-atualizar" onclick="setVlFilter('atualizar')"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--warn);margin-right:5px"></span>A atualizar</button>
       <button class="fbtn" id="vlf-em" onclick="setVlFilter('em')"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--acc);margin-right:5px"></span>Em atualização</button>
-      <button class="fbtn" id="vlf-atualizado" onclick="setVlFilter('atualizado')"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--grn);margin-right:5px"></span>Atualizado</button>
-      <button class="fbtn" id="vlf-reprovado" onclick="setVlFilter('reprovado')"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--red);margin-right:5px"></span>Reprovado</button>
     </div>
 
     <div class="val-list-header">
@@ -460,11 +555,11 @@ textarea.edit-ta:focus{border-color:var(--acc)}
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════
-     FLUXO VALIDAÇÃO: MODAL 3 — Validação Individual
-     ══════════════════════════════════════════════════════ -->
+<!-- =======================================================================
+     MODAL 3: VALIDAÇÃO INDIVIDUAL (Detalhes da Solicitacao e Decisão)
+     ======================================================================= -->
 <div class="ov l3" id="ovMain">
-  <div class="modal">
+  <div class="modal xl">
     <div class="mh">
       <div class="mh-l">
         <div class="mtype" id="mMainType"></div>
@@ -476,39 +571,40 @@ textarea.edit-ta:focus{border-color:var(--acc)}
       <button class="xbtn" onclick="closeOv('ovMain')">&#215;</button>
     </div>
     <div class="mbody">
-      <div class="meta-strip" id="metaStrip"></div>
-      
-      <!-- Contexto Clínico do Paciente -->
-      <div id="casoContextStrip" style="padding:14px 24px;background:var(--teal-bg);border-bottom:1px solid var(--teal-br);display:flex;align-items:center;justify-content:space-between;gap:16px">
-        <div style="display:flex;flex-direction:column;gap:4px">
-          <div style="font-size:10px;font-weight:600;color:var(--teal);text-transform:uppercase;letter-spacing:.5px">Contexto Clínico do Paciente Atendido</div>
-          <div style="font-size:13px;color:var(--txt);line-height:1.5" id="casoContextText"></div>
+      <!-- Contexto Clínico Detalhado do Paciente - Expandido em Blocos -->
+      <div id="casoContextStrip" style="padding:20px 24px;background:var(--teal-bg);border-bottom:1px solid var(--teal-br);">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span style="font-size:11px;font-weight:600;color:var(--teal);text-transform:uppercase;letter-spacing:.5px">Contexto Clínico Detalhado do Paciente</span>
+          </div>
+          <button class="btn" style="border-color:var(--teal-br);color:var(--teal);background:var(--sur);padding:6px 14px;font-size:12px;" onclick="openCaso()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Prontuário
+          </button>
         </div>
-        <button class="btn btn-outline-pur" style="border-color:var(--teal-br);color:var(--teal);background:var(--sur);padding:6px 12px;font-size:12px" onclick="openCaso()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          Prontuário
-        </button>
+        <div id="casoContextText" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px"></div>
       </div>
 
       <div class="split-wrap">
         <div class="sp">
           <div class="sp-head">
-            <div class="sp-title">Plano sinalizado para atualização</div>
+            <div class="sp-title">Plano de Cuidado Atual</div>
             <span class="sp-pill pp-r" id="spLeftPill">Versão atual</span>
           </div>
-          <div class="sp-body" id="spLeft"></div>
+          <div class="sp-body" id="spLeft" style="padding:18px 20px;"></div>
         </div>
         <div class="sp">
           <div class="sp-head">
             <div class="sp-title">Solicitação do médico</div>
             <span class="sp-pill pp-w">Modificação requerida</span>
           </div>
-          <div class="sp-body" id="spRight"></div>
+          <div class="sp-body" id="spRight" style="padding:18px 20px;"></div>
         </div>
       </div>
     </div>
     <div class="mfoot">
-      <button class="btn btn-ghost" onclick="closeOv('ovMain')">
+      <button class="btn btn-ghost" onclick="onBackMain()">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         Voltar
       </button>
@@ -522,14 +618,16 @@ textarea.edit-ta:focus{border-color:var(--acc)}
         Reprovar
       </button>
       <button class="btn btn-grn" id="btnAprovar" onclick="doAprovar()">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
         Aprovar
       </button>
     </div>
   </div>
 </div>
 
-<!-- ══ MODAL BASE DO CONHECIMENTO REF (l3 - dentro da validação) ══ -->
+<!-- =======================================================================
+     MODAL: BASE DO CONHECIMENTO VINCULADA (Referência interna)
+     ======================================================================= -->
 <div class="ov l3" id="ovEmb">
   <div class="modal xl">
     <div class="mh">
@@ -547,11 +645,13 @@ textarea.edit-ta:focus{border-color:var(--acc)}
       <div class="req-sec-lbl" style="margin-bottom:8px">Resumo da Regra</div>
       <div style="font-size:13px;line-height:1.75;color:var(--txt);background:var(--pur-bg);border:1px solid var(--pur-br);border-left:3px solid var(--pur);border-radius:var(--rs);padding:16px" id="embRText"></div>
     </div>
-    <div class="mfoot"><button class="btn btn-ghost" onclick="closeOv('ovEmb')">Fechar</button></div>
+    <div class="mfoot"><button class="btn btn-ghost" onclick="closeOv('ovEmb')">Voltar</button></div>
   </div>
 </div>
 
-<!-- ══ MODAL CASO CLÍNICO (l3) ══ -->
+<!-- =======================================================================
+     MODAL: PRONTUÁRIO / CASO CLÍNICO DO PACIENTE
+     ======================================================================= -->
 <div class="ov l3" id="ovCaso">
   <div class="modal xl">
     <div class="mh">
@@ -565,11 +665,13 @@ textarea.edit-ta:focus{border-color:var(--acc)}
       <button class="xbtn" onclick="closeOv('ovCaso')">&#215;</button>
     </div>
     <div style="padding:20px 24px;overflow-y:auto;flex:1" id="casoBody"></div>
-    <div class="mfoot"><button class="btn btn-ghost" onclick="closeOv('ovCaso')">Fechar</button></div>
+    <div class="mfoot"><button class="btn btn-ghost" onclick="closeOv('ovCaso')">Voltar</button></div>
   </div>
 </div>
 
-<!-- ══ MODAL PLANO SEM REQUISIÇÕES (l2) ══ -->
+<!-- =======================================================================
+     MODAL: VISUALIZAÇÃO DE PLANO DE CUIDADOS SEM REQUISIÇÕES (EDITÁVEL)
+     ======================================================================= -->
 <div class="ov l2" id="ovPlanoView">
   <div class="modal med" style="max-width: 970px;">
     <div class="mh">
@@ -610,9 +712,9 @@ textarea.edit-ta:focus{border-color:var(--acc)}
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════
-     BASES DO CONHECIMENTO: MODAL DETALHES (original)
-     ══════════════════════════════════════════════════════ -->
+<!-- =======================================================================
+     MODAL: DETALHES DA BASE DO CONHECIMENTO (TELA DE BASES)
+     ======================================================================= -->
 <div class="ov" id="ovEmbDet">
   <div class="modal xl">
     <div class="mh">
@@ -631,27 +733,158 @@ textarea.edit-ta:focus{border-color:var(--acc)}
       <div style="font-size:13px;line-height:1.75;color:var(--txt);background:var(--pur-bg);border:1px solid var(--pur-br);border-left:3px solid var(--pur);border-radius:var(--rs);padding:16px" id="edText"></div>
     </div>
     <div class="mfoot">
-      <button class="btn btn-ghost" onclick="closeOv('ovEmbDet')">Fechar</button>
-      <button class="btn btn-outline-acc" onclick="openPlanosAssoc()">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        Ver 4 Planos Associados
-      </button>
+      <button class="btn btn-ghost" onclick="closeOv('ovEmbDet')">Voltar</button>
     </div>
   </div>
 </div>
 
-<!-- ══ BASES DO CONHECIMENTO: MODAL 4 PLANOS (original) ══ -->
-<div class="ov l2" id="ovPlanos">
+<!-- Modais de Histórico Removidos de ovPlanos pois foi removido do código -->
+
+<!-- =======================================================================
+     MODAL HISTÓRICO 1: Dois Planos Grandes (Sem Resumo da Regra)
+     ======================================================================= -->
+<div class="ov" id="ovHistValPlans">
+  <div class="modal xl">
+    <div class="mh">
+      <div class="mh-l">
+        <div class="mtype mt-hist">Histórico</div>
+        <div>
+          <div class="mtitle" id="hvpTitle">Planos de Cuidados (Histórico)</div>
+          <div class="msub" id="hvpSub">Visualização de planos associados</div>
+        </div>
+      </div>
+      <button class="xbtn" onclick="closeOv('ovHistValPlans')">&#215;</button>
+    </div>
+    <div class="mbody">
+      <div class="planos-grid" id="hvpPlanosGrid"></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" onclick="closeOv('ovHistValPlans')">Voltar</button>
+    </div>
+  </div>
+</div>
+
+<!-- =======================================================================
+     MODAL HISTÓRICO 2: Lista de Validações do Plano
+     ======================================================================= -->
+<div class="ov l2" id="ovHistValItemsList">
+  <div class="modal" style="max-width:880px;min-height:60vh">
+    <div class="mh">
+      <div class="mh-l">
+        <div class="mtype mt-hist">Histórico</div>
+        <div>
+          <div class="mtitle" id="hvilTitle">Histórico de Validações do Plano</div>
+          <div class="msub" id="hvilSub">Lista de ações anteriores para este plano</div>
+        </div>
+      </div>
+      <button class="xbtn" onclick="closeOv('ovHistValItemsList')">&#215;</button>
+    </div>
+    <div class="mbody" style="padding: 20px 24px;">
+      <div class="tcard">
+        <table>
+          <thead>
+            <tr>
+              <th>Cód. Regra</th>
+              <th>Condição Clínica</th>
+              <th>Data Ação</th>
+              <th>Status</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody id="hvilBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" onclick="closeOv('ovHistValItemsList')">Voltar</button>
+    </div>
+  </div>
+</div>
+
+<!-- =======================================================================
+     MODAL HISTÓRICO 3: Detalhe da Validação (Somente Leitura)
+     ======================================================================= -->
+<div class="ov l3" id="ovHistValItemDetail">
+  <div class="modal xl">
+    <div class="mh">
+      <div class="mh-l">
+        <div id="hvdType"></div>
+        <div>
+          <div class="mtitle" id="hvdTitle">Registro Histórico do Plano</div>
+          <div class="msub" id="hvdSub">Visualização de validação processada</div>
+        </div>
+      </div>
+      <button class="xbtn" onclick="closeOv('ovHistValItemDetail')">&#215;</button>
+    </div>
+    <div class="mbody">
+      <div id="hvdCasoContextStrip" style="padding:20px 24px;background:var(--teal-bg);border-bottom:1px solid var(--teal-br);display:none">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span style="font-size:11px;font-weight:600;color:var(--teal);text-transform:uppercase;letter-spacing:.5px">Contexto Clínico do Paciente</span>
+        </div>
+        <div id="hvdCasoContextText"></div>
+      </div>
+      <div class="split-wrap">
+        <div class="sp">
+          <div class="sp-head"><div class="sp-title">Estado do Plano Anterior</div></div>
+          <div class="sp-body" id="hvdLeft"></div>
+        </div>
+        <div class="sp">
+          <div class="sp-head"><div class="sp-title">Detalhamento da Ação</div></div>
+          <div class="sp-body" id="hvdRight"></div>
+        </div>
+      </div>
+    </div>
+    <div class="mfoot"><button class="btn btn-ghost" onclick="closeOv('ovHistValItemDetail')">Voltar</button></div>
+  </div>
+</div>
+
+<!-- =======================================================================
+     MODAL HISTÓRICO 4: Comparação da Base (Edição)
+     ======================================================================= -->
+<div class="ov l2" id="ovHistEmbDetail">
+  <div class="modal" style="max-width:1320px; width:95vw">
+    <div class="mh">
+      <div class="mh-l">
+        <div id="hedType"></div>
+        <div>
+          <div class="mtitle" id="hedTitle">Comparação de Base</div>
+          <div class="msub" id="hedSub"></div>
+        </div>
+      </div>
+      <button class="xbtn" onclick="closeOv('ovHistEmbDetail')">&#215;</button>
+    </div>
+    <div class="mbody">
+      <div style="display:grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--bdr)">
+        <div style="padding:16px 24px; background:var(--sur2); border-right:1px solid var(--bdr); font-size:11px; font-weight:600; color:var(--mut); text-transform:uppercase;">Versão Anterior</div>
+        <div style="padding:16px 24px; background:var(--sur2); font-size:11px; font-weight:600; color:var(--acc); text-transform:uppercase;">Nova Versão</div>
+      </div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; height: 60vh; overflow-y: auto;">
+        <div id="hedLeft" style="padding:24px; border-right:1px solid var(--bdr); background:var(--sur)"></div>
+        <div id="hedRight" style="padding:24px; background:var(--sur)"></div>
+      </div>
+    </div>
+    <div class="mfoot"><button class="btn btn-ghost" onclick="closeOv('ovHistEmbDetail')">Voltar</button></div>
+  </div>
+</div>
+
+<!-- =======================================================================
+     MODAL HISTÓRICO 5: Adição/Exclusão (Bloco Único)
+     ======================================================================= -->
+<div class="ov l2" id="ovHistEmbSingle">
   <div class="modal med">
     <div class="mh">
       <div class="mh-l">
-        <div class="mtype" style="background:var(--teal-bg);color:var(--teal);border:1px solid var(--teal-br)">Planos associados</div>
-        <div><div class="mtitle" id="plTitle"></div><div class="msub" id="plSub"></div></div>
+        <div id="hesType"></div>
+        <div>
+          <div class="mtitle" id="hesTitle">Registro da Base</div>
+          <div class="msub" id="hesSub"></div>
+        </div>
       </div>
-      <button class="xbtn" onclick="closeOv('ovPlanos')">&#215;</button>
+      <button class="xbtn" onclick="closeOv('ovHistEmbSingle')">&#215;</button>
     </div>
-    <div class="p4grid" style="padding:20px 24px;overflow-y:auto;flex:1" id="plGrid"></div>
-    <div class="mfoot"><button class="btn btn-ghost" onclick="closeOv('ovPlanos')">Voltar</button></div>
+    <div class="mbody" id="hesBody" style="padding:24px; background:var(--sur); overflow-y:auto; max-height:70vh"></div>
+    <div class="mfoot"><button class="btn btn-ghost" onclick="closeOv('ovHistEmbSingle')">Voltar</button></div>
   </div>
 </div>
 
@@ -768,46 +1001,63 @@ const PLANOS_EMB = {
   ],
   'EMB-012':[
     {pid:'PC-1201',origem:'medico',label:'Dra. Julia Santos (Médico)',status:'ok',ts:'2025-05-18 14:00',texto:'Enapril 10mg 2x/dia. Restrição de sódio (<2g) e proteínas (0.8g/kg/dia). Dosar potássio e creatinina em 15 dias.'},
-    {pid:'PC-1202',origem:'ia',label:'Plano IA α',status:'ok',ts:'2025-05-15 11:00',texto:'Evitar uso de anti-inflamatórios não esteroides (AINEs). Controle rigoroso de PA.'},
-    {pid:'PC-1203',origem:'ia',label:'Plano IA β',status:'ok',ts:'2025-05-16 15:30',texto:'Vacinação para Hepatite B e Influenza recomendada. Acompanhamento conjunto com cardiologia.'},
-    {pid:'PC-1204',origem:'ia',label:'Plano IA γ',status:'ok',ts:'2025-05-19 10:45',texto:'Monitoramento de anemia renal e distúrbio mineral ósseo associados.'},
   ],
-  'EMB-013':[
-    {pid:'PC-1301',origem:'medico',label:'Dr. Nelson Mendes (Médico)',status:'ok',ts:'2025-05-22 09:30',texto:'Iniciar imunobiológico (anti-TNF ou anti-IL17/23) após triagem de tuberculose (IGRA/PPD) e sorologias.'},
-    {pid:'PC-1302',origem:'ia',label:'Plano IA α',status:'ok',ts:'2025-05-20 08:00',texto:'Hidratação cutânea intensa. Uso de corticoides tópicos de alta potência de forma intermitente.'},
-    {pid:'PC-1303',origem:'ia',label:'Plano IA β',status:'ok',ts:'2025-05-21 14:15',texto:'Exposição solar controlada e fototerapia se disponível. Avaliação dermatológica trimestral.'},
-    {pid:'PC-1304',origem:'ia',label:'Plano IA γ',status:'ok',ts:'2025-05-23 11:00',texto:'Rastreamento de comorbidades cardiometabólicas associadas à psoríase grave.'},
+  'EMB-001': [
+    {
+      pid:'PC-0101', origem:'medico', label:'Dr. Ricardo Silva (Médico)', status:'ok', ts:'2025-05-10 14:00',
+      blocos: {
+        diagnostico: 'Hipertensão Arterial Sistêmica Estágio 2 (SBC 2020) com risco cardiovascular moderado. Obesidade grau I e sedentarismo.',
+        farmacologico: 'Losartana 50mg VO 1x/dia pela manhã. Hidroclorotiazida 25mg VO 1x/dia. Manter AAS 100mg após o almoço.',
+        nao_farmacologico: 'Dieta DASH com restrição de sódio (<2g/dia). Exercício físico aeróbico (caminhada) 150min/semana distribuídos em 5 dias.',
+        exames: 'Reavaliação de potássio sérico e creatinina em 30 dias. ECG de repouso anual.',
+        metas: 'Meta de Pressão Arterial < 130/80 mmHg. Redução ponderal de 5% em 3 meses.',
+        retorno: 'Retorno em 3 meses para reavaliação de conduta e controle pressórico.',
+        orientacoes: 'Orientar Automonitorização da Pressão Arterial (AMPA) 2x ao dia por 7 dias antes do retorno.',
+        alertas: 'Sinais de alarme: Cefaleia súbita, dor torácica, dispneia ou alterações visuais agudas.'
+      }
+    },
+    {
+      pid:'PC-0102', origem:'ia', label:'Plano IA α', status:'ok', ts:'2025-05-12 09:00',
+      blocos: {
+        diagnostico: 'HAS estágio 2. Fatores agravantes: Dislipidemia e histórico familiar de AVC.',
+        farmacologico: 'Iniciar Losartana 50mg. Considerar associação com bloqueador de canal de cálcio (Anlodipino 5mg) se metas não atingidas em 4 semanas.',
+        nao_farmacologico: 'Mudança de estilo de vida: cessação tabágica e limitação de consumo alcoólico.',
+        exames: 'Monitoramento de função renal e ionograma trimestral.',
+        metas: 'Alcance de PA basal estável < 135/85 mmHg.',
+        retorno: 'Consulta de seguimento em 60 dias.',
+        orientacoes: 'Educação continuada sobre riscos da hipertensão não controlada.',
+        alertas: 'Urgência se PA > 180/110 mmHg persistente.'
+      }
+    }
   ],
-  'EMB-014':[
-    {pid:'PC-1401',origem:'medico',label:'Dra. Cristina Costa (Médico)',status:'ok',ts:'2025-05-25 11:00',texto:'Fisioterapia motora 3x/semana. Perda ponderal (meta 5% do peso). Paracetamol SOS e condroitina/glucosamina.'},
-    {pid:'PC-1402',origem:'ia',label:'Plano IA α',status:'ok',ts:'2025-05-22 10:00',texto:'Exercícios de baixo impacto (hidroginástica ou natação). Uso de joelheira estabilizadora.'},
-    {pid:'PC-1403',origem:'ia',label:'Plano IA β',status:'ok',ts:'2025-05-23 13:30',texto:'Uso intermitente de calor local para rigidez matinal e gelo após atividades físicas.'},
-    {pid:'PC-1404',origem:'ia',label:'Plano IA γ',status:'ok',ts:'2025-05-26 09:15',texto:'Avaliação de necessidade de infiltração intra-articular caso refratário a medidas físicas.'},
-  ],
-  'EMB-015':[
-    {pid:'PC-1501',origem:'medico',label:'Dr. Walter Lima (Médico)',status:'ok',ts:'2025-05-28 10:00',texto:'Donepezila 10mg/dia ao deitar. Estímulo cognitivo diário. Apoio social e prevenção de quedas domiciliares.'},
-    {pid:'PC-1502',origem:'ia',label:'Plano IA α',status:'ok',ts:'2025-05-25 09:00',texto:'Revisão de polifarmácia para evitar uso de anticolinérgicos que piorem a cognição.'},
-    {pid:'PC-1503',origem:'ia',label:'Plano IA β',status:'ok',ts:'2025-05-26 14:00',texto:'Rotina diária estruturada com atividades físicas e de socialização simples.'},
-    {pid:'PC-1504',origem:'ia',label:'Plano IA γ',status:'ok',ts:'2025-05-29 11:30',texto:'Grupo de apoio para cuidadores com foco em prevenção do burnout.'},
-  ],
-  'EMB-016':[
-    {pid:'PC-1601',origem:'medico',label:'Dra. Sofia Ramos (Médico)',status:'ok',ts:'2025-06-02 09:00',texto:'Progestagênio contínuo oral (dienogeste 2mg/dia). Analgesia escalonada. Retorno em 6 meses com controle de dor.'},
-    {pid:'PC-1602',origem:'ia',label:'Plano IA α',status:'ok',ts:'2025-05-30 11:00',texto:'Dispositivo intrauterino liberador de levonorgestrel (DIU-Mirena) como alternativa.'},
-    {pid:'PC-1603',origem:'ia',label:'Plano IA β',status:'ok',ts:'2025-05-31 15:00',texto:'Acompanhamento multiprofissional com fisioterapia pélvica e suporte psicológico.'},
-    {pid:'PC-1604',origem:'ia',label:'Plano IA γ',status:'ok',ts:'2025-06-03 14:00',texto:'Avaliação cirúrgica por laparoscopia se refratariedade ao tratamento clínico.'},
-  ],
-  'EMB-017':[
-    {pid:'PC-1701',origem:'medico',label:'Dr. Henrique Dias (Médico)',status:'ok',ts:'2025-06-05 13:00',texto:'Reposição de ferro parenteral (sacarato de hidróxido de ferro III 200mg IV semanal). Rastrear sangramento oculto.'},
-    {pid:'PC-1702',origem:'ia',label:'Plano IA α',status:'ok',ts:'2025-06-03 09:30',texto:'Investigação etiológica com colonoscopia e endoscopia digestiva alta.'},
-    {pid:'PC-1703',origem:'ia',label:'Plano IA β',status:'ok',ts:'2025-06-04 14:20',texto:'Dosar ferritina, saturação de transferrina e hemograma 30 dias após término da reposição.'},
-    {pid:'PC-1704',origem:'ia',label:'Plano IA γ',status:'ok',ts:'2025-06-06 11:00',texto:'Orientação nutricional para ingestão de alimentos ricos em ferro heme.'},
-  ],
-  'EMB-018':[
-    {pid:'PC-1801',origem:'medico',label:'Dra. Glória Nunes (Médico)',status:'ok',ts:'2025-06-10 15:00',texto:'Furoato de fluticasona spray nasal 2 jatos em cada narina 1x/dia. Lavagem nasal com soro fisiológico morno.'},
-    {pid:'PC-1802',origem:'ia',label:'Plano IA α',status:'ok',ts:'2025-06-08 10:00',texto:'Uso de anti-histamínicos não sedantes (como fexofenadina) sob demanda.'},
-    {pid:'PC-1803',origem:'ia',label:'Plano IA β',status:'ok',ts:'2025-06-09 11:30',texto:'Controle ambiental de poeira e ácaros no quarto e residência do paciente.'},
-    {pid:'PC-1804',origem:'ia',label:'Plano IA γ',status:'ok',ts:'2025-06-11 14:00',texto:'Avaliação com alergologista para indicação de imunoterapia específica se indicado.'},
-  ],
+  'EMB-002': [
+    {
+      pid:'PC-0201', origem:'medico', label:'Dra. Fernanda Lemos (Médico)', status:'ok', ts:'2025-05-15 10:30',
+      blocos: {
+        diagnostico: 'Diabetes Mellitus Tipo 2 descompensada (HbA1c 8.4%). Dislipidemia e Esteatose Hepática leve.',
+        farmacologico: 'Metformina 850mg VO 12/12h após as refeições. Gliclazida MR 30mg 1x/dia em jejum. Sinvastatina 20mg à noite.',
+        nao_farmacologico: 'Plano alimentar para DM (restrição de carboidratos simples). Perda de peso de 1kg/mês.',
+        exames: 'Hemoglobina Glicada, Perfil Lipídico e Microalbuminúria em 90 dias.',
+        metas: 'Meta de HbA1c < 7.0%. Meta de LDL < 70 mg/dL.',
+        retorno: 'Seguimento em 3 meses com novos exames.',
+        orientacoes: 'Automonitoramento glicêmico capilar (HGT) em jejum e 2h após o almoço 3x por semana.',
+        alertas: 'Hipo: Glicemia < 70 mg/dL (suco de laranja/açúcar). Hiper: hálito cetônico, confusão mental ou poliúria extrema.'
+      }
+    },
+    {
+      pid:'PC-0202', origem:'ia', label:'Plano IA β', status:'ok', ts:'2025-05-16 11:00',
+      blocos: {
+        diagnostico: 'DM2. Risco cardiovascular elevado.',
+        farmacologico: 'Otimizar Metformina para dose máxima tolerada. Considerar iSGLT2 (Dapagliflozina) por benefício cardioprotetor.',
+        nao_farmacologico: 'Atividade física resistida e aeróbica combinada.',
+        exames: 'Rastreio anual de retinopatia e pé diabético.',
+        metas: 'Controle metabólico rigoroso.',
+        retorno: 'Revisão trimestral.',
+        orientacoes: 'Cuidados com os pés e higiene bucal.',
+        alertas: 'Emergência se houver feridas nos pés que não cicatrizam.'
+      }
+    }
+  ]
 };
 
 /* FILA DE VALIDAÇÃO — 30 itens (EMB-001/PC-0102 e EMB-002/PC-0202) */
@@ -1188,6 +1438,173 @@ FILA_BASE.forEach(r=>{ LOGS[r.fid]=[{ts:r.criacao,acao:'Regra criada',cor:'var(-
 
 let FILA = FILA_BASE.map(r=>({...r,status:'atualizar',editado:false,modAtual:r.modificacao}));
 
+// Banco de dados do histórico de validações (inicialmente com alguns itens fictícios)
+const HIST_VALIDACOES = [
+  {
+    hId: 'HVAL-001',
+    embId: 'EMB-001',
+    pidAlvo: 'PC-0102',
+    cod: 'VAL-1',
+    condicao: 'Hipertensão Arterial Sistêmica',
+    data: '2025-06-10 14:00',
+    status: 'aceita',
+    planoAntes: 'Paciente hipertenso estágio 2. Iniciar Losartana 50mg ao dia. Recomenda-se dieta DASH e caminhadas 3x por semana. Retorno em 30 dias para controle de PA. Meta de PA < 130/80 mmHg. Alertas: dor torácica.',
+    med: { nome: 'Dr. Rafael Costa', crm: 'SP-112233', data: '2025-06-10 14:00', ini: 'RC' },
+    trecho: 'Aumentar losartana para 100mg imediatamente',
+    modificacao: 'Substituir por conduta clínica adequada.',
+    modAtual: 'Manter losartana 50mg. Dieta DASH, 150min/semana exercício aeróbico.'
+  },
+  {
+    hId: 'HVAL-002',
+    embId: 'EMB-002',
+    pidAlvo: 'PC-0202',
+    cod: 'VAL-1',
+    condicao: 'Diabetes Mellitus Tipo 2',
+    data: '2025-06-12 16:30',
+    status: 'recusada',
+    planoAntes: 'Diabetes Mellitus Tipo 2 compensada. Metformina 850mg 2x/dia. Dieta de baixo índice glicêmico e atividade física regular. Hemoglobina glicada trimestral. Meta de HbA1c < 7%. Sinais de alarme: hálito cetônico.',
+    med: { nome: 'Dra. Helena Matos', crm: 'RJ-234567', data: '2025-06-12 16:30', ini: 'HM' },
+    trecho: 'Reduzir metformina para 500mg',
+    modificacao: 'Metformina 850mg 2x/dia.',
+    modAtual: 'Reduzir metformina para 500mg'
+  },
+  {
+    hId: 'HVAL-003',
+    embId: 'EMB-001',
+    pidAlvo: 'PC-0102',
+    cod: 'VAL-2',
+    condicao: 'Hipertensão Arterial Sistêmica',
+    data: '2025-06-14 11:15',
+    status: 'editada e aceita',
+    planoAntes: 'Exercício sem avaliação cardíaca.',
+    med: { nome: 'Dr. Antônio Silva', crm: 'SP-998877', data: '2025-06-14 11:15', ini: 'AS' },
+    trecho: 'Exercício sem avaliação cardíaca',
+    modificacao: 'Requerer avaliação cardiológica prévia.',
+    modAtual: 'Realizar teste ergométrico de esforço antes de prescrever atividades físicas moderadas.'
+  }
+];
+
+// Banco de dados do histórico da base de conhecimento
+const HIST_EMB = [
+  {
+    hId: 'HEMB-001',
+    embId: 'EMB-001',
+    contexto: 'Paciente hipertenso, risco cardiovascular elevado, uso de losartana, comorbidades metabólicas...',
+    data: '2025-06-18 10:15',
+    status: 'editado',
+    antes: 'Paciente hipertenso, risco cardiovascular leve, uso de losartana, comorbidades metabólicas.',
+    depois: 'Paciente hipertenso, risco cardiovascular elevado, uso de losartana, comorbidades metabólicas, sedentarismo. Acompanhamento mensal recomendado.'
+  },
+  {
+    hId: 'HEMB-002',
+    embId: 'EMB-019',
+    contexto: 'Diretriz de cardiopatia congênita cianótica em recém-nascidos. Manejo com prostaglandina...',
+    data: '2025-06-19 09:00',
+    status: 'adicionado',
+    antes: '',
+    depois: 'Diretriz de cardiopatia congênita cianótica em recém-nascidos. Manejo com prostaglandina e suporte oxigenoterapêutico.'
+  },
+  {
+    hId: 'HEMB-003',
+    embId: 'EMB-020',
+    contexto: 'Asma ocupacional induzida por poeiras orgânicas e substâncias químicas...',
+    data: '2025-06-19 11:45',
+    status: 'apagado',
+    antes: 'Asma ocupacional induzida por poeiras orgânicas e substâncias químicas na indústria têxtil.',
+    depois: ''
+  },
+  {
+    hId: 'HEMB-004',
+    embId: 'EMB-021',
+    contexto: 'Protocolo de manejo de sepse neonatal precoce...',
+    data: '2025-06-20 08:30',
+    status: 'adicionado',
+    antes: '',
+    depois: 'Protocolo de manejo de sepse neonatal precoce em unidade de terapia intensiva neonatal.'
+  },
+  {
+    hId: 'HEMB-005',
+    embId: 'EMB-022',
+    contexto: 'Diretriz de tratamento de insuficiência cardíaca crônica com fração de ejeção reduzida...',
+    data: '2025-06-20 09:15',
+    status: 'editado',
+    antes: 'Tratamento de ICFER com IECA e Beta-bloqueador.',
+    depois: 'Tratamento de ICFER com quádrupla terapia: iSGLT2, sacubitril/valsartana, beta-bloqueador e antagonista mineralocorticoide.'
+  },
+  {
+    hId: 'HEMB-006',
+    embId: 'EMB-023',
+    contexto: 'Manejo de crise convulsiva febril em crianças...',
+    data: '2025-06-20 10:00',
+    status: 'apagado',
+    antes: 'Conduta expectante em crises febris simples até 5 minutos.',
+    depois: ''
+  },
+  {
+    hId: 'HEMB-007',
+    embId: 'EMB-024',
+    contexto: 'Orientações para pacientes com doença celíaca...',
+    data: '2025-06-20 10:45',
+    status: 'adicionado',
+    antes: '',
+    depois: 'Dieta estritamente isenta de glúten e monitoramento de contaminação cruzada.'
+  },
+  {
+    hId: 'HEMB-008',
+    embId: 'EMB-025',
+    contexto: 'Abordagem multidisciplinar da dor crônica oncológica...',
+    data: '2025-06-20 11:30',
+    status: 'editado',
+    antes: 'Uso de opióides conforme escala da OMS.',
+    depois: 'Abordagem multimodal incluindo procedimentos intervencionistas e suporte psicológico.'
+  },
+  {
+    hId: 'HEMB-009',
+    embId: 'EMB-026',
+    contexto: 'Prevenção de tromboembolismo venoso em pacientes cirúrgicos...',
+    data: '2025-06-20 12:15',
+    status: 'apagado',
+    antes: 'Uso de enoxaparina 40mg SC uma vez ao dia.',
+    depois: ''
+  },
+  {
+    hId: 'HEMB-010',
+    embId: 'EMB-027',
+    contexto: 'Rastreamento de câncer colorretal em adultos...',
+    data: '2025-06-20 13:00',
+    status: 'adicionado',
+    antes: '',
+    depois: 'Colonoscopia a cada 10 anos a partir dos 45 anos para risco médio.'
+  },
+  {
+    hId: 'HEMB-011',
+    embId: 'EMB-028',
+    contexto: 'Manejo de hipertensão gestacional e pré-eclâmpsia...',
+    data: '2025-06-20 13:45',
+    status: 'editado',
+    antes: 'Uso de metildopa 250mg 3x ao dia.',
+    depois: 'Monitoramento rigoroso de proteinúria e uso de nifedipino ou hidralazina se necessário.'
+  },
+  {
+    hId: 'HEMB-012',
+    embId: 'EMB-029',
+    contexto: 'Diretriz de vacinação para pacientes imunossuprimidos...',
+    data: '2025-06-20 14:30',
+    status: 'apagado',
+    antes: 'Evitar vacinas de vírus vivos atenuados.',
+    depois: ''
+  },
+  {
+    hId: 'HEMB-013',
+    embId: 'EMB-030',
+    contexto: 'Tratamento de depressão pós-parto leve a moderada...',
+    data: '2025-06-20 15:15',
+    status: 'apagado',
+    antes: 'Psicoterapia interpessoal como primeira linha.',
+    depois: ''
+  }
+];
+
 /* STATE */
 const PS=8;
 let vFilt='all',vSrch='',vPage=1;
@@ -1207,6 +1624,82 @@ const sty=document.createElement('style');
 sty.textContent='@keyframes spin{to{transform:rotate(360deg)}}';
 document.head.appendChild(sty);
 
+/* ═══════════════════════ SISTEMA DE BLOCOS DE PLANO ═══════════════════════ */
+const BLOCO_LABELS = {
+  diagnostico:       {lbl:'Diagnóstico e Contexto Clínico', accent:'var(--pur)',  bg:'var(--pur-bg)',  br:'var(--pur-br)'},
+  farmacologico:     {lbl:'Conduta Farmacológica',           accent:'var(--acc)',  bg:'var(--acc-g)',   br:'rgba(58,95,240,.2)'},
+  nao_farmacologico: {lbl:'Conduta Não-Farmacológica',       accent:'var(--teal)', bg:'var(--teal-bg)', br:'var(--teal-br)'},
+  exames:            {lbl:'Exames e Monitoramento',          accent:'var(--warn)', bg:'var(--warn-bg)', br:'var(--warn-br)'},
+  metas:             {lbl:'Metas Terapêuticas',              accent:'var(--grn)',  bg:'var(--grn-bg)',  br:'var(--grn-br)'},
+  retorno:           {lbl:'Retorno e Seguimento',            accent:'var(--mut)',  bg:'var(--sur3)',    br:'var(--bdr2)'},
+  orientacoes:       {lbl:'Orientações ao Paciente',         accent:'var(--teal)', bg:'var(--teal-bg)', br:'var(--teal-br)'},
+  alertas:           {lbl:'Alertas e Sinais de Alarme',      accent:'var(--red)',  bg:'var(--red-bg)',  br:'var(--red-br)'},
+};
+
+const FILA_BLOCO_MAP = {
+  1:'farmacologico',2:'farmacologico',3:'nao_farmacologico',4:'retorno',5:'metas',
+  6:'orientacoes',7:'exames',8:'metas',9:'orientacoes',10:'orientacoes',
+  11:'diagnostico',12:'diagnostico',13:'metas',14:'nao_farmacologico',15:'exames',
+  16:'farmacologico',17:'retorno',18:'nao_farmacologico',19:'metas',20:'exames',
+  21:'nao_farmacologico',22:'orientacoes',23:'orientacoes',24:'orientacoes',25:'diagnostico',
+  26:'exames',27:'orientacoes',28:'exames',29:'farmacologico',30:'metas'
+};
+
+function getBlocoAlvo(row){
+  if(FILA_BLOCO_MAP[row.fid]) return FILA_BLOCO_MAP[row.fid];
+  const keys=Object.keys(BLOCO_LABELS);
+  return keys[row.fid % keys.length];
+}
+
+function parsePlanoBlocos(texto){
+  if(!texto) return {farmacologico:'—'};
+  const frases=texto.split(/(?<=\.|\?|!)\s+/);
+  const b={diagnostico:[],farmacologico:[],nao_farmacologico:[],exames:[],metas:[],retorno:[],orientacoes:[],alertas:[]};
+  frases.forEach(f=>{
+    const fl=f.toLowerCase();
+    if(/\d+\s*(mg|mcg|g\/kg|ui)|dose\s|comprimido|spray|inalat|iv\b|im\b|infusão|droga|fármaco|prescrever|losartana|metformina|enalapril|atenolol|anlodipino|furosemida|estatina|insulina|salbutamol|budesonida|donepezila|amitriptilina|escitalopram|sertralina|duloxetina|ceftriaxona|azitromicina|levotiroxina|rivaroxabana|anticoagulante|corticoide|imunobi|manter\s+\w+\s*\d|iniciar\s+\w+\s*\d/.test(fl)){
+      b.farmacologico.push(f);
+    } else if(/dieta|exercício|atividade física|fisioter|aquática|nutri|cpap|psicoterap|tcc|cognitivo|meditação|relaxamento|estilo de vida|caminhada|hidroginástica|natação|cessação|tabag|reabilita|comportament|low-fodmap|miofuncional|higiene do sono/.test(fl)){
+      b.nao_farmacologico.push(f);
+    } else if(/exame|laborat|hemogram|creatinin|tsh|hba1c|ecg|ecocardiograma|raio|tomografia|ressonância|ultrassom|colesterol|glicemia|espirometria|polissonografia|potássio|ureia|albumina|microalb|fundoscopia|ergometria|ferritina|transferrina|ige|vdrl|pcr|lDL|hDL|tgo|tgp|ionograma|função renal|função hepática|relação alb|itb/.test(fl)){
+      b.exames.push(f);
+    } else if(/meta|objetivo|alvo|escore|framingham|morisky|cha2ds|gina|ada|sbd|sbc|sbe|step\s+\d|acq-7|gad-7|phq-9|fiq|diretriz|protocolo|guideline|menos de\s+\d|maior que\s+\d|abaixo de\s+\d|acima de\s+\d/.test(fl)){
+      b.metas.push(f);
+    } else if(/retorno|consulta em|acompanhamento|revisão em|seguimento|semanas?|meses?|dias.*volta|anual|semestral|mensal|trimestral|periodic|cada\s+\d/.test(fl)){
+      b.retorno.push(f);
+    } else if(/alerta|urgência|pronto-socorro|emergência|sinais de alarme|hospitalizar|acionamento|pa\s*[>≥]|glicemia\s*[<≤]\s*70|cetoacidose|dispneia súbita|síncope|angioedema|sangramento/.test(fl)){
+      b.alertas.push(f);
+    } else if(/orientar|instruir|paciente deve|informar|educar|ensinar|sinan|ampa|domiciliar|diário|automonitor|vigilância|notific|registro/.test(fl)){
+      b.orientacoes.push(f);
+    } else {
+      b.diagnostico.push(f);
+    }
+  });
+  const result={};
+  Object.entries(b).forEach(([k,v])=>{ const s=v.join(' ').trim(); if(s) result[k]=s; });
+  if(!Object.keys(result).length) result.farmacologico=texto;
+  return result;
+}
+
+function renderPlanoBlocos(plano, pid){
+  if(!plano) return `<div style="color:var(--dim);font-size:13px;padding:16px">Plano não encontrado.</div>`;
+  const blocos=plano.blocos||parsePlanoBlocos(plano.texto);
+  let html=`<div style="font-size:11px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;display:flex;align-items:center;gap:6px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Plano de Cuidados No Momento — ${pid}</div>`;
+  
+  html+=`<div style="background:var(--sur2); border:1px solid var(--bdr); border-radius:var(--rs); padding:16px; font-size:13px; line-height:1.7; color:var(--txt)">`;
+  Object.entries(BLOCO_LABELS).forEach(([key,meta])=>{
+    const val=blocos[key];
+    if(!val) return;
+    html+=`<div style="margin-bottom:16px">
+      <div style="font-size:10px; font-weight:700; color:var(--dim); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px">${meta.lbl}</div>
+      <div>${val}</div>
+    </div>`;
+  });
+  html+=`</div>`;
+  return html;
+}
+
+
 function stBadge(s){
   if(s==='atualizar') return `<span class="badge b-atualizar">${IC.spin} A atualizar</span>`;
   if(s==='atualizado') return `<span class="badge b-atualizado"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Atualizado</span>`;
@@ -1220,6 +1713,13 @@ function p4StBadge(s){
   return `<span class="badge" style="font-size:10px;padding:2px 7px;background:var(--sur3);color:var(--mut);border:1px solid var(--bdr2)">${s}</span>`;
 }
 
+function planoFullText(p) {
+  if (!p) return '—';
+  if (p.texto) return p.texto;
+  if (p.blocos) return Object.values(p.blocos).filter(Boolean).join(' ');
+  return '—';
+}
+
 /* ── SCREENS ── */
 function goScr(s){
   document.querySelectorAll('.screen').forEach(e=>e.classList.remove('on'));
@@ -1227,12 +1727,19 @@ function goScr(s){
   document.getElementById('screen-'+s).classList.add('on');
   document.getElementById('nav-'+s).classList.add('on');
   if(s==='emb') renderEmb();
+  if(s==='hist') {
+    backToHistSelector();
+    // Update badge count
+    document.getElementById('badgeHist').textContent = HIST_VALIDACOES.length + HIST_EMB.length;
+  }
 }
 
 /* ── VALIDAÇÃO ── */
 function fRows(){
   const groups = {};
   FILA.forEach(r => {
+    // Items totalmente concluídos (aprovados ou reprovados) ou em andamento somem da fila principal em 'all'
+    if((r.status === 'atualizado' || r.status === 'em-atualizacao' || r.status === 'reprovado') && vFilt === 'all') return;
     if(vFilt==='atualizar'&&r.status!=='atualizar') return;
     if(vFilt==='em'&&r.status!=='em-atualizacao') return;
     if(vFilt==='atualizado'&&r.status!=='atualizado') return;
@@ -1276,21 +1783,27 @@ function renderVal(){
   const aI=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>`;
   document.getElementById('valCards').innerHTML=`
     <div class="card"><div class="c-ic ci-w">${wI}</div><div><div class="c-val">${atualizar}</div><div class="c-lbl">A atualizar</div></div></div>
-    <div class="card"><div class="c-ic ci-b">${aI}</div><div><div class="c-val">${em}</div><div class="c-lbl">Em atualização</div></div></div>
-    <div class="card"><div class="c-ic ci-g">${gI}</div><div><div class="c-val">${atualizado}</div><div class="c-lbl">Atualizado</div></div></div>`;
+    <div class="card"><div class="c-ic ci-b">${aI}</div><div><div class="c-val">${em}</div><div class="c-lbl">Em atualização</div></div></div>`;
   const tbody=document.getElementById('valBody');
-  tbody.innerHTML=pg.length===0?'<tr class="empty"><td colspan="6">Nenhuma solicitação encontrada</td></tr>'
-    :pg.map(r=>`<tr>
-      <td class="mono" style="color:var(--acc);font-weight:500">${r.cod}</td>
-      <td style="font-size:13px;font-weight:500;color:var(--txt)">${r.condicao}</td>
-      <td class="mono">${r.pidAlvo}</td>
-      <td>
-        <div style="font-size:12px;font-weight:600;color:var(--txt)">${r.med.nome}</div>
-        <div style="font-size:11px;color:var(--dim);font-family:var(--mono)">${r.med.crm}</div>
-      </td>
-      <td>${stBadge(r.status)}</td>
-      <td><button class="icnbtn" title="Visualizar" onclick="openValVis(${r.fid})">${IC.eye}</button></td>
-    </tr>`).join('');
+  tbody.innerHTML=pg.length===0?'<tr class="empty"><td colspan="5">Nenhuma solicitação encontrada</td></tr>'
+    :pg.map(r=>{
+      const plans = PLANOS_EMB[r.embId] || [];
+      const planMed = plans.find(p => p.origem === 'medico') || { pid: 'PC-XXXX' };
+      const planIA = plans.find(p => p.pid === r.pidAlvo) || plans.find(p => p.origem === 'ia') || { pid: 'PC-YYYY' };
+      const cMed = FILA.filter(x => x.embId === r.embId && x.pidAlvo === planMed.pid).length;
+      const cIA = FILA.filter(x => x.embId === r.embId && x.pidAlvo === planIA.pid).length;
+      const sum = cMed + cIA;
+      return `<tr>
+        <td class="mono" style="color:var(--acc);font-weight:500">${r.cod}</td>
+        <td style="font-size:13px;font-weight:500;color:var(--txt);cursor:pointer;" onclick="openValVis(${r.fid})">${r.condicao}</td>
+        <td>
+          <div style="font-size:16px;font-weight:700;color:var(--txt);line-height:1">${sum}</div>
+          <div style="font-size:10px;color:var(--mut);font-family:var(--mono);margin-top:2px;white-space:nowrap">${planMed.pid}: ${cMed} | ${planIA.pid}: ${cIA}</div>
+        </td>
+        <td>${stBadge(r.status)}</td>
+        <td><button class="icnbtn" title="Visualizar" onclick="openValVis(${r.fid})">${IC.eye}</button></td>
+      </tr>`;
+    }).join('');
   const pp=Array.from({length:tp},(_,i)=>i+1);
   document.getElementById('valPag').innerHTML=`
     <div class="pag-i">Exibindo ${Math.min(st+1,total)}–${Math.min(st+PS,total)} de ${total}</div>
@@ -1300,7 +1813,7 @@ function renderVal(){
       <button class="pbtn" onclick="vGo(${vPage+1})" ${vPage===tp?'disabled':''}>&#8250;</button>
     </div>`;
 }
-function setF(f){vFilt=f;vPage=1;['all','atualizar','em','atualizado'].forEach(x=>document.getElementById('f-'+x).classList.remove('on'));document.getElementById('f-'+f).classList.add('on');renderVal();}
+function setF(f){vFilt=f;vPage=1;['all','atualizar','em'].forEach(x=>{const el=document.getElementById('f-'+x);if(el)el.classList.remove('on')});const cur=document.getElementById('f-'+f);if(cur)cur.classList.add('on');renderVal();}
 function vGo(p){vPage=p;renderVal();}
 document.getElementById('valSrch').addEventListener('input',e=>{vSrch=e.target.value.trim();vPage=1;renderVal();});
 
@@ -1319,7 +1832,9 @@ function openValVis(fid){
 
   const clr=emb.status==='ativo'?'var(--grn)':'var(--warn)';
   document.getElementById('vvMetaGrid').innerHTML=metaGrid(emb, false);
-  document.getElementById('vvContexto').textContent=emb.texto;
+
+  /* Contexto Clínico — apenas o texto principal; demais blocos via "Ver regra completa" */
+  document.getElementById('vvContexto').textContent = emb.texto;
 
   /* Montar os 2 planos: médico + IA alvo */
   const todosPlanos=PLANOS_EMB[emb.id]||[];
@@ -1351,7 +1866,7 @@ function openValVis(fid){
       </div>
       <div class="plano-body">
         <div class="plano-label">${p.label} · <span style="font-family:var(--mono);font-size:11px;color:var(--mut)">${p.pid}</span></div>
-        <div class="plano-texto">${p.texto}</div>
+        <div class="plano-texto">${planoFullText(p)}</div>
       </div>
       <div class="plano-footer">
         <span class="plano-ts">Atualizado: ${p.ts}</span>
@@ -1383,7 +1898,7 @@ let curVlSrch = '';
 
 function setVlFilter(f){
   curVlFilt = f;
-  ['all','atualizar','em','atualizado','reprovado'].forEach(x=>{
+  ['all','atualizar','em'].forEach(x=>{
     const el = document.getElementById('vlf-'+x);
     if(el) el.classList.remove('on');
   });
@@ -1418,11 +1933,11 @@ function updateVlList(){
     // Dropdown filter
     if(selVal !== 'all' && `vl-item-${r.fid}` !== selVal) return false;
 
+    // Esconder 'atualizado', 'reprovado' e 'em-atualizacao' no filtro 'all' para que sumam da lista
+    if(curVlFilt==='all' && (r.status==='atualizado'||r.status==='reprovado'||r.status==='em-atualizacao')) return false;
     // Status filter
     if(curVlFilt==='atualizar' && r.status!=='atualizar') return false;
     if(curVlFilt==='em' && r.status!=='em-atualizacao') return false;
-    if(curVlFilt==='atualizado' && r.status!=='atualizado') return false;
-    if(curVlFilt==='reprovado' && r.status!=='reprovado') return false;
     
     // Search filter
     if(curVlSrch){
@@ -1463,7 +1978,7 @@ function openValLista(embId,pid,plano,reqs){
   const srchInput = document.getElementById('vlSrch');
   if(srchInput) srchInput.value = '';
   
-  ['all','atualizar','em','atualizado','reprovado'].forEach(x=>{
+  ['all','atualizar','em'].forEach(x=>{
     const el = document.getElementById('vlf-'+x);
     if(el) el.classList.remove('on');
   });
@@ -1491,33 +2006,48 @@ function openValLista(embId,pid,plano,reqs){
 function scrollToValItem(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'nearest'});}
 
 /* MODAL 3: Validação individual */
+function buildContextoClinico(caso) {
+  if (!caso) return '';
+  const c = caso;
+  // Expands the summary with more descriptive text as requested
+  const obsLonga = (c.observacoes || '') + " " + (c.queixa || '') + " " + (c.diagnostico || '') + " Durante a avaliação, o paciente demonstrou estabilidade nos parâmetros vitais, embora relate episódios recorrentes no período noturno. É fundamental manter o seguimento rigoroso das orientações propostas no plano de cuidado para evitar agudizações do quadro e garantir a eficácia da conduta terapêutica atualizada. A adesão farmacológica deve ser monitorada em cada retorno, bem como as medidas de estilo de vida que impactam diretamente na evolução clínica de longo prazo.";
+  return `
+    <div style="grid-column: span 4; background: var(--teal-bg); border: 1px solid var(--teal-br); border-left: 3px solid var(--teal); border-radius: var(--rs); padding:18px; color: var(--txt); font-size: 14px; line-height: 1.8; min-height: 180px;">
+      <div style="font-size:10px; font-weight:700; color:var(--teal); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px">Resumo do Atendimento</div>
+      <div>${obsLonga}</div>
+    </div>
+  `;
+}
+
+function onBackMain() {
+  if (editMode) {
+    toggleEditMode();
+  } else {
+    closeOv('ovMain');
+  }
+}
+
 function openMain(fid){
   const row=FILA.find(r=>r.fid===fid); if(!row) return;
   curRow=row; editMode=false;
   const typeCls=row.status==='atualizar'?'mtype mt-atualizar':row.status==='atualizado'?'mtype mt-atualizado':row.status==='em-atualizacao'?'mtype mt-em':'mtype mt-atualizar';
   document.getElementById('mMainType').className=typeCls;
   document.getElementById('mMainType').textContent=row.status==='atualizar'?'A atualizar':row.status==='atualizado'?'Atualizado':row.status==='em-atualizacao'?'Em atualização':'Reprovado';
-  document.getElementById('mMainTitle').textContent=`${row.cod} — ${row.condicao}`;
-  document.getElementById('mMainSub').textContent=`Plano: ${row.pidAlvo} · Base do Conhecimento: ${row.embId} · Solicitante: ${row.med.nome}`;
-  document.getElementById('metaStrip').innerHTML=`
-    <div class="ms-item"><div class="ms-lbl">Cód. Validação</div><div class="ms-val acc">${row.cod}</div></div>
-    <div class="ms-item"><div class="ms-lbl">Condição Clínica</div><div class="ms-val">${row.condicao}</div></div>
-    <div class="ms-item"><div class="ms-lbl">Plano solicitado</div><div class="ms-val acc">${row.pidAlvo}</div></div>
-    <div class="ms-item"><div class="ms-lbl">Médico solicitante</div><div class="ms-val">${row.med.nome}</div></div>
-    <div class="ms-item"><div class="ms-lbl">Criação da regra</div><div class="ms-val">${row.criacao}</div></div>`;
+  document.getElementById('mMainTitle').textContent=`Validação Individual de Plano de Cuidado`;
+  document.getElementById('mMainSub').textContent=`Solicitante: ${row.med.nome} · Registro enviado em ${row.med.data}`;
 
   if (row.caso) {
-    document.getElementById('casoContextStrip').style.display = 'flex';
-    document.getElementById('casoContextText').innerHTML = `<b>Paciente:</b> ${row.caso.paciente} &nbsp;·&nbsp; <b>Queixa:</b> ${row.caso.queixa} &nbsp;·&nbsp; <b>Diagnóstico:</b> ${row.caso.diagnostico}`;
+    document.getElementById('casoContextStrip').style.display = 'block';
+    const textEl = document.getElementById('casoContextText');
+    textEl.style.gridTemplateColumns = 'repeat(4, 1fr)';
+    textEl.innerHTML = buildContextoClinico(row.caso);
   } else {
     document.getElementById('casoContextStrip').style.display = 'none';
   }
 
   const planos=PLANOS_EMB[row.embId]||[];
   const pl=planos.find(p=>p.pid===row.pidAlvo);
-  document.getElementById('spLeft').innerHTML=`
-    <div style="font-size:11px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Texto atual do plano — ${row.pidAlvo}</div>
-    <div style="font-size:13px;line-height:1.75;color:var(--txt);background:var(--sur2);border:1px solid var(--bdr);border-left:3px solid var(--red);border-radius:var(--rs);padding:16px">${pl?pl.texto:'—'}</div>`;
+  document.getElementById('spLeft').innerHTML = renderPlanoBlocos(pl, row.pidAlvo);
   renderSolicitacao(row);
   const done=row.status==='atualizado'||row.status==='reprovado';
   document.getElementById('btnAprovar').disabled=done;
@@ -1578,23 +2108,35 @@ function _applyEditModeUI(done) {
 }
 
 function renderSolicitacao(row){
+  const planos=PLANOS_EMB[row.embId]||[];
+  const pl=planos.find(p=>p.pid===row.pidAlvo);
+  const blocos=pl?(pl.blocos||parsePlanoBlocos(pl.texto)):{};
+  const blocoAlvo=getBlocoAlvo(row);
+  const blocoOriginal=blocos[blocoAlvo]||'(Conteúdo não disponível)';
+  const blocoMeta=BLOCO_LABELS[blocoAlvo]||{lbl:blocoAlvo,accent:'var(--warn)',bg:'var(--warn-bg)',br:'var(--warn-br)'};
+
   document.getElementById('spRight').innerHTML=`
     <div class="req-box">
       <div class="req-author">
         <div class="av">${row.med.ini}</div>
         <div><div class="av-name">${row.med.nome}</div><div class="av-crm">${row.med.crm}</div></div>
-        <div class="av-date">${row.med.data}</div>
       </div>
       <div class="req-sec">
-        <div class="req-sec-lbl">Trecho identificado</div>
-        <div class="trecho">"…${row.trecho}…"</div>
+        <div class="req-sec-lbl" style="color:var(--dim)">Bloco Selecionado pelo Médico: <span style="color:${blocoMeta.accent}">${blocoMeta.lbl}</span></div>
       </div>
-      <div class="req-sec">
-        <div class="req-sec-lbl">Modificação solicitada</div>
-        <div class="req-text" id="modTexto">${row.modAtual}</div>
+      <div style="display:flex; flex-direction:column; gap:12px; margin-top:10px">
+        <div class="req-sec">
+          <div class="req-sec-lbl" style="color:var(--dim)">Conteúdo Original</div>
+          <div style="background:var(--sur2); border:1px solid var(--bdr); border-radius:var(--rs); padding:12px; font-size:12.5px; color:var(--mut); line-height:1.6; font-style:italic">"${blocoOriginal}"</div>
+        </div>
+        <div class="req-sec">
+          <div class="req-sec-lbl" style="color:var(--acc)">Versão com Ajuste Solicitado</div>
+          <div class="req-text" id="modTexto" style="background:#fff; border:1px solid var(--acc); border-left:4px solid var(--acc); border-radius:var(--rs); padding:14px; font-size:13px; font-weight:500; color:var(--txt); line-height:1.6">${row.modificacao}</div>
+        </div>
       </div>
     </div>`;
 }
+
 
 function renderHist(fid){
   const logs=LOGS[fid]||[];
@@ -1604,6 +2146,7 @@ function renderHist(fid){
 
 function doAprovar(){
   if(!curRow) return;
+  const isEdit = editMode;
   if(editMode){
     const editArea=document.getElementById('editArea');
     const novo=editArea?editArea.value.trim():'';
@@ -1611,27 +2154,78 @@ function doAprovar(){
     curRow.modAtual=novo;
     editMode=false;
   }
+  // Block-aware plan update
+  const pl=PLANOS_EMB[curRow.embId]?.find(x=>x.pid===curRow.pidAlvo);
+  const planoAntes=pl?pl.texto:'';
+  if(pl){
+    const blocos=pl.blocos||parsePlanoBlocos(pl.texto);
+    const blocoKey=getBlocoAlvo(curRow);
+    blocos[blocoKey]=curRow.modAtual;
+    pl.blocos=blocos;
+    pl.texto=Object.values(blocos).filter(Boolean).join(' ');
+  }
+  const savedCaso = curRow.caso ? {...curRow.caso} : null;
   curRow.status='em-atualizacao';
   LOGS[curRow.fid].push({ts:now(),acao:'Aprovado — em atualização',cor:'var(--grn)',nota:`Plano ${curRow.pidAlvo} encaminhado para reprocessamento.`});
+  
+  HIST_VALIDACOES.push({
+    hId: 'HVAL-' + Date.now(),
+    embId: curRow.embId,
+    pidAlvo: curRow.pidAlvo,
+    cod: curRow.cod,
+    condicao: curRow.condicao,
+    data: now(),
+    status: isEdit ? 'editada e aceita' : 'aceita',
+    planoAntes: planoAntes,
+    med: {...curRow.med},
+    trecho: curRow.trecho,
+    modificacao: curRow.modificacao,
+    modAtual: curRow.modAtual,
+    caso: savedCaso,
+    blocoAlvo: getBlocoAlvo(curRow)
+  });
+
+  const savedFid = curRow.fid;
   setTimeout(()=>{
-    const r=FILA.find(x=>x.fid===curRow.fid);
+    const r=FILA.find(x=>x.fid===savedFid);
     if(r&&r.status==='em-atualizacao'){
       r.status='atualizado';
-      const p=PLANOS_EMB[r.embId]?.find(x=>x.pid===r.pidAlvo);
-      if(p){p.texto=r.modAtual;p.ts=now();}
-      LOGS[r.fid].push({ts:now(),acao:'Plano atualizado com sucesso',cor:'var(--grn)',nota:`Plano ${r.pidAlvo} indexado com a nova versão aprovada.`});
+      LOGS[r.fid].push({ts:now(),acao:'Plano atualizado com sucesso',cor:'var(--grn)',nota:`Bloco do plano ${r.pidAlvo} indexado com a nova versão aprovada.`});
       renderVal();
+      document.getElementById('badgeHist').textContent = HIST_VALIDACOES.length + HIST_EMB.length;
     }
   },3000);
-  closeOv('ovMain');renderVal();
+  closeOv('ovMain');closeOv('ovValLista');renderVal();
   toast('Aprovado — plano em atualização. Concluirá em instantes.','ok');
 }
 
 function doReprovar(){
   if(!curRow) return;
+  const planoAntes = (PLANOS_EMB[curRow.embId]?.find(x=>x.pid===curRow.pidAlvo)?.texto) || '';
+  const savedCaso = curRow.caso ? {...curRow.caso} : null;
   curRow.status='reprovado';
   LOGS[curRow.fid].push({ts:now(),acao:'Reprovado',cor:'var(--red)',nota:'Solicitação rejeitada. Nenhum plano de cuidado foi alterado. Histórico preservado.'});
-  closeOv('ovMain');renderVal();
+  
+  // Adiciona ao histórico de validações
+  HIST_VALIDACOES.push({
+    hId: 'HVAL-' + Date.now(),
+    embId: curRow.embId,
+    pidAlvo: curRow.pidAlvo,
+    cod: curRow.cod,
+    condicao: curRow.condicao,
+    data: now(),
+    status: 'recusada',
+    planoAntes: planoAntes,
+    med: {...curRow.med},
+    trecho: curRow.trecho,
+    modificacao: curRow.modificacao,
+    modAtual: curRow.modificacao,
+    caso: savedCaso
+  });
+
+  closeOv('ovMain');closeOv('ovValLista');renderVal();
+  // Update badge for history
+  document.getElementById('badgeHist').textContent = HIST_VALIDACOES.length + HIST_EMB.length;
   toast('Solicitação reprovada — histórico preservado.','warn');
 }
 
@@ -1669,7 +2263,6 @@ function openCaso(){
 
   document.getElementById('casoBody').innerHTML=`
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
-      ${metaCell('Queixa Principal', c.queixa, 4, 'var(--txt)', 'var(--teal-bg)', 'var(--teal-br)', 'var(--teal)')}
       ${metaCell('Diagnóstico', c.diagnostico, 4, 'var(--txt)', 'var(--pur-bg)', 'var(--pur-br)', 'var(--pur)')}
       ${metaCell('Conduta Atual', c.conduta_atual, 4, 'var(--txt)', 'var(--sur2)', 'var(--bdr)', 'var(--acc)')}
       ${c.comorbidades ? metaCell('Comorbidades', c.comorbidades, 2) : ''}
@@ -1694,7 +2287,7 @@ function openPlanoView(embId,pid,plano){
   document.getElementById('pvPlanoLabel').textContent=`Conteúdo do plano — ${pid}`;
   const bc=isMed?'var(--grn)':'var(--pur)';
   document.getElementById('pvPlanoText').style.borderLeftColor=bc;
-  document.getElementById('pvPlanoText').textContent=plano?plano.texto:'—';
+  document.getElementById('pvPlanoText').textContent=plano?planoFullText(plano):'—';
   document.getElementById('pvPlanoMeta').innerHTML=`
     <div class="plano-view-meta-item"><div style="font-size:10px;color:var(--dim);margin-bottom:4px">Origem</div><div style="font-size:13px;font-weight:600;color:var(--txt)">${plano?plano.label:'—'}</div></div>
     <div class="plano-view-meta-item"><div style="font-size:10px;color:var(--dim);margin-bottom:4px">Última atualização</div><div style="font-size:13px;font-family:var(--mono);color:var(--txt)">${plano?plano.ts:'—'}</div></div>
@@ -1759,16 +2352,13 @@ function renderEmb(){
     <div class="card"><div class="c-ic ci-p">${dI}</div><div><div class="c-val">${EMBS.length}</div><div class="c-lbl">Total de bases do conhecimento</div></div></div>
     <div class="card"><div class="c-ic ci-g">${dI}</div><div><div class="c-val">${atv}</div><div class="c-lbl">Ativas</div></div></div>
     <div class="card"><div class="c-ic ci-w">${dI}</div><div><div class="c-val">${pend}</div><div class="c-lbl">Pendentes retreino</div></div></div>`;
-  document.getElementById('embBody').innerHTML=pg.length===0?'<tr class="empty"><td colspan="6">—</td></tr>'
+  document.getElementById('embBody').innerHTML=pg.length===0?'<tr class="empty"><td colspan="5">—</td></tr>'
     :pg.map(e=>{
-      const pls=PLANOS_EMB[e.id]||[],inad=pls.filter(p=>p.status==='atualizar').length;
-      const plCl=inad>0?`<span class="badge b-atualizar" style="font-size:10px;padding:2px 7px">4 (${inad} ✗)</span>`:`<span style="font-family:var(--mono);font-size:12px;color:var(--grn);font-weight:600">4 ✓</span>`;
       const st=e.status==='ativo'?`<span class="emb-stat-pill ep-ok">Ativa</span>`:`<span class="emb-stat-pill ep-pend">Retreino</span>`;
       return `<tr onclick="openEmbDet('${e.id}')" style="cursor:pointer">
         <td class="mono">${e.id}</td>
-        <td class="tcell" title="${e.texto.replace(/"/g,'&quot;')}">${e.texto}</td>
-        <td style="font-size:12px;color:var(--mut)">${e.esp}</td>
-        <td>${plCl}</td>
+        <td class="tcell" title="${planoFullText(e).replace(/"/g,'&quot;')}">${planoFullText(e)}</td>
+        <td style="font-size:12px;color:var(--mut)">Pediatria/${e.esp.toUpperCase()}</td>
         <td>${st}</td>
         <td><button class="icnbtn" onclick="event.stopPropagation();openEmbDet('${e.id}')">${IC.eye}</button></td>
       </tr>`;
@@ -1794,27 +2384,6 @@ function openEmbDet(id){
   document.getElementById('edMeta').innerHTML=metaGrid(emb);
   document.getElementById('edText').textContent=emb.texto;
   openOv('ovEmbDet');
-}
-
-/* Modal 4 planos (original) */
-function openPlanosAssoc(){
-  if(!curEmb) return;
-  const pls=PLANOS_EMB[curEmb.id]||[];
-  document.getElementById('plTitle').textContent=`${curEmb.id} — ${curEmb.esp}`;
-  document.getElementById('plSub').textContent=`1 plano médico + 3 planos IA`;
-  document.getElementById('plGrid').innerHTML=pls.map(p=>{
-    const isDoc=p.origem==='medico';
-    const ob=isDoc?`<span class="badge b-doc" style="font-size:10px;padding:2px 7px">${IC.db} Médico</span>`:`<span class="badge b-llm" style="font-size:10px;padding:2px 7px">${IC.robot} IA</span>`;
-    return `<div class="p4card">
-      <div class="p4h"><span class="p4id">${p.pid}</span><div style="display:flex;gap:5px">${ob}${p4StBadge(p.status)}</div></div>
-      <div class="p4b">
-        <div class="p4origin">${p.label}</div>
-        <div class="p4text">${p.texto}</div>
-        <div class="p4ts">Última atualização: ${p.ts}</div>
-      </div>
-    </div>`;
-  }).join('');
-  openOv('ovPlanos');
 }
 
 const MEDICAL_INFO = {
@@ -1984,13 +2553,9 @@ function metaGrid(emb, showAll = true){
   const alertas = med.alertas || 'Aparecimento de novos sintomas graves ou reações alérgicas.';
 
   const items = [
-    `<div style="background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px;grid-column: span 1">
-      <div style="font-size:10px;color:var(--dim);margin-bottom:4px;text-transform:uppercase;font-weight:600">ID da Base</div>
-      <div style="font-size:13px;font-family:var(--mono);font-weight:600">${emb.id}</div>
-    </div>`,
-    `<div style="background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px;grid-column: span 1">
-      <div style="font-size:10px;color:var(--dim);margin-bottom:4px;text-transform:uppercase;font-weight:600">Especialidade</div>
-      <div style="font-size:13px;font-weight:600;color:var(--acc)">${emb.esp}</div>
+    `<div style="background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px;grid-column: span 2">
+      <div style="font-size:10px;color:var(--dim);margin-bottom:4px;text-transform:uppercase;font-weight:600">Especialidade/Sub-especialidades</div>
+      <div style="font-size:12.5px;font-weight:500;color:var(--txt)">Pediatria/${emb.esp.toUpperCase()}</div>
     </div>`,
     `<div style="background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 14px;grid-column: span 2">
       <div style="font-size:10px;color:var(--dim);margin-bottom:4px;text-transform:uppercase;font-weight:600">Diagnósticos Associados</div>
@@ -2034,8 +2599,9 @@ function metaGrid(emb, showAll = true){
 function now(){const d=new Date();return d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}
 function openOv(id){document.getElementById(id).classList.add('on')}
 function closeOv(id){document.getElementById(id).classList.remove('on')}
-['ovValVis','ovValLista','ovMain','ovEmb','ovCaso','ovPlanoView','ovEmbDet','ovPlanos'].forEach(id=>{
-  document.getElementById(id).addEventListener('click',e=>{if(e.target===document.getElementById(id))closeOv(id);});
+['ovValVis','ovValLista','ovMain','ovEmb','ovCaso','ovPlanoView','ovEmbDet','ovHistValPlans','ovHistValItemsList','ovHistValItemDetail','ovHistEmbDetail','ovHistEmbSingle'].forEach(id=>{
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('click',e=>{if(e.target===el)closeOv(id);});
 });
 function toast(msg,type){
   const t=document.getElementById('toast');
@@ -2044,6 +2610,305 @@ function toast(msg,type){
     ?`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--grn)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>`
     :`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>`;
   t.classList.add('on');setTimeout(()=>t.classList.remove('on'),3600);
+}
+
+/* ── HISTÓRICO SCREENS & LOGIC ── */
+let curHistSec = '';
+
+function showHistSection(sec) {
+  curHistSec = sec;
+  document.getElementById('hist-selector').style.display = 'none';
+  document.getElementById('hist-val-screen').style.display = sec === 'val' ? 'block' : 'none';
+  document.getElementById('hist-emb-screen').style.display = sec === 'emb' ? 'block' : 'none';
+  if (sec === 'val') {
+    renderHistVal();
+  } else {
+    renderHistEmbScreen();
+  }
+}
+
+function backToHistSelector() {
+  curHistSec = '';
+  document.getElementById('hist-selector').style.display = 'grid';
+  document.getElementById('hist-val-screen').style.display = 'none';
+  document.getElementById('hist-emb-screen').style.display = 'none';
+}
+
+function renderHistVal() {
+  const q = document.getElementById('histValSrch').value.toLowerCase();
+  
+  // Use unique conditions from HIST_VALIDACOES and FILA (if they have history)
+  const conditions = new Set();
+  const data = [];
+
+  // 1. From History
+  HIST_VALIDACOES.forEach(h => {
+    if (!conditions.has(h.embId)) {
+      if (q && !h.embId.toLowerCase().includes(q) && !h.condicao.toLowerCase().includes(q)) return;
+      conditions.add(h.embId);
+      data.push({ embId: h.embId, condicao: h.condicao, statusHtml: '<span class="badge b-atualizado">✓ Concluído</span>' });
+    }
+  });
+
+  // 2. From Fila (if updated or reprovado, and not already in data)
+  FILA.forEach(r => {
+    if (r.status === 'atualizado' || r.status === 'reprovado') {
+      if (!conditions.has(r.embId)) {
+         if (q && !r.embId.toLowerCase().includes(q) && !r.condicao.toLowerCase().includes(q)) return;
+         conditions.add(r.embId);
+         data.push({ embId: r.embId, condicao: r.condicao, statusHtml: '<span class="badge b-atualizado">✓ Concluído</span>' });
+      }
+    }
+  });
+  
+  const tbody = document.getElementById('histValBody');
+  tbody.innerHTML = data.length === 0 
+    ? '<tr><td colspan="4" style="text-align:center;color:var(--dim);padding:40px;">Nenhum registro encontrado</td></tr>'
+    : data.map(r => `
+      <tr>
+        <td class="mono" style="color:var(--acc);font-weight:500">${r.embId}</td>
+        <td style="font-size:13px;font-weight:500;color:var(--txt);cursor:pointer;" onclick="openHistValPlans('${r.embId}')">${r.condicao}</td>
+        <td>${r.statusHtml}</td>
+        <td><button class="icnbtn" title="Visualizar Planos" onclick="openHistValPlans('${r.embId}')">${IC.eye}</button></td>
+      </tr>
+    `).join('');
+    
+  document.getElementById('histValPag').innerHTML = `<div class="pag-i">Total de ${data.length} regra(s) no histórico</div>`;
+}
+
+function openHistValPlans(embId) {
+  const emb = EMBS.find(e => e.id === embId);
+  if (!emb) return;
+  
+  document.getElementById('hvpTitle').textContent = `Planos de Cuidados — ${emb.esp}`;
+  document.getElementById('hvpSub').textContent = `Base do Conhecimento: ${emb.id} · Apenas planos de cuidados`;
+  
+  const todosPlanos = PLANOS_EMB[emb.id] || [];
+  const planMed = todosPlanos.find(p => p.origem === 'medico');
+  const planIA = todosPlanos.find(p => p.origem === 'ia') || todosPlanos[1];
+  const planosMostrar = [planMed, planIA].filter(Boolean);
+  
+  document.getElementById('hvpPlanosGrid').innerHTML = planosMostrar.map((p, idx) => {
+    const isMed = p.origem === 'medico';
+    const originClass = isMed ? 'medico' : 'ia';
+    const originBadge = isMed
+      ? `<span class="plano-origin-badge medico">${IC.db} Médico</span>`
+      : `<span class="plano-origin-badge ia">${IC.robot} IA</span>`;
+      
+    const histCount = HIST_VALIDACOES.filter(h => h.embId === embId && h.pidAlvo === p.pid).length;
+    
+    return `
+      <div class="plano-container" onclick="openHistValItemsList('${emb.id}', '${p.pid}')">
+        <div class="plano-hdr ${originClass}">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="plano-num">Plano ${idx+1}</div>
+            ${originBadge}
+          </div>
+          <span style="font-size:11px;color:var(--mut);font-family:var(--mono);font-weight:600">${histCount} histórico(s)</span>
+        </div>
+        <div class="plano-body">
+          <div class="plano-label">${p.label} · <span style="font-family:var(--mono);font-size:11px;color:var(--mut)">${p.pid}</span></div>
+          <div class="plano-texto">${planoFullText(p)}</div>
+        </div>
+        <div class="plano-footer">
+          <span class="plano-ts">Atualizado: ${p.ts}</span>
+          <span class="click-hint">${IC.arrow} Ver histórico de validações</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+  
+  openOv('ovHistValPlans');
+}
+
+function openHistValItemsList(embId, pid) {
+  const items = HIST_VALIDACOES.filter(h => h.embId === embId && h.pidAlvo === pid);
+  
+  document.getElementById('hvilTitle').textContent = `Histórico de Validações — ${pid}`;
+  document.getElementById('hvilSub').textContent = `Base: ${embId} · Exibindo ${items.length} registro(s)`;
+  
+  const tbody = document.getElementById('hvilBody');
+  tbody.innerHTML = items.length === 0
+    ? '<tr><td colspan="5" style="text-align:center;color:var(--dim);padding:20px;">Nenhuma validação anterior encontrada para este plano.</td></tr>'
+    : items.map(item => {
+        let stBadge = '';
+        if (item.status === 'aceita') {
+          stBadge = '<span class="badge b-atualizado">✓ Aceita</span>';
+        } else if (item.status === 'recusada') {
+          stBadge = '<span class="badge b-reprov">✗ Recusada</span>';
+        } else {
+          stBadge = '<span class="badge b-em-atual">✎ Editada e Aceita</span>';
+        }
+        return `
+          <tr>
+            <td class="mono">${item.cod}</td>
+            <td>${item.condicao}</td>
+            <td class="mono">${item.data}</td>
+            <td>${stBadge}</td>
+            <td><button class="icnbtn" title="Visualizar" onclick="openHistValItemDetail('${item.hId}')">${IC.eye}</button></td>
+          </tr>
+        `;
+      }).join('');
+      
+  openOv('ovHistValItemsList');
+}
+
+function openHistValItemDetail(hId) {
+  const item = HIST_VALIDACOES.find(h => h.hId === hId);
+  if (!item) return;
+  
+  // Status type badge
+  const stColor = item.status === 'recusada' ? 'var(--red)' : item.status === 'editada e aceita' ? 'var(--acc)' : 'var(--grn)';
+  const stLabel = item.status === 'recusada' ? '✗ Recusada' : item.status === 'editada e aceita' ? '✎ Editada e Aceita' : '✓ Aceita';
+  document.getElementById('hvdType').innerHTML = `<span style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid ${stColor}30;background:${stColor}15;color:${stColor}">${stLabel}</span>`;
+  document.getElementById('hvdTitle').textContent = `Registro Histórico — ${item.cod}`;
+  document.getElementById('hvdSub').textContent = `Plano: ${item.pidAlvo} · Processado em: ${item.data}`;
+
+  // Populate clinical context strip
+  const ctxStrip = document.getElementById('hvdCasoContextStrip');
+  const ctxText = document.getElementById('hvdCasoContextText');
+  if (item.caso) {
+    ctxStrip.style.display = 'block';
+    ctxText.style.display = 'grid';
+    ctxText.style.gridTemplateColumns = 'repeat(4, 1fr)';
+    ctxText.style.gap = '10px';
+    ctxText.innerHTML = buildContextoClinico(item.caso);
+  } else {
+    ctxStrip.style.display = 'none';
+  }
+  
+  const plAnteriorMock = { pid: item.pidAlvo, texto: item.planoAntes, origem: 'medico' };
+  // Ensure we show the full plan by parsing the text into blocks
+  const blocosFull = parsePlanoBlocos(item.planoAntes);
+  plAnteriorMock.blocos = blocosFull;
+  document.getElementById('hvdLeft').innerHTML = renderPlanoBlocos(plAnteriorMock, item.pidAlvo);
+  
+  document.getElementById('hvdRight').innerHTML = `
+    <div class="req-box" style="border-left-color: ${stColor}">
+      <div class="req-author">
+        <div class="av" style="background:${stColor}">${item.med.ini}</div>
+        <div><div class="av-name">${item.med.nome}</div><div class="av-crm">${item.med.crm}</div></div>
+        <div class="av-date">${item.med.data}</div>
+      </div>
+      <div class="req-sec">
+        <div class="req-sec-lbl">Trecho identificado</div>
+        <div class="trecho" style="background: rgba(0,0,0,0.03); color: var(--mut);">"…${item.trecho}…"</div>
+      </div>
+      <div class="req-sec">
+        <div class="req-sec-lbl">Modificação solicitada</div>
+        <div class="req-text">${item.modificacao}</div>
+      </div>
+      <div class="req-sec">
+        <div class="req-sec-lbl" style="color:${stColor}">Resultado / Decisão tomada</div>
+        <div class="req-text" style="font-weight:500;color:var(--txt);padding:10px;border-radius:var(--rs);background:${stColor}10;border:1px solid ${stColor}30;">${item.modAtual}</div>
+      </div>
+    </div>
+  `;
+  
+  openOv('ovHistValItemDetail');
+}
+
+function renderHistEmbScreen() {
+  const q = document.getElementById('histEmbSrch').value.toLowerCase();
+  const filtered = HIST_EMB.filter(e => {
+    return e.embId.toLowerCase().includes(q) || e.contexto.toLowerCase().includes(q);
+  });
+  
+  const tbody = document.getElementById('histEmbBody');
+  tbody.innerHTML = filtered.length === 0
+    ? '<tr><td colspan="5" style="text-align:center;color:var(--dim);padding:40px;">Nenhum registro de alteração encontrado</td></tr>'
+    : filtered.map(e => {
+        let stBadge = '';
+        if (e.status === 'adicionado') {
+          stBadge = '<span class="badge b-atualizado">+ Adicionado</span>';
+        } else if (e.status === 'editado') {
+          stBadge = '<span class="badge b-em-atual">✎ Editado</span>';
+        } else {
+          stBadge = '<span class="badge b-reprov">✗ Apagado</span>';
+        }
+        return `
+          <tr>
+            <td class="mono">${e.embId}</td>
+            <td class="tcell" title="${e.contexto}">${e.contexto}</td>
+            <td class="mono">${e.data}</td>
+            <td>${stBadge}</td>
+            <td><button class="icnbtn" title="Visualizar" onclick="openHistEmbDetail('${e.hId}')">${IC.eye}</button></td>
+          </tr>
+        `;
+      }).join('');
+      
+  document.getElementById('histEmbPag').innerHTML = `<div class="pag-i">Total de ${filtered.length} alteração(ões) na base</div>`;
+}
+
+function renderEmbFields(embId, altText = null) {
+  const emb = EMBS.find(e => e.id === embId) || { id: embId, esp: 'Clínica Médica', texto: altText || '—' };
+  
+  function field(lbl, val, span=2, accent='') {
+    return `<div style="background:var(--sur);border:1px solid var(--bdr);${accent?`border-left:3px solid ${accent};`:''}border-radius:var(--rs);padding:10px 14px;grid-column:span ${span}">
+      <div style="font-size:10px;color:var(--dim);margin-bottom:5px;text-transform:uppercase;font-weight:600">${lbl}</div>
+      <div style="font-size:12.5px;font-weight:500;color:var(--txt);line-height:1.6">${val}</div>
+    </div>`;
+  }
+
+  // Melhora o preenchimento para itens que não estão na base principal
+  let med = MEDICAL_INFO[embId];
+  if (!med) {
+    // Mock information for history items not in current EMBS
+    med = {
+      diagnosticos: 'CID-10 relacionado à especialidade informada.',
+      sintomas: 'Sintomas clássicos observados em casos similares.',
+      fatores: 'Fatores genéticos e ambientais associados.',
+      diretrizes: 'Diretriz institucional atualizada (2025).',
+      tratamento: 'Protocolo clínico de primeira linha disponível na base.'
+    };
+  }
+  
+  return `
+    <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+      ${field('Especialidade', emb.esp, 2)}
+      ${field('Resumo da Regra', altText || emb.texto, 2, 'var(--acc)')}
+      ${field('Diagnósticos Associados', med.diagnosticos || '—', 2)}
+      ${field('Sintomas Comuns', med.sintomas || '—', 2)}
+      ${field('Fatores de Risco', med.fatores || '—', 2)}
+      ${field('Diretrizes Clínicas', med.diretrizes || '—', 2)}
+      ${field('Tratamento Sugerido', med.tratamento || '—', 2)}
+    </div>`;
+}
+
+function openHistEmbDetail(hId) {
+  const e = HIST_EMB.find(x => x.hId === hId);
+  if (!e) return;
+  
+  if (e.status === 'editado') {
+     // USES MODAL 1: Comparison
+     const stColor = 'var(--acc)';
+     const stLabel = '✎ Editado';
+     
+     document.getElementById('hedType').innerHTML = `<span style="padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; background: ${stColor}15; color: ${stColor}; border: 1px solid ${stColor}30;">${stLabel}</span>`;
+     document.getElementById('hedTitle').textContent = `Comparação da Regra — ${e.embId}`;
+     document.getElementById('hedSub').textContent = `Modificação em: ${e.data}`;
+     
+     const leftSide = document.getElementById('hedLeft');
+     const rightSide = document.getElementById('hedRight');
+     
+     leftSide.innerHTML = renderEmbFields(e.embId, e.antes);
+     rightSide.innerHTML = renderEmbFields(e.embId, e.depois);
+     
+     openOv('ovHistEmbDetail');
+  } else {
+     // USES MODAL 2: Single Rule (Add/Delete)
+     const st = e.status;
+     const stColor = st === 'apagado' ? 'var(--red)' : 'var(--grn)';
+     const stLabel = st === 'apagado' ? '✗ Apagado' : '+ Adicionado';
+     
+     document.getElementById('hesType').innerHTML = `<span style="padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; background: ${stColor}15; color: ${stColor}; border: 1px solid ${stColor}30;">${stLabel}</span>`;
+     document.getElementById('hesTitle').textContent = `Registro da Regra — ${e.embId}`;
+     document.getElementById('hesSub').textContent = `Data: ${e.data}`;
+     
+     document.getElementById('hesBody').innerHTML = renderEmbFields(e.embId, st === 'adicionado' ? e.depois : e.antes);
+     
+     openOv('ovHistEmbSingle');
+  }
 }
 
 /* INIT */
